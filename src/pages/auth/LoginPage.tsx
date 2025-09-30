@@ -1,5 +1,6 @@
 import logoImg from "@/assets/Moyo_logo.png";
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon.tsx";
+import InputField from "@/components/InputField.tsx";
 
 // 하단 링크들 스타일 정의
 const linkButtonClass = "hover:underline focus:outline-none cursor-pointer";
@@ -18,15 +19,8 @@ export default function LoginPage() {
         <div className="w-full max-w-sm p-6">
           {/* 아이디/비번 입력 */}
           <div className="space-y-3 mb-4">
-            <input
-              className="h-12 bg-gray-200 rounded flex items-center px-3 w-full"
-              placeholder="아이디 입력"
-            />
-            <input
-              className="h-12 bg-gray-200 rounded flex items-center px-3 w-full"
-              placeholder="비밀번호 입력"
-              type="password"
-            />
+            <InputField placeholder="아이디 입력" />
+            <InputField placeholder="비밀번호 입력" type="password" />
           </div>
 
           {/* 로그인 버튼 */}
@@ -48,16 +42,6 @@ export default function LoginPage() {
             <span>|</span>
             <button className={linkButtonClass}>비밀번호 찾기</button>
           </div>
-
-          {/* <hr className="mb-4" /> */}
-
-          {/* 소셜 로그인 */}
-          {/* <div className="flex justify-center gap-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full" />
-            <div className="w-10 h-10 bg-gray-200 rounded-full" />
-            <div className="w-10 h-10 bg-gray-200 rounded-full" />
-            <div className="w-10 h-10 bg-gray-200 rounded-full" />
-          </div> */}
         </div>
       </div>
     </div>
