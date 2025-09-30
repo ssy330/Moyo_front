@@ -1,4 +1,4 @@
-//InputFieldProps
+//InputFieldProps Interface
 interface InputFieldProps {
   placeholder: string;
   type?: "text" | "password" | "email";

@@ -1,12 +1,13 @@
 import logoImg from "@/assets/Moyo_logo.png";
-import KakaoTalkIcon from "@/assets/KakaoTalkIcon.tsx";
-import InputField from "@/components/InputField.tsx";
-
-// 하단 링크들 스타일 정의
-const linkButtonClass = "hover:underline focus:outline-none cursor-pointer";
+import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
+import InputField from "@/components/InputField";
+import AuthLinks from "@/components/AuthLinks";
+import { useNavigate } from "react-router-dom";
 
 // src/pages/LoginPage.tsx
 export default function LoginPage() {
+  const nav = useNavigate();
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* 왼쪽 영역 - 로고 */}
@@ -24,7 +25,7 @@ export default function LoginPage() {
           </div>
 
           {/* 로그인 버튼 */}
-          <button className="h-12 bg-[#FEE500] rounded mb-3 flex items-center justify-center w-full cursor-pointer gap-2 hover:bg-[#F4DC00]">
+          <button className="h-12 bg-[#FEE500] rounded mb-3 flex items-center justify-center w-full cursor-pointer gap-2  hover:bg-[#F4DC00]">
             <KakaoTalkIcon />
             카카오계정으로 시작하기
           </button>
@@ -36,11 +37,11 @@ export default function LoginPage() {
 
           {/* 하단 링크들 */}
           <div className="text-center text-sm text-gray-500 mb-6 space-x-2">
-            <button className={linkButtonClass}>회원가입</button>
+            <AuthLinks text="회원가입" onClick={() => nav("/register")} />
             <span>|</span>
-            <button className={linkButtonClass}>아이디 찾기</button>
+            <AuthLinks text="아이디 찾기" />
             <span>|</span>
-            <button className={linkButtonClass}>비밀번호 찾기</button>
+            <AuthLinks text="비밀번호 찾기" />
           </div>
         </div>
       </div>
