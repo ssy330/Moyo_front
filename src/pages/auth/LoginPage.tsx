@@ -1,4 +1,4 @@
-import logoImg from '@/assets/Moyo_logo.png'; 
+import logoImg from "@/assets/Moyo_logo.png";
 
 // src/pages/LoginPage.tsx
 export default function LoginPage() {
@@ -14,26 +14,35 @@ export default function LoginPage() {
         <div className="w-full max-w-sm p-6">
           {/* 아이디/비번 입력 */}
           <div className="space-y-3 mb-4">
-            <div className="h-12 bg-gray-200 rounded flex items-center px-3">
-              아이디 입력
-            </div>
-            <div className="h-12 bg-gray-200 rounded flex items-center px-3">
-              비밀번호 입력
-            </div>
+            <input
+              className="h-12 bg-gray-200 rounded flex items-center px-3 w-full"
+              placeholder="아이디 입력"
+            />
+            <input
+              className="h-12 bg-gray-200 rounded flex items-center px-3 w-full"
+              placeholder="비밀번호 입력"
+              type="password"
+            />
           </div>
 
           {/* 로그인 버튼 */}
-          <div className="h-12 bg-gray-300 rounded mb-3 flex items-center justify-center">
+          <button className="h-12 bg-gray-300 rounded mb-3 flex items-center justify-center w-full cursor-pointer">
             로그인 버튼
-          </div>
+          </button>
 
           {/* 하단 링크들 */}
           <div className="text-center text-sm text-gray-500 mb-6 space-x-2">
-            <span>비밀번호 찾기</span>
+            <button className="hover:underline focus:outline-none">
+              비밀번호 찾기
+            </button>
             <span>|</span>
-            <span>회원가입</span>
+            <button className="hover:underline focus:outline-none">
+              회원가입
+            </button>
             <span>|</span>
-            <span>아이디 찾기</span>
+            <button className="hover:underline focus:outline-none">
+              아이디 찾기
+            </button>
           </div>
 
           <hr className="mb-4" />
