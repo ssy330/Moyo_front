@@ -1,7 +1,7 @@
 // src/router.tsx
-import React, { Suspense, lazy } from "react";
+import { Suspense, lazy } from "react";
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import AppLayout from "./AppLayout"
+import AppLayout from "./AppLayout";
 
 // --- 페이지 컴포넌트 (lazy 로드) ---
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -12,7 +12,8 @@ const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/settings/SettingsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-
+const FindIdPage = lazy(() => import("./pages/auth/FindIdPage"));
+const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 
 // --- 라우터 정의 ---
 export const router = createBrowserRouter([
@@ -28,5 +29,7 @@ export const router = createBrowserRouter([
   },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
+  { path: "/login/idInquiry", element: <FindIdPage /> },
+  { path: "/login/pwInquiry", element: <FindPwPage /> },
   { path: "*", element: <NotFoundPage /> },
 ]);
