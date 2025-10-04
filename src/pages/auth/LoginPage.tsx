@@ -1,8 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import logoImg from "@/assets/Moyo_logo.png";
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
 import InputField from "@/components/InputField";
 import AuthLinks from "@/components/AuthLinks";
-import { useNavigate } from "react-router-dom";
+import LoginButton from "@/components/LoginButton";
 
 // src/pages/LoginPage.tsx
 export default function LoginPage() {
@@ -25,15 +26,14 @@ export default function LoginPage() {
           </div>
 
           {/* 로그인 버튼 */}
-          <button className="h-12 bg-[#FEE500] rounded mb-3 flex items-center justify-center w-full cursor-pointer gap-2  hover:bg-[#F4DC00]">
-            <KakaoTalkIcon />
-            카카오계정으로 시작하기
-          </button>
+          <LoginButton
+            icon={<KakaoTalkIcon />}
+            title={"카카오계정으로 시작하기"}
+            styles="gap-2 bg-[#FEE500] hover:bg-[#F4DC00]"
+          />
 
           {/* 소셜 로그인 버튼 */}
-          <button className="h-12 bg-gray-300 rounded mb-3 flex items-center justify-center w-full cursor-pointer">
-            로그인 버튼
-          </button>
+          <LoginButton title="로그인 버튼" styles="bg-gray-300" />
 
           {/* 하단 링크들 */}
           <div className="text-center text-sm text-gray-500 mb-6 space-x-2">
