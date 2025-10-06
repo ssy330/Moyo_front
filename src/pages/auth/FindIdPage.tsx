@@ -1,23 +1,13 @@
-import logoImg from "@/assets/Moyo_logo.png";
 import LoginButton from "@/components/LoginButton";
 import AuthLinks from "@/components/AuthLinks";
-import { useNavigate } from "react-router-dom";
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
+import MoyoLogo from "@/components/MoyoLogo";
 
 const FindIdPage = () => {
-  const nav = useNavigate();
-
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50">
       {/* 상단 로고 */}
-      <div className="flex items-center justify-center mt-10 cursor-pointer">
-        <img
-          className="w-32 h-auto rounded"
-          src={logoImg}
-          alt="Moyo Logo"
-          onClick={() => nav("/login")}
-        />
-      </div>
+      <MoyoLogo />
 
       {/* 본문 - 인증 버튼들 */}
       <div className="flex flex-col items-center justify-center flex-1 w-full max-w-sm p-6">
@@ -42,9 +32,9 @@ const FindIdPage = () => {
       </div>
 
       {/* 하단 링크 */}
-      <div className="pb-10 text-sm text-gray-600 flex space-x-4">
+      <div className="pb-10 text-sm text-green-600 flex flex-col sm:flex-row items-center sm:space-x-4 space-y-2 sm:space-y-0 text-center">
         <p className="text-gray-500">계정이 없으신가요?</p>
-        <AuthLinks text="회원가입" onClick={() => nav("/register")} />
+        <AuthLinks text="회원가입" />
       </div>
     </div>
   );

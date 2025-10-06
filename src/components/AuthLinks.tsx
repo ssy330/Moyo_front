@@ -1,16 +1,23 @@
+import { Link } from "react-router-dom";
+
 // 하단 링크들 스타일 정의
 const linkButtonClass = "hover:underline focus:outline-none cursor-pointer";
 
 interface AuthLinksProps {
-  text: string;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  text: "회원가입" | "아이디 찾기" | "비밀번호 찾기";
 }
 
-const AuthLinks = ({ text, onClick }: AuthLinksProps) => {
+const linkMap: Record<AuthLinksProps["text"], string> = {
+  회원가입: "/register",
+  "아이디 찾기": "/login/idInquiry",
+  "비밀번호 찾기": "/login/pwInquiry",
+};
+
+const AuthLinks = ({ text }: AuthLinksProps) => {
   return (
-    <button className={linkButtonClass} onClick={onClick}>
+    <Link to={linkMap[text]} className={linkButtonClass}>
       {text}
-    </button>
+    </Link>
   );
 };
 

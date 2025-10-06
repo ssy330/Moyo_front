@@ -6,14 +6,22 @@ interface LoginButtonProps {
   icon?: React.ReactNode;
   title: string;
   styles?: string; //임시
+  type?: "button" | "submit";
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void; // 임시 선택적 프로퍼티
 }
 //로그인 버튼
-const LoginButton = ({ icon, title, styles, onClick }: LoginButtonProps) => {
+const LoginButton = ({
+  icon,
+  title,
+  styles,
+  type,
+  onClick,
+}: LoginButtonProps) => {
   return (
     <button
       className={`${LoginButtonDefaultStyle} ${styles}`}
       onClick={onClick}
+      type={type}
     >
       {icon && <span className="mr-2">{icon}</span>}
       {title}

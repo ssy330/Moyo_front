@@ -1,23 +1,13 @@
 import AuthLinks from "@/components/AuthLinks";
 import LoginButton from "@/components/LoginButton";
-import { useNavigate } from "react-router-dom";
-import logoImg from "@/assets/Moyo_logo.png";
+import MoyoLogo from "@/components/MoyoLogo";
 import InputField from "@/components/InputField";
 
 const FindPwPage = () => {
-  const nav = useNavigate();
-
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 px-4">
       {/* 상단 로고 */}
-      <div className="flex items-center justify-center mt-10">
-        <img
-          className="w-28 sm:w-32 h-auto rounded cursor-pointer"
-          src={logoImg}
-          alt="Moyo Logo"
-          onClick={() => nav("/login")}
-        />
-      </div>
+      <MoyoLogo />
 
       {/* 본문 */}
       <div className="flex flex-col items-center justify-center flex-1 w-full max-w-sm p-6">
@@ -40,9 +30,9 @@ const FindPwPage = () => {
       </div>
 
       {/* 하단 링크 */}
-      <div className="pb-10 text-sm text-gray-600 flex flex-col sm:flex-row items-center sm:space-x-4 space-y-2 sm:space-y-0 text-center">
+      <div className="pb-10 text-sm text-green-600 flex flex-col sm:flex-row items-center sm:space-x-4 space-y-2 sm:space-y-0 text-center">
         <p className="text-gray-500">아이디를 잊으셨나요?</p>
-        <AuthLinks text="아이디 찾기" onClick={() => nav("/login/idInquiry")} />
+        <AuthLinks text="아이디 찾기" />
       </div>
     </div>
   );
