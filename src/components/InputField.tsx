@@ -1,24 +1,14 @@
 import { useState } from "react";
 
 //InputFieldProps Interface
-interface InputFieldProps {
-  placeholder: string;
-  type?: "text" | "password" | "email";
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  name?: string;
-  className?: string;
-  autoComplete?: string;
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   showToggle?: boolean;
 }
 
 const InputField = ({
-  placeholder,
   type = "text",
-  onChange,
-  name,
-  className,
-  autoComplete,
   showToggle,
+  ...props
 }: InputFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const inputType =
@@ -31,14 +21,12 @@ const InputField = ({
   return (
     <div className="relative w-full">
       <input
+        {...props}
         className={`h-12 px-3 pr-10 w-full rounded-md border border-gray-300 
           focus:outline-none focus:ring-1 focus:ring-green-400 focus:border-green-400 
-          placeholder-gray-400 bg-white shadow-sm ${className}`}
-        placeholder={placeholder}
+          placeholder-gray-400 bg-white shadow-sm ${props.className}`}
         type={inputType}
-        onChange={onChange}
-        name={name}
-        autoComplete={autoComplete}
+        autoComplete={props.autoComplete}
       />
 
       {type === "password" && showToggle && (

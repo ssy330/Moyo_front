@@ -38,7 +38,10 @@ export default function RegisterPage() {
         </h2>
 
         {/* 입력창 + 버튼 */}
-        <div className="w-full flex flex-col space-y-4">
+        <form
+          className="w-full flex flex-col space-y-4"
+          onSubmit={(e) => e.preventDefault()} //기본 새로고침 방지
+        >
           <div className="flex flex-col">
             {/* 닉네임 */}
             <InputField
@@ -63,21 +66,25 @@ export default function RegisterPage() {
             placeholder="아아디를 입력하세요."
             name="id"
             className="w-full "
+            autoComplete="username"
           />
           <InputField
             placeholder="비밀번호를 입력하세요."
             className="w-full "
             name="password"
             type="password"
+            autoComplete="new-password"
             showToggle
           />
           <InputField
             placeholder="비밀번호를 다시 입력하세요."
-            name="password"
             className="w-full "
+            name="passwordConfirm"
+            type="password"
+            autoComplete="new-password"
           />
           <LoginButton title="다음" styles="bg-green-200 hover:bg-green-300" />
-        </div>
+        </form>
 
         <hr className="my-6 border-gray-300 w-full" />
       </div>
