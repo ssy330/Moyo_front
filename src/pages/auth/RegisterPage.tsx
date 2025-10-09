@@ -32,7 +32,6 @@ export default function RegisterPage() {
 
       {/* 본문 */}
       <div className="flex flex-col items-center justify-center flex-1 w-full max-w-sm p-6">
-        {/* 반응형 텍스트 */}
         <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-6 text-center leading-snug break-keep max-w-xs sm:max-w-sm">
           회원가입
         </h2>
@@ -65,23 +64,23 @@ export default function RegisterPage() {
           <InputField
             placeholder="아아디를 입력하세요."
             name="id"
-            className="w-full "
             autoComplete="username"
           />
+          {/* 비밀번호 */}
           <InputField
             placeholder="비밀번호를 입력하세요."
-            className="w-full "
             name="password"
             type="password"
             autoComplete="new-password"
             showToggle
           />
+          {/* 비밀번호 확인 */}
           <InputField
             placeholder="비밀번호를 다시 입력하세요."
-            className="w-full "
             name="passwordConfirm"
             type="password"
             autoComplete="new-password"
+            showToggle
           />
           <LoginButton title="다음" styles="bg-green-200 hover:bg-green-300" />
         </form>
@@ -91,8 +90,8 @@ export default function RegisterPage() {
 
       {/* 하단 링크 */}
       <div className="pb-10 text-sm text-green-600 flex flex-col sm:flex-row items-center sm:space-x-4 space-y-2 sm:space-y-0 text-center">
-        <p className="text-gray-500">아이디를 잊으셨나요?</p>
-        <AuthLinks text="아이디 찾기" />
+        <p className="text-gray-500">계정이 있으신가요?</p>
+        <AuthLinks text="로그인" />
       </div>
     </div>
   );

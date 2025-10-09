@@ -1,6 +1,7 @@
 // 로그인 버튼 기본 스타일 정의
 const LoginButtonDefaultStyle =
   "h-12  rounded mb-3 flex items-center justify-center w-full cursor-pointer transition-colors duration-200";
+
 // Prop타입 정의 - 아이콘(객체 노드로), 버튼 제목, 버튼 추가 스타일, onClick
 interface LoginButtonProps {
   icon?: React.ReactNode;
