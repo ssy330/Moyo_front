@@ -1,7 +1,7 @@
-import LoginButton from "@/components/LoginButton";
-import AuthLinks from "@/components/AuthLinks";
+import LoginButton from "@/components/authComponents/LoginButton";
+import AuthLinks from "@/components/authComponents/AuthLinks";
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
-import MoyoLogo from "@/components/MoyoLogo";
+import MoyoLogo from "@/components/authComponents/MoyoLogo";
 
 const FindIdPage = () => {
   return (

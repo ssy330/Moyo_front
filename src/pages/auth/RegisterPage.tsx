@@ -1,7 +1,7 @@
-import AuthLinks from "@/components/AuthLinks";
-import InputField from "@/components/InputField";
-import LoginButton from "@/components/LoginButton";
-import MoyoLogo from "@/components/MoyoLogo";
+import AuthLinks from "@/components/authComponents/AuthLinks";
+import InputField from "@/components/authComponents/InputField";
+import LoginButton from "@/components/authComponents/LoginButton";
+import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { useState } from "react";
 
 export default function RegisterPage() {

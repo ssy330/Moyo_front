@@ -1,8 +1,8 @@
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
-import InputField from "@/components/InputField";
-import AuthLinks from "@/components/AuthLinks";
-import LoginButton from "@/components/LoginButton";
-import MoyoLogo from "@/components/MoyoLogo";
+import InputField from "@/components/authComponents/InputField";
+import AuthLinks from "@/components/authComponents/AuthLinks";
+import LoginButton from "@/components/authComponents/LoginButton";
+import MoyoLogo from "@/components/authComponents/MoyoLogo";
 
 // src/pages/LoginPage.tsx
 export default function LoginPage() {
