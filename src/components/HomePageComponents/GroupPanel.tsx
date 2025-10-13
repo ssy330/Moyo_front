@@ -1,8 +1,22 @@
+import GroupActionButton from "./GroupActionButton";
+import GroupCard from "./GroupCard";
+
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
 };
 
+const groupMockData = [
+  { id: 1, title: "MOTIV", memberNum: 22, imageUrl: "/images/motiv.jpg" },
+  { id: 2, title: "AUNAE", memberNum: 32, imageUrl: "/images/aunae.jpg" },
+  { id: 3, title: "KIS", memberNum: 12, imageUrl: "/images/kis.jpg" },
+];
+
 const GroupPanel = ({ viewMode }: GroupPanelProps) => {
+  const handleClickGroup = (id: number) => {
+    console.log(`Navigate to group detail: ${id}`);
+    // e.g. useNavigate(`/groups/${id}`);
+  };
+
   return (
     <>
       <div
@@ -12,39 +26,24 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
         {/* 만들기, 참여하기 2개 */}
         <div
           className={`grid gap-8 ${
-            viewMode === "both" ? "grid-cols-2 md:grid-cols-3" : "grid-cols-4"
+            viewMode === "both" ? "grid-cols-2 md:grid-cols-3" : "grid-cols-5"
           }`}
         >
-          {/* 만들기 */}
-          <button
-            type="button"
-            className="w-full h-48 rounded-xl bg-white border border-gray-200 shadow-sm
-                         flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer"
-          >
-            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-gray-400">
-              +
-            </div>
-            <span className="text-gray-700 font-medium">만들기</span>
-          </button>
+          {/* 만들기 / 참여하기 */}
+          <GroupActionButton label="만들기" />
+          <GroupActionButton label="참여하기" />
 
-          {/* 참여하기 */}
-          <button
-            type="button"
-            className="w-full h-48 rounded-xl bg-white border border-gray-200 shadow-sm
-                         flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer"
-          >
-            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-gray-400">
-              +
-            </div>
-            <span className="text-gray-700 font-medium">참여하기</span>
-          </button>
-        </div>
-
-        {/* 스크롤바 모형 */}
-        <div className="absolute top-6 right-6 bottom-6 hidden md:flex items-center">
-          <div className="w-[10px] h-full rounded-full bg-rose-100 relative">
-            <div className="absolute left-1/2 -translate-x-1/2 top-1/3 w-[12px] h-[64px] rounded-full bg-rose-200" />
-          </div>
+          {/* 그룹 카드들 */}
+          {groupMockData.map((group) => (
+            <GroupCard
+              key={group.id}
+              id={group.id}
+              title={group.title}
+              memberNum={group.memberNum}
+              imageUrl={group.imageUrl}
+              onClick={handleClickGroup}
+            />
+          ))}
         </div>
       </div>
     </>

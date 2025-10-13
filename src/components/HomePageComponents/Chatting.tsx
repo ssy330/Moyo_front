@@ -32,9 +32,15 @@ const Chatting = () => {
           {/* 채팅 본문 */}
           <div className="flex-1 bg-gray-100 flex flex-col">
             <div className="h-10 bg-white flex items-center gap-6 px-4 border-b shrink-0">
-              <div className="h-6 w-12 bg-gray-300 rounded" />
-              <div className="h-6 w-12 bg-gray-300 rounded" />
-              <div className="h-6 w-12 bg-gray-300 rounded" />
+              <button className="h-6 w-12 hover:bg-gray-100 rounded cursor-pointer">
+                전체
+              </button>
+              <button className="h-6 w-12 cursor-pointer hover:bg-gray-100 rounded ">
+                개인
+              </button>
+              <button className="h-6 w-12 cursor-pointer hover:bg-gray-100 rounded ">
+                그룹
+              </button>
             </div>
             <div className="flex-1 bg-gray-200" />
           </div>
