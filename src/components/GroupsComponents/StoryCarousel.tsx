@@ -25,11 +25,11 @@ const StoryCarousel = () => {
         )}
 
         {/* 스크롤 가능한 스토리 리스트 */}
-        <div className="overflow-hidden w-full px-12">
+        <div className="overflow-hidden w-full px-3">
           <div
             className="flex gap-3 transition-transform duration-500 ease-in-out"
             style={{
-              transform: `translateX(-${slideIndex * 100}%)`,
+              transform: `translateX(-${slideIndex * 50}%)`,
               width: `${(totalAvatars / perPage) * 100}%`,
             }}
           >

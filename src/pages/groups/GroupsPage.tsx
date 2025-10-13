@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Settings } from "lucide-react";
 import StoryCarousel from "@/components/GroupsComponents/StoryCarousel";
 
 export default function MoyoGroupLayout() {
@@ -18,19 +19,26 @@ export default function MoyoGroupLayout() {
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
       <div className="mx-auto max-w-[1200px] px-4 py-5">
-        <div className="grid gap-6 md:grid-cols-[230px_1fr] items-stretch">
+        <div className="grid gap-10 md:grid-cols-[230px_1fr] items-stretch">
           {/* 왼쪽 패널 */}
-          <aside className="space-y-4">
-            <button className="w-fit rounded-full bg-rose-100 px-4 py-2 text-sm font-medium hover:bg-rose-200 transition">
-              그룹 관리
-            </button>
+          <aside className="space-y-4 mt-[76px]">
             <div className="rounded-md bg-neutral-200 p-4 relative">
-              <div className="aspect-[4/3] w-full rounded bg-neutral-300" />
-              <div className="mt-3 text-lg font-semibold">커버 사진</div>
+              {/* 커버사진 영역 */}
+              <div className="aspect-[4/3] w-full rounded bg-neutral-300 relative overflow-hidden">
+                {/* ⚙️ Settings 아이콘 */}
+                <button
+                  className="absolute bottom-3 right-3 text-neutral-600 opacity-60 hover:opacity-100 hover:text-neutral-800 transition"
+                  aria-label="그룹 관리"
+                >
+                  <Settings size={22} strokeWidth={1.8} />
+                </button>
+              </div>
             </div>
 
-            <div className="rounded-md bg-white p-4 shadow-sm">
-              <div className="text-xl font-extrabold tracking-tight">GROUP</div>
+            <div className="rounded-md bg-white p-4 shadow-sm space-y-2">
+              <div className="text-xl font-extrabold tracking-tight">
+                GROUP 이름
+              </div>
               <div className="mt-2 text-sm text-neutral-600 leading-relaxed">
                 여기는 그룹 소개가 들어가는 영역입니다.
               </div>
@@ -44,6 +52,8 @@ export default function MoyoGroupLayout() {
               </div>
             </div>
 
+            {/* 그룹 관리 버튼 - 커버사진 카드 내부 오른쪽 상단 */}
+
             <div className="rounded-md bg-white p-4 shadow-sm text-center">
               <button className="flex-1 text-xl font-semibold cursor-pointer">
                 게시판 글 작성
@@ -55,7 +65,7 @@ export default function MoyoGroupLayout() {
           </aside>
 
           {/* 오른쪽 메인 */}
-          <main className="space-y-4 mb-6 w-[600px] ">
+          <main className="space-y-4 mb-6 w-[600px]">
             <StoryCarousel />
 
             {/* 공지사항 */}

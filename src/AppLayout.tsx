@@ -28,7 +28,7 @@ const AppLayout = () => {
           </button>
 
           <button
-            onClick={() => navigate("/notifications")}
+            onClick={() => navigate("/notifications/1")}
             className="p-2 rounded-xl bg-yellow-100 hover:bg-yellow-200 transition"
             title="알림"
           >

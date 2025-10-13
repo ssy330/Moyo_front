@@ -11,6 +11,7 @@ const GroupsPage = lazy(() => import("./pages/groups/GroupsPage"));
 const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/settings/SettingsPage"));
+const Notifications = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const FindIdPage = lazy(() => import("./pages/auth/FindIdPage"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: "/groups", element: <GroupsPage /> },
       { path: "/groups/:id", element: <GroupDetailPage /> },
       { path: "/profile/:id", element: <ProfilePage /> },
+      { path: "/notifications/:id", element: <Notifications /> },
       { path: "/settings", element: <SettingsPage /> },
     ],
   },
