@@ -18,7 +18,7 @@ const AppLayout = () => {
 
         {/* 하단 아이콘 묶음 */}
         <div className="flex flex-col items-center gap-6">
-          {/* 아이콘 목록들 ↓ ↓ ↓ */}
+          {/* 아이콘 목록들 */}
           <button
             onClick={() => navigate("/profile/1")}
             className="p-2 rounded-xl bg-sky-100 hover:bg-sky-200 transition"
