@@ -1,9 +1,11 @@
 import { Settings } from "lucide-react";
 import { useState } from "react";
-import WritePostModal from "./WriteModel";
+import WritePostModal from "./WriteModal";
+import InviteCodeModal from "./InviteCodeModal";
 
 const GroupsLeftPanel = () => {
   const [openWriteModal, setOpenWriteModal] = useState(false);
+  const [openInviteCode, setOpenInviteCode] = useState(false);
   return (
     <>
       {/* 왼쪽 패널 */}
@@ -21,6 +23,7 @@ const GroupsLeftPanel = () => {
           </div>
         </div>
 
+        {/* 그룹 정보 */}
         <div className="rounded-md bg-white p-4 shadow-sm space-y-2">
           <div className="text-xl font-extrabold tracking-tight">
             GROUP 이름
@@ -32,7 +35,12 @@ const GroupsLeftPanel = () => {
             <button className="rounded bg-neutral-100 px-2 py-1 cursor-pointer">
               멤버: 93,128명
             </button>
-            <span className="rounded bg-neutral-100 px-2 py-1">초대코드</span>
+            <button
+              className="rounded bg-neutral-100 px-2 py-1 cursor-pointer"
+              onClick={() => setOpenInviteCode(true)}
+            >
+              초대코드
+            </button>
           </div>
         </div>
         <div className="rounded-md bg-white p-4 shadow-sm text-center">
@@ -47,10 +55,17 @@ const GroupsLeftPanel = () => {
           게시판 나누기 (카테고리)
         </div>
       </aside>
+
       {/* 글쓰기 모달 */}
       <WritePostModal
         isOpen={openWriteModal}
         onClose={() => setOpenWriteModal(false)}
+      />
+
+      {/* 초대 코드 모델 */}
+      <InviteCodeModal
+        isOpen={openInviteCode}
+        onClose={() => setOpenInviteCode(false)}
       />
     </>
   );

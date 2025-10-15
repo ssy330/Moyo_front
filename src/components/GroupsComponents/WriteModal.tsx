@@ -1,24 +1,15 @@
-import { X, Camera, Video, Smile, ListChecks } from "lucide-react";
+import { Camera, Video, Smile, ListChecks } from "lucide-react";
+import type { ModalProps } from "@/types/types";
+import CloseButton from "../CloseButton";
 
-const WritePostModal = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
+const WritePostModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 relative animate-fadeIn">
         {/* 닫기 버튼 */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-neutral-400 hover:text-neutral-600 transition"
-        >
-          <X size={22} />
-        </button>
+        <CloseButton onClick={onClose} />
 
         {/* 제목 */}
         <h2 className="text-xl font-bold mb-4 text-center">글쓰기</h2>
@@ -26,7 +17,7 @@ const WritePostModal = ({
         {/* 입력 폼 */}
         <div className="space-y-3">
           <textarea
-            placeholder="팀과 함께 나의 일상을 기록해보세요!"
+            placeholder="그룹 내 인원들과 나의 일상을 공유해보세요!"
             className="w-full border border-neutral-300 rounded-lg px-3 py-3 h-50 resize-none focus:outline-none focus:ring-1 focus:ring-neutral-400 text-[15px] leading-relaxed"
           />
         </div>
