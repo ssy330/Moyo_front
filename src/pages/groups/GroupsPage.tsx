@@ -4,13 +4,13 @@ import GroupsLeftPanel from "@/components/GroupsComponents/GroupsLeftPanel";
 
 export default function MoyoGroupLayout() {
   const [fabOpen, setFabOpen] = useState(false);
-  const fabRef = useRef(null);
+  const fabRef = useRef<HTMLDivElement>(null);
 
   // outside click
   useEffect(() => {
     const handle = (e: MouseEvent) => {
       if (!fabRef.current) return;
-      if (!fabRef.current.contains(e.target)) setFabOpen(false);
+      if (!fabRef.current.contains(e.target as Node)) setFabOpen(false);
     };
     document.addEventListener("click", handle);
     return () => document.removeEventListener("click", handle);

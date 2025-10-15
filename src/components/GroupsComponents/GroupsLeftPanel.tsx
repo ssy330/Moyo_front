@@ -29,9 +29,9 @@ const GroupsLeftPanel = () => {
             여기는 그룹 소개가 들어가는 영역입니다.
           </div>
           <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500">
-            <span className="rounded bg-neutral-100 px-2 py-1">
+            <button className="rounded bg-neutral-100 px-2 py-1 cursor-pointer">
               멤버: 93,128명
-            </span>
+            </button>
             <span className="rounded bg-neutral-100 px-2 py-1">초대코드</span>
           </div>
         </div>
