@@ -2,8 +2,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import StoryPost from "./StoryPost";
 import StoryItem from "./StoryItem";
+import StoryModal from "./StoryModal";
 
 const StoryCarousel = () => {
+  const [openStory, setOpenStory] = useState(false);
   const [openStoryPost, setOpenStoryPost] = useState(false);
 
   const [slideIndex, setSlideIndex] = useState(0);
@@ -37,10 +39,14 @@ const StoryCarousel = () => {
             }}
           >
             {/* ✅ 첫 번째: 내 스토리 */}
-            <StoryItem isMine onClick={() => setOpenStoryPost(true)} />
+            <StoryItem
+              isMine
+              onStory={() => setOpenStory(true)}
+              onStoryAdd={() => setOpenStoryPost(true)}
+            />
             {/* 나머지 아바타들 */}
             {avatars.map((_, i) => (
-              <StoryItem key={i} onClick={() => setOpenStoryPost(true)} />
+              <StoryItem key={i} onStory={() => setOpenStory(true)} />
             ))}
           </div>
         </div>
@@ -55,11 +61,14 @@ const StoryCarousel = () => {
           </button>
         )}
 
-        {/* 스토리 작성 컴포넌트 */}
+        {/* 스토리 작성 + 컴포넌트 */}
         <StoryPost
           isOpen={openStoryPost}
           onClose={() => setOpenStoryPost(false)}
         />
+
+        {/* 스토리 컴포넌트 */}
+        <StoryModal isOpen={openStory} onClose={() => setOpenStory(false)} />
       </div>
     </>
   );
