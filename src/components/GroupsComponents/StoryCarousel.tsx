@@ -1,6 +1,7 @@
-import { ChevronLeft, Plus, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import StoryPost from "./StoryPost";
+import StoryItem from "./StoryItem";
 
 const StoryCarousel = () => {
   const [openStoryPost, setOpenStoryPost] = useState(false);
@@ -14,7 +15,6 @@ const StoryCarousel = () => {
 
   return (
     <>
-      {/* 스토리 영역 - 공지사항과 같은 너비 */}
       {/* 🔹 스토리 영역 */}
       <div className="relative w-full max-w-[600px] mx-auto mb-5">
         {/* 왼쪽 화살표 */}
@@ -37,29 +37,10 @@ const StoryCarousel = () => {
             }}
           >
             {/* ✅ 첫 번째: 내 스토리 */}
-            <div className="relative h-14 w-14 shrink-0 rounded-full bg-gradient-to-tr from-rose-400 to-pink-300 p-[2px]">
-              <div className="h-full w-full rounded-full bg-white p-[2px] relative">
-                <div className="h-full w-full rounded-full bg-neutral-300" />
-                {/* + 버튼 */}
-                <button
-                  className="absolute bottom-0 right-0 h-5 w-5 flex items-center justify-center rounded-full bg-rose-500 text-white hover:bg-rose-600 transition"
-                  onClick={() => setOpenStoryPost(true)}
-                >
-                  <Plus size={14} strokeWidth={2.5} />
-                </button>
-              </div>
-            </div>
-
+            <StoryItem isMine onClick={() => setOpenStoryPost(true)} />
             {/* 나머지 아바타들 */}
             {avatars.map((_, i) => (
-              <div
-                key={i}
-                className="h-14 w-14 shrink-0 rounded-full bg-gradient-to-tr from-rose-400 to-pink-300 p-[2px]"
-              >
-                <div className="h-full w-full rounded-full bg-white p-[2px]">
-                  <div className="h-full w-full rounded-full bg-neutral-300" />
-                </div>
-              </div>
+              <StoryItem key={i} onClick={() => setOpenStoryPost(true)} />
             ))}
           </div>
         </div>
