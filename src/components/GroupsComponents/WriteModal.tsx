@@ -6,8 +6,14 @@ const WritePostModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 relative animate-fadeIn">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 relative animate-fadeIn"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 닫기 버튼 */}
         <CloseButton onClick={onClose} />
 

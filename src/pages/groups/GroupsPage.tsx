@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import StoryCarousel from "@/components/GroupsComponents/StoryCarousel";
+import StoryCarousel from "@/components/GroupsComponents/Groups-Story/StoryCarousel";
 import GroupsLeftPanel from "@/components/GroupsComponents/GroupsLeftPanel";
 
 export default function MoyoGroupLayout() {

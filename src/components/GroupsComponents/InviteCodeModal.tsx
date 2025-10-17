@@ -23,8 +23,14 @@ const InviteCodeModal = ({ isOpen, onClose }: ModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative animate-fadeIn border border-emerald-100">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative animate-fadeIn border border-emerald-100"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 닫기 버튼 */}
         <CloseButton onClick={onClose} />
 
