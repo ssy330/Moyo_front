@@ -6,6 +6,7 @@ import InviteCodeModal from "./InviteCodeModal";
 const GroupsLeftPanel = () => {
   const [openWriteModal, setOpenWriteModal] = useState(false);
   const [openInviteCode, setOpenInviteCode] = useState(false);
+
   return (
     <>
       {/* 왼쪽 패널 */}
@@ -43,14 +44,16 @@ const GroupsLeftPanel = () => {
             </button>
           </div>
         </div>
-        <div className="rounded-md bg-white p-4 shadow-sm text-center">
-          <button
-            className="flex-1 text-xl font-semibold cursor-pointer"
-            onClick={() => setOpenWriteModal(true)}
-          >
-            게시판 글 작성
-          </button>
+
+        {/* 게시판 글 작성 */}
+        <div
+          className="rounded-md bg-white p-4 shadow-sm text-center cursor-pointer"
+          onClick={() => setOpenWriteModal(true)}
+        >
+          <span className="flex-1 text-xl font-semibold">게시판 글 작성</span>
         </div>
+
+        {/* 카테고리 */}
         <div className="mt-3 rounded bg-neutral-100 p-6 text-center text-sm text-neutral-500">
           게시판 나누기 (카테고리)
         </div>

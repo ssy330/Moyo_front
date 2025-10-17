@@ -1,7 +1,10 @@
 import { ChevronLeft, Plus, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import StoryPost from "./StoryPost";
 
 const StoryCarousel = () => {
+  const [openStoryPost, setOpenStoryPost] = useState(false);
+
   const [slideIndex, setSlideIndex] = useState(0);
   const totalAvatars = 14; // 전체 스토리 개수 (예시)
   const perPage = 7; // 한 화면에 보여줄 개수 (예시)
@@ -38,7 +41,10 @@ const StoryCarousel = () => {
               <div className="h-full w-full rounded-full bg-white p-[2px] relative">
                 <div className="h-full w-full rounded-full bg-neutral-300" />
                 {/* + 버튼 */}
-                <button className="absolute bottom-0 right-0 h-5 w-5 flex items-center justify-center rounded-full bg-rose-500 text-white hover:bg-rose-600 transition">
+                <button
+                  className="absolute bottom-0 right-0 h-5 w-5 flex items-center justify-center rounded-full bg-rose-500 text-white hover:bg-rose-600 transition"
+                  onClick={() => setOpenStoryPost(true)}
+                >
                   <Plus size={14} strokeWidth={2.5} />
                 </button>
               </div>
@@ -67,6 +73,12 @@ const StoryCarousel = () => {
             <ChevronRight className="w-5 h-5 text-neutral-700" />
           </button>
         )}
+
+        {/* 스토리 작성 컴포넌트 */}
+        <StoryPost
+          isOpen={openStoryPost}
+          onClose={() => setOpenStoryPost(false)}
+        />
       </div>
     </>
   );
