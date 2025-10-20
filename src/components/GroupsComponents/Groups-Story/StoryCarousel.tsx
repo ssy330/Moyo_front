@@ -9,7 +9,7 @@ const StoryCarousel = () => {
   const [openStoryPost, setOpenStoryPost] = useState(false);
 
   const [slideIndex, setSlideIndex] = useState(0);
-  const totalAvatars = 14; // 전체 스토리 개수 (예시)
+  const totalAvatars = 35; // 전체 스토리 개수 (예시)
   const perPage = 7; // 한 화면에 보여줄 개수 (예시)
   const maxSlide = Math.ceil(totalAvatars / perPage) - 1;
 
@@ -38,7 +38,7 @@ const StoryCarousel = () => {
               width: `${(totalAvatars / perPage) * 100}%`,
             }}
           >
-            {/* ✅ 첫 번째: 내 스토리 */}
+            {/*  첫 번째: 내 스토리 */}
             <StoryItem
               isMine
               onStory={() => setOpenStory(true)}
