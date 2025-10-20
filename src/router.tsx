@@ -8,7 +8,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const GroupsPage = lazy(() => import("./pages/groups/GroupsPage"));
-const NewGroupsPage = lazy(() => import("./pages/groups/NewGroupsPage"));
+const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/settings/SettingsPage"));
@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/groups", element: <GroupsPage /> },
-      { path: "/groups/new", element: <NewGroupsPage /> },
+      { path: "/groups/new", element: <GroupCreatePage /> },
       { path: "/groups/:id", element: <GroupDetailPage /> },
       { path: "/profile/:id", element: <ProfilePage /> },
       { path: "/notifications/:id", element: <Notifications /> },

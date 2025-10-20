@@ -34,7 +34,10 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
           }`}
         >
           {/* 만들기 / 참여하기 */}
-          <GroupActionButton label="만들기" />
+          <GroupActionButton
+            label="만들기"
+            onClick={() => nav("/groups/new")}
+          />
           <GroupActionButton label="참여하기" />
 
           {/* 그룹 카드들 */}
