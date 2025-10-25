@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import groupReducer from "@/features/groupSlice";
+import authSliceReducer from "@/features/authSlice";
 
 export const store = configureStore({
   reducer: {
     group: groupReducer,
+    auth: authSliceReducer,
   },
 });
 
