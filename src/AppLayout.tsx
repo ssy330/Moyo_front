@@ -6,7 +6,7 @@ const AppLayout = () => {
 
   return (
     <div className="flex">
-      {/* 🌸 사이드바 */}
+      {/* 사이드바 */}
       <aside className="fixed left-0 top-0 z-40 h-screen w-16 border-r border-rose-100 bg-[#FFF6F6] flex flex-col items-center justify-between py-6">
         {/* 상단 로고 */}
         <div
