@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-export const useValidation = (type: "nickname" | "id" | "password") => {
+export const useValidation = (
+  type: "nickname" | "id" | "password" | "passwordConfirm",
+  passwordValue?: string
+) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
 
   const validate = (value: string) => {
@@ -9,6 +12,13 @@ export const useValidation = (type: "nickname" | "id" | "password") => {
       id: /^[a-zA-Z0-9]{8,}$/,
       password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     };
+
+    // ✅ passwordConfirm만 따로 처리
+    if (type === "passwordConfirm") {
+      const result = value === passwordValue && value.trim().length > 0; //같고 0보다 큼.
+      setIsValid(result);
+      return;
+    }
 
     // ✅ 나머지는 정규식 검사
     const result = rules[type].test(value);

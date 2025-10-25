@@ -3,9 +3,10 @@ import InputField from "./InputField";
 import { useValidation } from "@/hook/useValidation";
 
 interface InputGroupProps {
-  name: "nickname" | "id" | "password";
+  name: "nickname" | "id" | "password" | "passwordConfirm";
   placeholder?: string;
   value: string;
+  passwordValue?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onValidChange?: (valid: boolean | null) => void;
 }
@@ -14,10 +15,11 @@ const InputGroup = ({
   placeholder,
   name,
   value,
+  passwordValue,
   onChange,
   onValidChange,
 }: InputGroupProps) => {
-  const { isValid, validate, messages } = useValidation(name);
+  const { isValid, validate, messages } = useValidation(name, passwordValue);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -36,8 +38,8 @@ const InputGroup = ({
         name={name}
         value={value}
         onChange={handleChange}
-        type={name === "password" ? "password" : "text"}
-        showToggle={name === "password"}
+        type={name.includes("password") ? "password" : "text"}
+        showToggle={name.includes("password")}
       />
       {isValid === false && (
         <p className="text-xs text-red-500 mt-1 pl-2">{messages[name][0]}</p>

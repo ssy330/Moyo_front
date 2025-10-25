@@ -1,5 +1,4 @@
 import AuthLinks from "@/components/authComponents/AuthLinks";
-import InputField from "@/components/authComponents/InputField";
 import InputGroup from "@/components/authComponents/InputGroup";
 import LoginButton from "@/components/authComponents/LoginButton";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
@@ -17,12 +16,6 @@ const RegisterPage = () => {
   const [isIdValid, setIsIdValid] = useState<boolean | null>(null);
   const [isPwValid, setIsPwValid] = useState<boolean | null>(null);
   const [isPwMatch, setIsPwMatch] = useState<boolean | null>(null);
-
-  // ✅ 비밀번호 확인
-  const onPWConfirmChange = (value: string) => {
-    setPasswordConfirm(value);
-    setIsPwMatch(value === password && value.length > 0);
-  };
 
   // ✅ 모든 조건 충족 시 다음 버튼 활성화
   const isFormValid =
@@ -74,26 +67,14 @@ const RegisterPage = () => {
           />
 
           {/* 비밀번호 확인 */}
-          <div className="flex flex-col">
-            <InputField
-              placeholder="비밀번호를 다시 입력하세요"
-              name="passwordConfirm"
-              type="password"
-              showToggle
-              value={passwordConfirm}
-              onChange={(e) => onPWConfirmChange(e.target.value)}
-            />
-            {isPwMatch === false && (
-              <p className="text-xs text-red-500 mt-1 pl-2">
-                비밀번호가 일치하지 않습니다.
-              </p>
-            )}
-            {isPwMatch === true && (
-              <p className="text-xs text-green-500 mt-1 pl-2">
-                비밀번호가 일치합니다.
-              </p>
-            )}
-          </div>
+          <InputGroup
+            name="passwordConfirm"
+            placeholder="비밀번호를 다시 입력하세요"
+            value={passwordConfirm}
+            passwordValue={password} // ✅ 원본 비밀번호 전달!
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            onValidChange={setIsPwMatch}
+          />
 
           {/* 다음 버튼 */}
           <LoginButton
