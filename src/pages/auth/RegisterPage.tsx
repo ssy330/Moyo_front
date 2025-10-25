@@ -2,9 +2,13 @@ import AuthLinks from "@/components/authComponents/AuthLinks";
 import InputGroup from "@/components/authComponents/InputGroup";
 import LoginButton from "@/components/authComponents/LoginButton";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
+import { setNickname, setId, setPassword } from "@/features/authSlice";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const RegisterPage = () => {
+  const dispatch = useDispatch();
+
   // ✅ 로컬 상태
   const [nickname, setNicknameLocal] = useState("");
   const [id, setIdLocal] = useState("");
@@ -23,6 +27,18 @@ const RegisterPage = () => {
     isIdValid === true &&
     isPwValid === true &&
     isPwMatch === true;
+
+  // Redux로 상태 전송
+  const handleSubmit = () => {
+    if (isFormValid) {
+      dispatch(setNickname(nickname));
+      dispatch(setId(id));
+      dispatch(setPassword(password));
+
+      alert("Redux에 상태 전송 완료!");
+      // 예: navigate("/profile");
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 px-4">
@@ -85,12 +101,7 @@ const RegisterPage = () => {
                 : "bg-gray-300 cursor-not-allowed"
             }`}
             disabled={!isFormValid}
-            onClick={() => {
-              if (isFormValid) {
-                alert("모든 조건이 충족되었습니다!");
-                // 다음 단계로 이동 (ex. navigate("/profile"))
-              }
-            }}
+            onClick={handleSubmit}
           />
         </form>
 
