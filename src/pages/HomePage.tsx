@@ -1,5 +1,6 @@
 import Chatting from "@/components/HomePageComponents/Chatting";
 import GroupPanel from "@/components/HomePageComponents/GroupPanel";
+import ViewModeButtonGroup from "@/components/HomePageComponents/ViewModeButtonGroup";
 import { useState } from "react";
 
 const HomePage = () => {
@@ -8,38 +9,7 @@ const HomePage = () => {
   return (
     <div className="relative pt-12 px-20">
       {/* 필터 버튼 */}
-      <div className="absolute top-4 right-10 flex items-center gap-3">
-        <button
-          onClick={() => setViewMode("panel")}
-          className={`px-3 py-1 rounded-md border ${
-            viewMode === "panel"
-              ? "bg-rose-200 border-rose-400"
-              : "bg-white border-gray-300"
-          }`}
-        >
-          패널만
-        </button>
-        <button
-          onClick={() => setViewMode("chat")}
-          className={`px-3 py-1 rounded-md border ${
-            viewMode === "chat"
-              ? "bg-rose-200 border-rose-400"
-              : "bg-white border-gray-300"
-          }`}
-        >
-          채팅만
-        </button>
-        <button
-          onClick={() => setViewMode("both")}
-          className={`px-3 py-1 rounded-md border ${
-            viewMode === "both"
-              ? "bg-rose-200 border-rose-400"
-              : "bg-white border-gray-300"
-          }`}
-        >
-          둘 다
-        </button>
-      </div>
+      <ViewModeButtonGroup value={viewMode} onChange={setViewMode} />
 
       {/* 메인 레이아웃 */}
       <div className="flex gap-6 items-start">

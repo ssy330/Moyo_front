@@ -8,6 +8,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const GroupsPage = lazy(() => import("./pages/groups/GroupsPage"));
+const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/settings/SettingsPage"));
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/groups", element: <GroupsPage /> },
+      { path: "/groups/new", element: <GroupCreatePage /> },
       { path: "/groups/:id", element: <GroupDetailPage /> },
       { path: "/profile/:id", element: <ProfilePage /> },
       { path: "/notifications/:id", element: <Notifications /> },
@@ -31,7 +33,7 @@ export const router = createBrowserRouter([
   },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
-  { path: "/login/idInquiry", element: <FindIdPage /> },
-  { path: "/login/pwInquiry", element: <FindPwPage /> },
+  { path: "/find/id", element: <FindIdPage /> },
+  { path: "/find/password", element: <FindPwPage /> },
   { path: "*", element: <NotFoundPage /> },
 ]);
