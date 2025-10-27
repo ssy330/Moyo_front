@@ -1,3 +1,6 @@
+/**
+ * 채팅과 그룹 보여주는 것 설정.
+ */
 type ViewMode = "both" | "panel" | "chat";
 
 interface ButtonOption {
