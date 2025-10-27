@@ -1,4 +1,4 @@
-import Chatting from "@/components/HomePageComponents/Chatting";
+import ChattingPanel from "@/components/HomePageComponents/ChattingPanel";
 import GroupPanel from "@/components/HomePageComponents/GroupPanel";
 import ViewModeButtonGroup from "@/components/HomePageComponents/ViewModeButtonGroup";
 import { useState } from "react";
@@ -20,7 +20,7 @@ const HomePage = () => {
         )}
         {(viewMode === "both" || viewMode === "chat") && (
           <aside className="w-[420px] lg:w-[450px] shrink-0">
-            <Chatting />
+            <ChattingPanel />
           </aside>
         )}
       </div>

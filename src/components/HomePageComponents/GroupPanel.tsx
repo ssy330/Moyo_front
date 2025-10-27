@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import GroupActionButton from "./GroupActionButton";
 import GroupCard from "./GroupCard";
+import GroupJoinModal from "./GroupJoinModal";
+import { useState } from "react";
 
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
@@ -14,6 +16,8 @@ const groupMockData = [
 
 const GroupPanel = ({ viewMode }: GroupPanelProps) => {
   const nav = useNavigate();
+
+  const [openGroupJoin, setOpenGroupJoin] = useState(false);
 
   const handleClickGroup = (id: number) => {
     console.log(`Navigate to group detail: ${id}`);
@@ -38,7 +42,10 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
             label="만들기"
             onClick={() => nav("/groups/new")}
           />
-          <GroupActionButton label="참여하기" />
+          <GroupActionButton
+            label="참여하기"
+            onClick={() => setOpenGroupJoin(true)}
+          />
 
           {/* 그룹 카드들 */}
           {groupMockData.map((group) => (
@@ -53,6 +60,10 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
           ))}
         </div>
       </div>
+      <GroupJoinModal
+        isOpen={openGroupJoin}
+        onClose={() => setOpenGroupJoin(false)}
+      />
     </>
   );
 };

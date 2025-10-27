@@ -1,4 +1,4 @@
-const Chatting = () => {
+const ChattingPanel = () => {
   return (
     <>
       {/* 채팅 와이어프레임 */}
@@ -50,4 +50,4 @@ const Chatting = () => {
   );
 };
 
-export default Chatting;
+export default ChattingPanel;
