@@ -1,3 +1,7 @@
+/**
+ * 메인에 있는 그룹에 들어갈 수 있는 버튼(카드)
+ */
+
 type GroupCardProps = {
   id: number;
   title: string;

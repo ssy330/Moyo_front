@@ -1,3 +1,6 @@
+/**
+ * 그룹 만들 때, 입력 폼
+ */
 import { Camera, Video, Smile, ListChecks } from "lucide-react";
 import type { ModalProps } from "@/types/types";
 import CloseButton from "../CloseButton";
