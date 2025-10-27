@@ -1,9 +1,33 @@
+import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRadio";
 import { useState } from "react";
 
 export default function GroupCreatePage() {
   const [approval, setApproval] = useState("auto");
   const [nicknameAllowed, setNicknameAllowed] = useState(false);
   const [privacy, setPrivacy] = useState(false);
+  const [groupName, setGroupName] = useState("");
+  const [description, setDescription] = useState("");
+
+  // ✅ 모든 조건이 충족될 때만 다음 버튼 활성화
+  const isFormValid =
+    groupName.trim() !== "" && description.trim() !== "" && privacy === true;
+
+  const handleCreate = () => {
+    if (!isFormValid) return;
+
+    // 임시
+    const info = `
+      📌 모임 생성 정보
+
+      모임 이름: ${groupName}
+      가입 승인 방식: ${approval === "auto" ? "바로 승인" : "가입 승인 필요"}
+      닉네임 사용: ${nicknameAllowed ? "닉네임 가능" : "실명만 가능"}
+      모임 설명: ${description}
+      개인정보 동의: ${privacy ? "동의함 ✅" : "미동의 ❌"}
+    `;
+
+    alert(info);
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 py-5">
@@ -16,6 +40,8 @@ export default function GroupCreatePage() {
           <input
             type="text"
             placeholder="모임 이름"
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
             className="w-full text-center border border-neutral-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -24,26 +50,20 @@ export default function GroupCreatePage() {
         <div className="mb-6">
           <p className="font-semibold text-sm mb-2">모임 가입 승인 설정</p>
           <div className="flex gap-6">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="approval"
-                value="auto"
-                checked={approval === "auto"}
-                onChange={(e) => setApproval(e.target.value)}
-              />
-              <span>바로 승인</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="approval"
-                value="manual"
-                checked={approval === "manual"}
-                onChange={(e) => setApproval(e.target.value)}
-              />
-              <span>가입 승인</span>
-            </label>
+            <GroupsCreateRadio
+              name="approval"
+              value="auto"
+              checked={approval === "auto"}
+              onChange={(e) => setApproval(e.target.value)}
+              title={"바로 승인"}
+            />
+            <GroupsCreateRadio
+              name="approval"
+              value="manual"
+              checked={approval === "manual"}
+              onChange={(e) => setApproval(e.target.value)}
+              title="가입 승인"
+            />
           </div>
         </div>
 
@@ -51,26 +71,20 @@ export default function GroupCreatePage() {
         <div className="mb-6">
           <p className="font-semibold text-sm mb-2">실명 / 닉네임 여부</p>
           <div className="flex gap-6">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="nickname"
-                value="real"
-                checked={!nicknameAllowed}
-                onChange={() => setNicknameAllowed(false)}
-              />
-              <span>실명만 가능</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="nickname"
-                value="nick"
-                checked={nicknameAllowed}
-                onChange={() => setNicknameAllowed(true)}
-              />
-              <span>닉네임 가능</span>
-            </label>
+            <GroupsCreateRadio
+              name="nickname"
+              value="real"
+              checked={!nicknameAllowed}
+              onChange={() => setNicknameAllowed(false)}
+              title="실명만 가능"
+            />
+            <GroupsCreateRadio
+              name="nickname"
+              value="nick"
+              checked={nicknameAllowed}
+              onChange={() => setNicknameAllowed(true)}
+              title="닉네임만 가능"
+            />
           </div>
         </div>
 
@@ -79,6 +93,8 @@ export default function GroupCreatePage() {
           <p className="font-semibold text-sm mb-2">모임 설명</p>
           <textarea
             placeholder="모임에 대한 설명을 입력하세요."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             className="w-full border border-neutral-300 rounded-md p-2 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -104,7 +120,15 @@ export default function GroupCreatePage() {
           <button className="w-[48%] py-2 border border-neutral-300 rounded-md hover:bg-neutral-100 transition">
             가입폼 등록
           </button>
-          <button className="w-[48%] py-2 bg-green-300 rounded-md hover:bg-green-400 transition">
+          <button
+            onClick={handleCreate}
+            disabled={!isFormValid}
+            className={`w-[48%] py-2 rounded-md transition ${
+              isFormValid
+                ? "bg-green-400 hover:bg-green-500 text-white"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
+          >
             만들기
           </button>
         </div>
