@@ -23,6 +23,8 @@ const FindPwPage = () => {
             name="id"
             className="w-full "
           />
+
+          {/* 다음 버튼 */}
           <LoginButton title="다음" styles="bg-green-200 hover:bg-green-300" />
         </div>
 

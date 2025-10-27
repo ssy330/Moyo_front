@@ -12,7 +12,7 @@ const MoyoLogo = ({ type }: MoyoLogoProps) => {
       <img
         className={
           type === "main"
-            ? "w-auto h-[200px]  rounded" //메인일 때 스타일
+            ? "w-auto h-[200px]  rounded"
             : "w-28 sm:w-32 h-auto rounded cursor-pointer"
         }
         src={logoImg}

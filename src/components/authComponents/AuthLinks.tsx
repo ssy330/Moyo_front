@@ -9,8 +9,8 @@ interface AuthLinksProps {
 
 const linkMap: Record<AuthLinksProps["text"], string> = {
   회원가입: "/register",
-  "아이디 찾기": "/login/idInquiry",
-  "비밀번호 찾기": "/login/pwInquiry",
+  "아이디 찾기": "/find/id",
+  "비밀번호 찾기": "/find/password",
   로그인: "/login",
 };
 

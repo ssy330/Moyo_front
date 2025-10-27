@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import GroupActionButton from "./GroupActionButton";
 import GroupCard from "./GroupCard";
 
@@ -12,9 +13,12 @@ const groupMockData = [
 ];
 
 const GroupPanel = ({ viewMode }: GroupPanelProps) => {
+  const nav = useNavigate();
+
   const handleClickGroup = (id: number) => {
     console.log(`Navigate to group detail: ${id}`);
     // e.g. useNavigate(`/groups/${id}`);
+    nav("/groups");
   };
 
   return (
@@ -30,7 +34,10 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
           }`}
         >
           {/* 만들기 / 참여하기 */}
-          <GroupActionButton label="만들기" />
+          <GroupActionButton
+            label="만들기"
+            onClick={() => nav("/groups/new")}
+          />
           <GroupActionButton label="참여하기" />
 
           {/* 그룹 카드들 */}
