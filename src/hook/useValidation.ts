@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const useValidation = (
-  type: "nickname" | "email" | "password" | "passwordConfirm",
+  type: "nickname" | "email" | "password" | "passwordConfirm" | "authCode",
   passwordValue?: string,
 ) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -11,6 +11,7 @@ export const useValidation = (
       nickname: /^[a-zA-Z가-힣]{2,}$/, // 2글자 이상, 한글/영문
       email: /^[0-9a-zA-Z]([._-]?[0-9a-zA-Z])*@[0-9a-zA-Z-]+(\.[a-zA-Z]{2,})+$/,
       password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, // 문자+숫자+기호 포함 8자 이상
+      authCode: /^\d{6}$/, // ✅ 인증번호 6자리 숫자
     };
 
     // ✅ passwordConfirm만 따로 처리
@@ -20,7 +21,7 @@ export const useValidation = (
       return;
     }
 
-    // ✅ 나머지는 정규식 검사
+    // ✅ 나머지 정규식 검사
     const result = rules[type].test(value);
     setIsValid(result);
   };
@@ -36,6 +37,10 @@ export const useValidation = (
       "안전한 비밀번호입니다",
     ],
     passwordConfirm: ["비밀번호가 일치하지 않습니다", "비밀번호가 일치합니다"],
+    authCode: [
+      "인증번호는 숫자 6자리여야 합니다",
+      "올바른 인증번호 형식입니다",
+    ],
   };
 
   return { isValid, validate, messages };

@@ -1,10 +1,10 @@
 import AuthLinks from "@/components/authComponents/AuthLinks";
-import AuthInputGroup from "@/components/authComponents/AuthInputGroup";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { Button } from "@/components/ui/button";
 import { setNickname, setEmail, setPassword } from "@/features/authSlice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import AuthInputProps from "@/components/authComponents/AuthInputProps";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -82,7 +82,7 @@ const RegisterPage = () => {
           onSubmit={(e) => e.preventDefault()}
         >
           {/* 닉네임 */}
-          <AuthInputGroup
+          <AuthInputProps
             name="nickname"
             placeholder="닉네임을 입력하세요"
             value={nickname}
@@ -93,7 +93,7 @@ const RegisterPage = () => {
           {/* 이메일 + 인증버튼 */}
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <AuthInputGroup
+              <AuthInputProps
                 name="email"
                 placeholder="이메일을 입력하세요"
                 value={email}
@@ -121,7 +121,7 @@ const RegisterPage = () => {
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                placeholder="인증번호 입력"
+                placeholder="인증번호 입력하세요"
                 value={inputCode}
                 onChange={(e) => setInputCode(e.target.value)}
                 disabled={isCodeValid === true}
@@ -156,7 +156,7 @@ const RegisterPage = () => {
           )}
 
           {/* 비밀번호 */}
-          <AuthInputGroup
+          <AuthInputProps
             name="password"
             placeholder="비밀번호를 입력하세요"
             value={password}
@@ -165,7 +165,7 @@ const RegisterPage = () => {
           />
 
           {/* 비밀번호 확인 */}
-          <AuthInputGroup
+          <AuthInputProps
             name="passwordConfirm"
             placeholder="비밀번호를 다시 입력하세요"
             value={passwordConfirm}

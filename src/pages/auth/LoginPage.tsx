@@ -3,11 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
-import AuthInput from "@/components/authComponents/AuthInput";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { Button } from "@/components/ui/button";
 import type { AxiosError } from "axios";
+import AuthInputProps from "@/components/authComponents/AuthInputProps";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -56,21 +56,22 @@ export default function LoginPage() {
           <form onSubmit={handleLogin}>
             {/* 입력 + 버튼 묶음 */}
             <div className="mb-4 flex flex-col gap-3">
-              <AuthInput
-                placeholder="이메일 입력"
+              <AuthInputProps
                 name="email"
                 autoComplete="username"
+                placeholder="이메일을 입력하세요"
                 value={form.email}
                 onChange={handleChange}
+                validateOnChange={false}
               />
 
-              <AuthInput
-                placeholder="비밀번호 입력"
-                type="password"
+              <AuthInputProps
                 name="password"
                 autoComplete="current-password"
+                placeholder="비밀번호 입력"
                 value={form.password}
                 onChange={handleChange}
+                validateOnChange={false}
               />
 
               {/* 로그인 버튼 */}
