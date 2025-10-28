@@ -14,7 +14,6 @@ const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/settings/SettingsPage"));
 const Notifications = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const FindIdPage = lazy(() => import("./pages/auth/FindIdPage"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 
 // --- 라우터 정의 ---
@@ -33,7 +32,6 @@ export const router = createBrowserRouter([
   },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
-  { path: "/find/id", element: <FindIdPage /> },
   { path: "/find/password", element: <FindPwPage /> },
   { path: "*", element: <NotFoundPage /> },
 ]);
