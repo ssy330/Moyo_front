@@ -1,6 +1,7 @@
 import CloseButton from "../CloseButton";
 import type { ModalProps } from "@/types/types";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
   const [inviteCode, setInviteCode] = useState("");
@@ -50,18 +51,18 @@ const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
 
         {/* 버튼 영역 */}
         <div className="flex justify-end space-x-3">
-          <button
+          <Button
+            variant="outline" // ✅ 테두리형
             onClick={onClose}
-            className="rounded-md border px-4 py-2 text-gray-600 transition hover:bg-gray-100"
+            className="text-gray-600"
           >
             취소
-          </button>
-          <button
-            onClick={() => alert(`참여 코드: ${inviteCode}`)}
-            className="rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
-          >
+          </Button>
+
+          {/* 참가 버튼 */}
+          <Button onClick={() => alert(`참여 코드: ${inviteCode}`)}>
             참가
-          </button>
+          </Button>
         </div>
       </div>
     </div>

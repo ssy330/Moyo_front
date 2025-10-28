@@ -5,7 +5,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   showToggle?: boolean;
 }
 
-const InputField = ({
+const AuthInput = ({
   type = "text",
   showToggle,
   ...props
@@ -40,4 +40,4 @@ const InputField = ({
   );
 };
 
-export default InputField;
+export default AuthInput;

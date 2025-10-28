@@ -2,14 +2,11 @@
 
 작업자 : 신소연, 황호태
 
-## 페이지 구성
+## 최근 업데이트 사항.
 
-메인 홈 router = {"/"}
+### 10월 28일
 
-HomePage.tsx
-
-- ViewModeButtonGroup : 채팅만, 그룹만, 둘다 필터버튼
-- 메인 레이아웃.
-  - GroupPanel : 그룹만 모아둔 패널
-    -
-  - Chatting : 채팅 보여주는 패널
+- Shadcn/UI 도입으로 LoginButton.tsx 삭제 및 리팩토링
+- 아이디 찾기 페이지 삭제
+- 이메일 인풋으로 변환
+- 주요 컴포넌트 네임 변경 ex) InputField -> AuthInput

@@ -1,4 +1,5 @@
 import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRadio";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 export default function GroupCreatePage() {
@@ -30,11 +31,11 @@ export default function GroupCreatePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 py-5">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 py-5">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow">
         {/* 사진 + 이름 */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-24 h-24 rounded-full bg-neutral-200 mb-3 flex items-center justify-center text-neutral-500">
+        <div className="mb-6 flex flex-col items-center">
+          <div className="mb-3 flex h-24 w-24 items-center justify-center rounded-full bg-neutral-200 text-neutral-500">
             사진
           </div>
           <input
@@ -42,13 +43,13 @@ export default function GroupCreatePage() {
             placeholder="모임 이름"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
-            className="w-full text-center border border-neutral-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-neutral-300 p-2 text-center focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* 모임 가입 승인 설정 */}
         <div className="mb-6">
-          <p className="font-semibold text-sm mb-2">모임 가입 승인 설정</p>
+          <p className="mb-2 text-sm font-semibold">모임 가입 승인 설정</p>
           <div className="flex gap-6">
             <GroupsCreateRadio
               name="approval"
@@ -69,7 +70,7 @@ export default function GroupCreatePage() {
 
         {/* 실명 / 닉네임 여부 */}
         <div className="mb-6">
-          <p className="font-semibold text-sm mb-2">실명 / 닉네임 여부</p>
+          <p className="mb-2 text-sm font-semibold">실명 / 닉네임 여부</p>
           <div className="flex gap-6">
             <GroupsCreateRadio
               name="nickname"
@@ -90,12 +91,12 @@ export default function GroupCreatePage() {
 
         {/* 모임 설명 */}
         <div className="mb-6">
-          <p className="font-semibold text-sm mb-2">모임 설명</p>
+          <p className="mb-2 text-sm font-semibold">모임 설명</p>
           <textarea
             placeholder="모임에 대한 설명을 입력하세요."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-neutral-300 rounded-md p-2 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-24 w-full resize-none rounded-md border border-neutral-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
@@ -116,21 +117,23 @@ export default function GroupCreatePage() {
         </div>
 
         {/* 버튼 */}
-        <div className="flex justify-between mt-8">
-          <button className="w-[48%] py-2 border border-neutral-300 rounded-md hover:bg-neutral-100 transition">
+        <div className="mt-8 flex justify-between">
+          <Button
+            variant="outline"
+            className="w-[48%]"
+            disabled={approval === "auto"}
+            onClick={() => alert("설문 폼 이동.!")}
+          >
             가입폼 등록
-          </button>
-          <button
-            onClick={handleCreate}
+          </Button>
+
+          <Button
+            className="w-[48%]"
             disabled={!isFormValid}
-            className={`w-[48%] py-2 rounded-md transition ${
-              isFormValid
-                ? "bg-green-400 hover:bg-green-500 text-white"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
+            onClick={handleCreate}
           >
             만들기
-          </button>
+          </Button>
         </div>
       </div>
     </div>

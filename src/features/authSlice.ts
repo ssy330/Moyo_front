@@ -2,14 +2,14 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type AuthState = {
   nickname: string;
-  id: string;
+  email: string;
   password: string;
   isLoggedIn: boolean;
 };
 
 const initialState: AuthState = {
   nickname: "",
-  id: "",
+  email: "",
   password: "",
   isLoggedIn: false,
 };
@@ -21,8 +21,8 @@ export const authSlice = createSlice({
     setNickname: (state, action: PayloadAction<string>) => {
       state.nickname = action.payload;
     },
-    setId: (state, action: PayloadAction<string>) => {
-      state.id = action.payload;
+    setEmail: (state, action: PayloadAction<string>) => {
+      state.email = action.payload;
     },
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;
@@ -30,6 +30,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setNickname, setId, setPassword } = authSlice.actions;
+export const { setNickname, setEmail, setPassword } = authSlice.actions;
 
 export default authSlice.reducer;

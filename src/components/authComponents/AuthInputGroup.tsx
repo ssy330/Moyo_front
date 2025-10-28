@@ -1,24 +1,26 @@
 import { useEffect } from "react";
-import InputField from "./InputField";
+import AuthInput from "./AuthInput";
 import { useValidation } from "@/hook/useValidation";
 
-interface InputGroupProps {
-  name: "nickname" | "id" | "password" | "passwordConfirm";
+interface AuthInputGroupProps {
+  name: "nickname" | "email" | "password" | "passwordConfirm";
   placeholder?: string;
   value: string;
   passwordValue?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onValidChange?: (valid: boolean | null) => void;
+  disabled?: boolean;
 }
 
-const InputGroup = ({
+const AuthInputGroup = ({
   placeholder,
   name,
   value,
   passwordValue,
   onChange,
   onValidChange,
-}: InputGroupProps) => {
+  disabled = false,
+}: AuthInputGroupProps) => {
   const { isValid, validate, messages } = useValidation(name, passwordValue);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,13 +35,14 @@ const InputGroup = ({
 
   return (
     <div className="flex flex-col">
-      <InputField
+      <AuthInput
         placeholder={placeholder}
         name={name}
         value={value}
         onChange={handleChange}
         type={name.includes("password") ? "password" : "text"}
         showToggle={name.includes("password")}
+        disabled={disabled}
       />
       {isValid === false && (
         <p className="mt-1 pl-2 text-xs text-red-500">{messages[name][0]}</p>
@@ -51,4 +54,4 @@ const InputGroup = ({
   );
 };
 
-export default InputGroup;
+export default AuthInputGroup;
