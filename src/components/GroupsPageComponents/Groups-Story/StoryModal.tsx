@@ -11,7 +11,7 @@ const StoryModal = ({ isOpen, onClose }: ModalProps) => {
     >
       {/* 닫기 버튼 */}
       <div
-        className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative animate-fadeIn border border-emerald-100"
+        className="animate-fadeIn relative w-full max-w-md rounded-2xl border border-emerald-100 bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <CloseButton onClick={onClose} className="top-5 right-5" />

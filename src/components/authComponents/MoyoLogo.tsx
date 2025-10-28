@@ -8,12 +8,12 @@ const MoyoLogo = ({ type }: MoyoLogoProps) => {
   const nav = useNavigate();
 
   return (
-    <div className="flex items-center justify-center mt-10">
+    <div className="mt-10 flex items-center justify-center">
       <img
         className={
           type === "main"
-            ? "w-auto h-[200px]  rounded"
-            : "w-28 sm:w-32 h-auto rounded cursor-pointer"
+            ? "h-[200px] w-auto rounded"
+            : "h-auto w-28 cursor-pointer rounded sm:w-32"
         }
         src={logoImg}
         alt="Moyo Logo"

@@ -13,22 +13,22 @@ const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 relative animate-fadeIn"
+        className="animate-fadeIn relative w-full max-w-md rounded-2xl bg-white p-8 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 */}
         <CloseButton onClick={onClose} />
 
         {/* 제목 */}
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-4">
+        <h2 className="mb-4 text-center text-2xl font-bold text-green-700">
           서버 참가하기
         </h2>
 
         {/* 안내 문구 */}
-        <p className="text-center text-gray-600 text-sm mb-2">
+        <p className="mb-2 text-center text-sm text-gray-600">
           초대 코드를 입력하여 기존 서버에 참가하세요.
         </p>
-        <p className="text-center text-gray-500 text-sm mb-6">
+        <p className="mb-6 text-center text-sm text-gray-500">
           초대 코드는 이렇게 생겼습니다:
           <br />
           <span className="text-blue-600">
@@ -43,22 +43,22 @@ const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
             value={inviteCode}
             onChange={(e) => setInviteCode(e.target.value)}
             placeholder="여기에 초대 코드를 붙여 넣으세요"
-            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-md border border-gray-300 p-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
-          <p className="text-xs text-gray-400 mt-1">초대 코드를 입력하세요</p>
+          <p className="mt-1 text-xs text-gray-400">초대 코드를 입력하세요</p>
         </div>
 
         {/* 버튼 영역 */}
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-md border text-gray-600 hover:bg-gray-100 transition"
+            className="rounded-md border px-4 py-2 text-gray-600 transition hover:bg-gray-100"
           >
             취소
           </button>
           <button
             onClick={() => alert(`참여 코드: ${inviteCode}`)}
-            className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
+            className="rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
           >
             참가
           </button>

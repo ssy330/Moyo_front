@@ -20,19 +20,18 @@ const GroupCard = ({
   return (
     <div
       onClick={() => onClick?.(id)}
-      className="cursor-pointer rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm
-                 hover:shadow-md transition duration-200"
+      className="cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition duration-200 hover:shadow-md"
     >
       {/* 상단 이미지 */}
-      <div className="w-full h-32 bg-gray-100">
+      <div className="h-32 w-full bg-gray-100">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+          <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
             No Image
           </div>
         )}
@@ -40,10 +39,10 @@ const GroupCard = ({
 
       {/* 하단 정보 */}
       <div className="p-3">
-        <h3 className="text-sm font-semibold text-gray-800 truncate">
+        <h3 className="truncate text-sm font-semibold text-gray-800">
           {title}
         </h3>
-        <p className="text-xs text-gray-500 mt-1">멤버 {memberNum}</p>
+        <p className="mt-1 text-xs text-gray-500">멤버 {memberNum}</p>
       </div>
     </div>
   );

@@ -31,12 +31,11 @@ const ViewModeButtonGroup = ({
         <button
           key={key}
           onClick={() => onChange(key)}
-          className={`px-3 py-1 rounded-md border transition-colors
-            ${
-              value === key
-                ? "bg-rose-200 border-rose-400"
-                : "bg-white border-gray-300 hover:bg-gray-100"
-            }`}
+          className={`rounded-md border px-3 py-1 transition-colors ${
+            value === key
+              ? "border-rose-400 bg-rose-200"
+              : "border-gray-300 bg-white hover:bg-gray-100"
+          }`}
         >
           {label}
         </button>

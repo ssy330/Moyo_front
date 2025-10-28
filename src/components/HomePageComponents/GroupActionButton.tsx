@@ -10,14 +10,13 @@ const GroupActionButton = ({ label, onClick }: GroupActionButtonProps) => {
   return (
     <button
       type="button"
-      className="w-full h-48 rounded-xl bg-white border border-gray-200 shadow-sm
-                         flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer"
+      className="flex h-48 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
       onClick={onClick}
     >
-      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-gray-400">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-2xl text-gray-400">
         +
       </div>
-      <span className="text-gray-700 font-medium">{label}</span>
+      <span className="font-medium text-gray-700">{label}</span>
     </button>
   );
 };

@@ -22,9 +22,7 @@ const InputField = ({
     <div className="relative w-full">
       <input
         {...props}
-        className={`h-12 px-3 pr-10 w-full rounded-md border border-gray-300 
-          focus:outline-none focus:ring-1 focus:ring-green-400 focus:border-green-400 
-          placeholder-gray-400 bg-white shadow-sm ${props.className}`}
+        className={`h-12 w-full rounded-md border border-gray-300 bg-white px-3 pr-10 placeholder-gray-400 shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-400 focus:outline-none ${props.className}`}
         type={inputType}
         autoComplete={props.autoComplete}
       />
@@ -32,7 +30,7 @@ const InputField = ({
       {type === "password" && showToggle && (
         <button
           type="button"
-          className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 text-sm"
+          className="absolute inset-y-0 right-2 flex items-center text-sm text-gray-500 hover:text-gray-700"
           onClick={() => setShowPassword((prev) => !prev)}
         >
           {showPassword ? "숨김" : "보기"}

@@ -18,19 +18,19 @@ const StoryCarousel = () => {
   return (
     <>
       {/* 🔹 스토리 영역 */}
-      <div className="relative w-full max-w-[600px] mx-auto mb-5">
+      <div className="relative mx-auto mb-5 w-full max-w-[600px]">
         {/* 왼쪽 화살표 */}
         {slideIndex > 0 && (
           <button
             onClick={() => setSlideIndex((i) => i - 1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-neutral-100"
+            className="absolute top-1/2 left-0 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md hover:bg-neutral-100"
           >
-            <ChevronLeft className="w-5 h-5 text-neutral-700" />
+            <ChevronLeft className="h-5 w-5 text-neutral-700" />
           </button>
         )}
 
         {/* 스크롤 가능한 스토리 리스트 */}
-        <div className="overflow-hidden w-full px-3">
+        <div className="w-full overflow-hidden px-3">
           <div
             className="flex gap-3 transition-transform duration-500 ease-in-out"
             style={{
@@ -55,9 +55,9 @@ const StoryCarousel = () => {
         {slideIndex < maxSlide && (
           <button
             onClick={() => setSlideIndex((i) => i + 1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-neutral-100"
+            className="absolute top-1/2 right-0 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md hover:bg-neutral-100"
           >
-            <ChevronRight className="w-5 h-5 text-neutral-700" />
+            <ChevronRight className="h-5 w-5 text-neutral-700" />
           </button>
         )}
 

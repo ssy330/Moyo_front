@@ -42,10 +42,10 @@ const InputGroup = ({
         showToggle={name.includes("password")}
       />
       {isValid === false && (
-        <p className="text-xs text-red-500 mt-1 pl-2">{messages[name][0]}</p>
+        <p className="mt-1 pl-2 text-xs text-red-500">{messages[name][0]}</p>
       )}
       {isValid === true && (
-        <p className="text-xs text-green-500 mt-1 pl-2">{messages[name][1]}</p>
+        <p className="mt-1 pl-2 text-xs text-green-500">{messages[name][1]}</p>
       )}
     </div>
   );

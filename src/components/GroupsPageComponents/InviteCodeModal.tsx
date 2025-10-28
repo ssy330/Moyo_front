@@ -28,34 +28,34 @@ const InviteCodeModal = ({ isOpen, onClose }: ModalProps) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative animate-fadeIn border border-emerald-100"
+        className="animate-fadeIn relative w-full max-w-md rounded-2xl border border-emerald-100 bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 */}
         <CloseButton onClick={onClose} />
 
         {/* 제목 */}
-        <h2 className="text-2xl font-bold text-center text-emerald-600 mb-5">
+        <h2 className="mb-5 text-center text-2xl font-bold text-emerald-600">
           초대코드 공유
         </h2>
 
         {/* 링크 박스 */}
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center justify-between shadow-sm">
-          <span className="text-sm text-emerald-800 truncate">
+        <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+          <span className="truncate text-sm text-emerald-800">
             {inviteCode || "생성 중..."}
           </span>
           <button
             onClick={handleCopy}
-            className="ml-3 bg-pink-300 hover:bg-pink-400 text-white text-sm px-4 py-1.5 rounded-md font-semibold transition shadow-sm"
+            className="ml-3 rounded-md bg-pink-300 px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-pink-400"
           >
             <Copy />
           </button>
         </div>
 
         {/* 안내 문구 */}
-        <p className="mt-3 text-xs text-center text-neutral-500">
+        <p className="mt-3 text-center text-xs text-neutral-500">
           초대 링크는{" "}
-          <span className="text-emerald-600 font-medium">7일 후 만료</span>돼요.
+          <span className="font-medium text-emerald-600">7일 후 만료</span>돼요.
         </p>
       </div>
     </div>
