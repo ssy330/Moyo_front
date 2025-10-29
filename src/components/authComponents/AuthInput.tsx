@@ -96,7 +96,9 @@ export default function AuthInput({
 
       {/* 메시지 */}
       {isValid !== null && (
-        <p className={`text-xs ${isValid ? "text-green-500" : "text-red-500"}`}>
+        <p
+          className={`truncate text-xs leading-4 ${isValid ? "text-green-500" : "text-red-500"}`}
+        >
           {isValid ? messages[name][1] : messages[name][0]}
         </p>
       )}

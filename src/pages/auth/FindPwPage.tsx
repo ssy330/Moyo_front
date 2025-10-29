@@ -63,9 +63,15 @@ const FindPwPage = () => {
               type="button"
               onClick={handleSendCode}
               disabled={isRunning || isEmailValid === false}
-              className="h-12 w-24 shrink-0"
+              className="h-12 shrink-0"
             >
-              {isRunning ? `${formatTime()}` : isCodeSent ? "재전송" : "발송"}
+              {isCodeValid === true
+                ? "완료"
+                : isRunning
+                  ? formatTime()
+                  : isCodeSent
+                    ? "재전송"
+                    : "인증"}
             </Button>
           </div>
 
@@ -84,7 +90,7 @@ const FindPwPage = () => {
               <Button
                 type="button"
                 onClick={handleVerifyCode}
-                className="h-12 w-20 shrink-0"
+                className="h-12 shrink-0"
               >
                 다음
               </Button>

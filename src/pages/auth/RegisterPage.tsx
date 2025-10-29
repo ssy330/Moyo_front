@@ -121,7 +121,7 @@ const RegisterPage = () => {
                   ? "cursor-not-allowed bg-gray-300 text-gray-600"
                   : isRunning
                     ? "cursor-not-allowed bg-gray-300 text-gray-600"
-                    : "bg-green-500 text-white hover:bg-green-600"
+                    : ""
               }`}
             >
               {isCodeValid === true
