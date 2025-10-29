@@ -18,7 +18,6 @@ const RegisterPage = () => {
 
   // ✅ 이메일 인증 관련
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [authCode, setAuthCode] = useState("");
   const [inputCode, setInputCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState<boolean | null>(null);
 
@@ -31,6 +30,9 @@ const RegisterPage = () => {
   // ✅ 재전송 타이머 훅
   const { isRunning, start, formatTime } = useResendTimer(60);
 
+  // 재전송 props
+  const [resendKey, setResendKey] = useState(0);
+
   // ✅ 모든 조건 충족 시 다음 버튼 활성화
   const isFormValid =
     isNickValid === true &&
@@ -41,21 +43,22 @@ const RegisterPage = () => {
 
   // ✅ 인증번호 발송
   const handleSendCode = () => {
-    if (!isEmailValid) return alert("올바른 이메일을 입력하세요.");
+    if (!email.trim()) {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+    //if (isRunning) return; // 이미 타이머 작동 중이면 무시
 
-    // ❌ 이미 타이머 작동 중이면 무시
-    if (isRunning) return;
+    start(); // 타이머 시작
+    setResendKey((prev) => prev + 1);
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setAuthCode(code);
+    // TODO: 실제 이메일 인증번호 발송 API 호출
     setIsCodeSent(true);
-    start(); // ✅ 타이머 시작
-    alert(`인증번호가 발송되었습니다! (테스트용: ${code})`);
+    alert("인증번호가 발송되었습니다.");
   };
-
   // ✅ 인증번호 확인
   const handleVerifyCode = () => {
-    if (inputCode === authCode) {
+    if (inputCode === "123123") {
       setIsCodeValid(true);
       alert("인증이 완료되었습니다!");
     } else {
@@ -116,11 +119,11 @@ const RegisterPage = () => {
                 isRunning || // 타이머 동작 중
                 isCodeValid === true // 인증 완료 상태
               }
-              className={`h-12 px-4 text-sm font-medium transition-colors ${
+              className={`h-12 w-15 px-4 text-sm font-medium transition-colors ${
                 isCodeValid === true
                   ? "cursor-not-allowed bg-gray-300 text-gray-600"
                   : isRunning
-                    ? "cursor-not-allowed bg-gray-300 text-gray-600"
+                    ? "cursor-not-allowed"
                     : ""
               }`}
             >
@@ -143,16 +146,13 @@ const RegisterPage = () => {
                 value={inputCode}
                 onChange={(e) => setInputCode(e.target.value)}
                 disabled={isCodeValid === true}
+                resendKey={resendKey}
               />
               <Button
                 type="button"
                 onClick={handleVerifyCode}
                 disabled={inputCode.trim().length === 0 || isCodeValid === true}
-                className={`h-12 px-4 text-sm font-medium ${
-                  isCodeValid === true
-                    ? "cursor-not-allowed bg-gray-300 text-gray-600"
-                    : "bg-green-500 text-white hover:bg-green-600"
-                }`}
+                className={"h-12 px-4 text-sm font-medium"}
               >
                 {isCodeValid === true ? "완료" : "확인"}
               </Button>

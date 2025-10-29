@@ -27,7 +27,7 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
 
   return (
     <>
-      <div className="relative m-4 flex min-h-[90vh] flex-1 flex-col overflow-y-auto rounded-2xl border border-rose-400 bg-rose-50 p-10 pb-16 shadow-sm">
+      <div className="relative m-4 flex min-h-[90vh] flex-1 flex-col overflow-y-auto rounded-2xl border border-green-400 bg-green-50 p-10 pb-16 shadow-sm">
         {/* 만들기, 참여하기 2개 */}
         <div
           className={`grid gap-8 ${

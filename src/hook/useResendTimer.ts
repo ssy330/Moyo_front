@@ -7,7 +7,7 @@ export const useResendTimer = (initialTime = 60) => {
 
   // ⏰ 타이머 시작
   const start = () => {
-    if (isRunning) return;
+    if (timerRef.current) clearInterval(timerRef.current); //수정
     setTimeLeft(initialTime);
     setIsRunning(true);
   };

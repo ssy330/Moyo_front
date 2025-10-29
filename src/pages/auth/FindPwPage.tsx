@@ -11,6 +11,8 @@ const FindPwPage = () => {
   const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
   const [isCodeValid, setIsCodeValid] = useState<boolean | null>(null);
 
+  const [resendKey, setResendKey] = useState(0);
+
   // ✅ 1분 재전송 타이머 훅
   const { isRunning, start, formatTime } = useResendTimer(60);
 
@@ -19,11 +21,13 @@ const FindPwPage = () => {
       alert("이메일을 입력해주세요.");
       return;
     }
-    if (isRunning) return; // 이미 타이머 작동 중이면 무시
+    //if (isRunning) return; // 이미 타이머 작동 중이면 무시
+
+    start(); // 타이머 시작
+    setResendKey((prev) => prev + 1);
 
     // TODO: 실제 이메일 인증번호 발송 API 호출
     setIsCodeSent(true);
-    start(); // 타이머 시작
     alert("인증번호가 발송되었습니다.");
   };
 
@@ -63,7 +67,7 @@ const FindPwPage = () => {
               type="button"
               onClick={handleSendCode}
               disabled={isRunning || isEmailValid === false}
-              className="h-12 shrink-0"
+              className="h-12 w-15 shrink-0"
             >
               {isCodeValid === true
                 ? "완료"
@@ -85,6 +89,7 @@ const FindPwPage = () => {
                   value={authCode}
                   onChange={(e) => setAuthCode(e.target.value)}
                   disabled={isCodeValid === true}
+                  resendKey={resendKey}
                 />
               </div>
               <Button

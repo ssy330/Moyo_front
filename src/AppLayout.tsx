@@ -7,13 +7,13 @@ const AppLayout = () => {
   return (
     <div className="flex">
       {/* 사이드바 */}
-      <aside className="fixed left-0 top-0 z-40 h-screen w-16 border-r border-rose-100 bg-[#FFF6F6] flex flex-col items-center justify-between py-6">
+      <aside className="fixed top-0 left-0 z-40 flex h-screen w-16 flex-col items-center justify-between border-r border-green-100 bg-green-50 py-6">
         {/* 상단 로고 */}
         <div
-          className="flex items-center justify-center w-10 h-10 bg-rose-200 rounded-xl cursor-pointer hover:bg-rose-300 transition"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl bg-green-200 transition hover:bg-green-300"
           onClick={() => navigate("/")}
         >
-          <span className="font-bold text-sm text-gray-800">moyo</span>
+          <span className="text-sm font-bold text-gray-800">moyo</span>
         </div>
 
         {/* 하단 아이콘 묶음 */}
@@ -21,32 +21,32 @@ const AppLayout = () => {
           {/* 아이콘 목록들 */}
           <button
             onClick={() => navigate("/profile/1")}
-            className="p-2 rounded-xl bg-sky-100 hover:bg-sky-200 transition"
+            className="rounded-xl bg-sky-200 p-2 transition hover:bg-sky-300"
             title="내 프로필"
           >
-            <User size={20} className="text-sky-700" />
+            <User size={20} className="text-sky-800" />
           </button>
 
           <button
             onClick={() => navigate("/notifications/1")}
-            className="p-2 rounded-xl bg-yellow-100 hover:bg-yellow-200 transition"
+            className="rounded-xl bg-yellow-200 p-2 transition hover:bg-yellow-300"
             title="알림"
           >
-            <Bell size={20} className="text-yellow-600" />
+            <Bell size={20} className="text-yellow-700" />
           </button>
 
           <button
             onClick={() => navigate("/calender")}
-            className="p-2 rounded-xl bg-rose-100 hover:bg-rose-200 transition"
+            className="rounded-xl bg-green-200 p-2 transition hover:bg-green-300"
             title="캘린더"
           >
-            <CalendarDays size={20} className="text-rose-600" />
+            <CalendarDays size={20} className="text-green-700" />
           </button>
 
           {/* 설정 아이콘 바로 아래 배치 */}
           <button
             onClick={() => navigate("/settings")}
-            className="p-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 transition mt-2"
+            className="mt-2 rounded-xl bg-neutral-100 p-2 transition hover:bg-neutral-200"
             title="설정"
           >
             <Settings size={20} className="text-gray-600" />
@@ -55,7 +55,7 @@ const AppLayout = () => {
       </aside>
 
       {/* 메인 콘텐츠 */}
-      <main className="ml-16 flex-1 bg-gray-50 min-h-screen">
+      <main className="ml-16 min-h-screen flex-1 bg-gray-50">
         <Outlet />
       </main>
     </div>

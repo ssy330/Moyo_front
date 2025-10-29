@@ -13,6 +13,7 @@ interface AuthInputProps {
   onValidChange?: (valid: boolean | null) => void;
   autoComplete?: string;
   validateOnChange?: boolean;
+  resendKey?: number;
 }
 
 export default function AuthInput({
@@ -24,11 +25,13 @@ export default function AuthInput({
   disabled = false,
   onValidChange,
   autoComplete,
+  resendKey,
   validateOnChange = true,
 }: AuthInputProps) {
+  // 유효성 검사
   const { isValid, validate, messages } = useValidation(name, passwordValue);
+  // 비밀번호가 보였을 때,
   const [showPw, setShowPw] = useState(false);
-
   const isPassword = name.includes("password");
   const isAuthCode = name.includes("authCode");
   const inputType = isPassword ? (showPw ? "text" : "password") : "text";
@@ -73,7 +76,7 @@ export default function AuthInput({
           disabled={disabled}
           maxLength={name === "authCode" ? 6 : undefined}
           autoComplete={getAutoCompleteValue()}
-          className={`h-12 ${isAuthCode ? "pr-24" : "pr-12"} ${
+          className={`h-12 ${isAuthCode ? "pr-20 md:pr-24" : "pr-12"} ${
             isValid === false ? "border-red-400" : ""
           }`}
         />
@@ -88,8 +91,8 @@ export default function AuthInput({
         )}
         {isAuthCode &&
           !disabled && ( // 인증 완료 시 disabled = true 라면 숨김
-            <div className="absolute top-1/2 right-3 -translate-y-1/2">
-              <AuthCountdown />
+            <div className="absolute top-1/2 right-3 ml-0 -translate-y-1/2">
+              <AuthCountdown key={resendKey} initialTime={300} />
             </div>
           )}
       </div>
