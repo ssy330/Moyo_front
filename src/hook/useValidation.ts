@@ -37,10 +37,7 @@ export const useValidation = (
       "안전한 비밀번호입니다",
     ],
     passwordConfirm: ["비밀번호가 일치하지 않습니다", "비밀번호가 일치합니다"],
-    authCode: [
-      "인증번호는 숫자 6자리여야 합니다",
-      "올바른 인증번호 형식입니다",
-    ],
+    authCode: ["인증번호는 숫자 6자리여야 합니다", ""],
   };
 
   return { isValid, validate, messages };

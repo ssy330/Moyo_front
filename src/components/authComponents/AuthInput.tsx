@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useValidation } from "@/hook/useValidation";
 import { Input } from "@/components/ui/input";
+import AuthCountdown from "@/components/authComponents/AuthCountDown";
 
-interface AuthInputPropsProps {
+interface AuthInputProps {
   name: "nickname" | "email" | "password" | "passwordConfirm" | "authCode";
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,7 +15,7 @@ interface AuthInputPropsProps {
   validateOnChange?: boolean;
 }
 
-export default function AuthInputProps({
+export default function AuthInput({
   name,
   value,
   onChange,
@@ -24,11 +25,12 @@ export default function AuthInputProps({
   onValidChange,
   autoComplete,
   validateOnChange = true,
-}: AuthInputPropsProps) {
+}: AuthInputProps) {
   const { isValid, validate, messages } = useValidation(name, passwordValue);
   const [showPw, setShowPw] = useState(false);
 
   const isPassword = name.includes("password");
+  const isAuthCode = name.includes("authCode");
   const inputType = isPassword ? (showPw ? "text" : "password") : "text";
 
   useEffect(() => {
@@ -69,8 +71,11 @@ export default function AuthInputProps({
             if (validateOnChange) validate(e.target.value);
           }}
           disabled={disabled}
+          maxLength={name === "authCode" ? 6 : undefined}
           autoComplete={getAutoCompleteValue()}
-          className={`h-12 pr-12 ${isValid === false ? "border-red-400" : ""}`}
+          className={`h-12 ${isAuthCode ? "pr-24" : "pr-12"} ${
+            isValid === false ? "border-red-400" : ""
+          }`}
         />
         {isPassword && (
           <button
@@ -81,6 +86,12 @@ export default function AuthInputProps({
             {showPw ? "숨김" : "보기"}
           </button>
         )}
+        {isAuthCode &&
+          !disabled && ( // 인증 완료 시 disabled = true 라면 숨김
+            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+              <AuthCountdown />
+            </div>
+          )}
       </div>
 
       {/* 메시지 */}

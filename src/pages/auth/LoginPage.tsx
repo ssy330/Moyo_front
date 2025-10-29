@@ -7,7 +7,7 @@ import AuthLinks from "@/components/authComponents/AuthLinks";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { Button } from "@/components/ui/button";
 import type { AxiosError } from "axios";
-import AuthInputProps from "@/components/authComponents/AuthInputProps";
+import AuthInput from "@/components/authComponents/AuthInput";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin}>
             {/* 입력 + 버튼 묶음 */}
             <div className="mb-4 flex flex-col gap-3">
-              <AuthInputProps
+              <AuthInput
                 name="email"
                 autoComplete="username"
                 placeholder="이메일을 입력하세요"
@@ -65,7 +65,7 @@ export default function LoginPage() {
                 validateOnChange={false}
               />
 
-              <AuthInputProps
+              <AuthInput
                 name="password"
                 autoComplete="current-password"
                 placeholder="비밀번호 입력"
