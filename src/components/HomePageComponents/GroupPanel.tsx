@@ -31,7 +31,9 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
         {/* 만들기, 참여하기 2개 */}
         <div
           className={`grid gap-8 ${
-            viewMode === "both" ? "grid-cols-2 md:grid-cols-3" : "grid-cols-5"
+            viewMode === "both"
+              ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+              : "grid-cols-2 md:grid-cols-2 lg:grid-cols-5"
           }`}
         >
           {/* 만들기 / 참여하기 */}
