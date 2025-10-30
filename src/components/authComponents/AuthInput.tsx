@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useValidation } from "@/hook/useValidation";
 import { Input } from "@/components/ui/input";
-import AuthCountdown from "@/components/authComponents/AuthCountDown";
+import AuthCountdown from "@/components/authComponents/AuthCountdown";
 
 interface AuthInputProps {
   name: "nickname" | "email" | "password" | "passwordConfirm" | "authCode";

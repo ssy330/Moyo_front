@@ -8,8 +8,13 @@ import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { Button } from "@/components/ui/button";
 import type { AxiosError } from "axios";
 import AuthInput from "@/components/authComponents/AuthInput";
+import GitHubIcon from "@/assets/GithHubIcon";
+import { useSignInWithOAuth } from "@/hook/mutations/use-sign-in-with-oauth";
 
 export default function LoginPage() {
+  const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =
+    useSignInWithOAuth();
+
   const navigate = useNavigate();
 
   // 입력 상태 관리
@@ -25,7 +30,7 @@ export default function LoginPage() {
   };
 
   // 로그인 요청
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignInEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await api.post("/auth/login", {
@@ -42,6 +47,11 @@ export default function LoginPage() {
     }
   };
 
+  //소셜로그인 요청
+  const handleSignInWithGitHubClick = async () => {
+    signInWithOAuth("github"); // ✅ Supabase가 자동으로 리다이렉트
+  };
+
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* 왼쪽 영역 - 로고 */}
@@ -53,7 +63,7 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-white">
         <div className="w-full max-w-sm p-6">
           {/* 로그인 폼 */}
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSignInEmailLogin}>
             {/* 입력 + 버튼 묶음 */}
             <div className="mb-4 flex flex-col gap-3">
               <AuthInput
@@ -90,6 +100,20 @@ export default function LoginPage() {
                   <KakaoTalkIcon />
                 </span>
                 카카오계정으로 시작하기
+              </Button>
+
+              {/* 깃허브 로그인 버튼 */}
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 w-full"
+                disabled={isSignInWithOAuthPending}
+                onClick={handleSignInWithGitHubClick}
+              >
+                <span className="mr-2">
+                  <GitHubIcon />
+                </span>
+                깃허브계정으로 로그인하기
               </Button>
             </div>
 
