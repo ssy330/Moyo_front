@@ -3,6 +3,7 @@ import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 import { useResendTimer } from "@/hook/useResendTimer";
+import { MSGS } from "@/utils/messages";
 
 const FindPwPage = () => {
   const [email, setEmail] = useState("");
@@ -17,28 +18,30 @@ const FindPwPage = () => {
   const { isRunning, start, formatTime } = useResendTimer(60);
 
   const handleSendCode = () => {
-    if (!email.trim()) {
-      alert("이메일을 입력해주세요.");
+    if (!email.trim() || isEmailValid === false) {
+      alert(MSGS.INVALID_EMAIL);
       return;
     }
-    //if (isRunning) return; // 이미 타이머 작동 중이면 무시
+    // if (isRunning) return; // 이미 타이머 작동 중이면 무시
 
     start(); // 타이머 시작
     setResendKey((prev) => prev + 1);
 
     // TODO: 실제 이메일 인증번호 발송 API 호출
     setIsCodeSent(true);
-    alert("인증번호가 발송되었습니다.");
+    alert(MSGS.CODE_SENT);
   };
 
   // 이메일 일치여부 확인!
   const handleVerifyCode = () => {
     if (!authCode.trim()) {
-      alert("인증번호를 입력해주세요.");
+      // 필요 시 messages.ts에 별도 메시지(KEY: REQUIRED_AUTH_CODE 등) 추가 권장
+      alert(MSGS.INVALID_OR_EXPIRED_CODE);
       return;
     }
+    // TODO: 실제 인증번호 검증 API 호출
     setIsCodeValid(true);
-    alert("인증이 완료되었습니다. 다음 단계로 이동합니다.");
+    alert(MSGS.CODE_VERIFIED);
   };
 
   return (
@@ -72,10 +75,10 @@ const FindPwPage = () => {
               {isCodeValid === true
                 ? "완료"
                 : isRunning
-                  ? formatTime()
-                  : isCodeSent
-                    ? "재전송"
-                    : "인증"}
+                ? formatTime()
+                : isCodeSent
+                ? "재전송"
+                : "인증"}
             </Button>
           </div>
 

@@ -5,7 +5,8 @@ import { setNickname, setEmail, setPassword } from "@/features/authSlice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import AuthInput from "@/components/authComponents/AuthInput";
-import { useResendTimer } from "@/hook/useResendTimer"; // ✅ 추가
+import { useResendTimer } from "@/hook/useResendTimer";
+import { MSGS } from "@/utils/messages"; // ✅ 메시지 상수 import
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -43,27 +44,35 @@ const RegisterPage = () => {
 
   // ✅ 인증번호 발송
   const handleSendCode = () => {
-    if (!email.trim()) {
-      alert("이메일을 입력해주세요.");
+    if (!email.trim() || isEmailValid === false) {
+      alert(MSGS.INVALID_EMAIL);
       return;
     }
-    //if (isRunning) return; // 이미 타이머 작동 중이면 무시
+    // if (isRunning) return; // 이미 타이머 작동 중이면 무시
 
     start(); // 타이머 시작
     setResendKey((prev) => prev + 1);
 
     // TODO: 실제 이메일 인증번호 발송 API 호출
     setIsCodeSent(true);
-    alert("인증번호가 발송되었습니다.");
+    alert(MSGS.CODE_SENT);
   };
+
   // ✅ 인증번호 확인
   const handleVerifyCode = () => {
+    if (!inputCode.trim()) {
+      // 필요하면 messages.ts에 REQUIRED_AUTH_CODE 추가해서 사용해도 좋아요.
+      alert(MSGS.INVALID_OR_EXPIRED_CODE);
+      return;
+    }
+
+    // TODO: 실제 인증번호 검증 API 호출
     if (inputCode === "123123") {
       setIsCodeValid(true);
-      alert("인증이 완료되었습니다!");
+      alert(MSGS.CODE_VERIFIED);
     } else {
       setIsCodeValid(false);
-      alert("인증번호가 일치하지 않습니다.");
+      alert(MSGS.INVALID_OR_EXPIRED_CODE);
     }
   };
 
@@ -72,7 +81,8 @@ const RegisterPage = () => {
       dispatch(setNickname(nickname));
       dispatch(setEmail(email));
       dispatch(setPassword(password));
-      alert("회원가입 완료!");
+      alert(MSGS.SIGNUP_SUCCESS);
+      // TODO: 실제 회원가입 API와 연동 시 여기서 요청 후 처리
     }
   };
 
@@ -123,17 +133,17 @@ const RegisterPage = () => {
                 isCodeValid === true
                   ? "cursor-not-allowed bg-gray-300 text-gray-600"
                   : isRunning
-                    ? "cursor-not-allowed"
-                    : ""
+                  ? "cursor-not-allowed"
+                  : ""
               }`}
             >
               {isCodeValid === true
                 ? "완료"
                 : isRunning
-                  ? formatTime()
-                  : isCodeSent
-                    ? "재전송"
-                    : "인증"}
+                ? formatTime()
+                : isCodeSent
+                ? "재전송"
+                : "인증"}
             </Button>
           </div>
 
