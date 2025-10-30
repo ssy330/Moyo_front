@@ -5,16 +5,16 @@ import AppLayout from "./AppLayout";
 
 // --- 페이지 컴포넌트 (lazy 로드) ---
 const HomePage = lazy(() => import("./pages/HomePage"));
-const LoginPage = lazy(() => import("./pages/authpages/LoginPage"));
-const RegisterPage = lazy(() => import("./pages/authpages/RegisterPage"));
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const GroupsPage = lazy(() => import("./pages/groups/GroupsPage"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
-const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const SettingsPage = lazy(() => import("./pages/settings/SettingsPage"));
 const Notifications = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const FindPwPage = lazy(() => import("./pages/authpages/FindPwPage"));
+const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 
 // --- 라우터 정의 ---
 export const router = createBrowserRouter([
