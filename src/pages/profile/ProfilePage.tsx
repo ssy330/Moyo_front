@@ -1,5 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Pencil } from "lucide-react";
+
 // src/pages/profile/ProfilePage.tsx
-import { useParams } from "react-router-dom";
 export default function ProfilePage() {
   const [nickname, setNickname] = useState("Hoping");
 
