@@ -132,7 +132,7 @@ export default function ProfilePage() {
           <div className="mt-6 flex justify-end">
             <Button
               onClick={handleLogout}
-              className="flex items-center space-x-2 bg-red-500 text-white hover:bg-red-600"
+              className="flex items-center space-x-2"
             >
               <LogOut className="h-4 w-4" />
               <span>로그아웃</span>
