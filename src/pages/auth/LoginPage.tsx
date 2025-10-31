@@ -1,26 +1,21 @@
 // src/pages/LoginPage.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "@/lib/api";
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { Button } from "@/components/ui/button";
-import type { AxiosError } from "axios";
 import AuthInput from "@/components/authComponents/AuthInput";
-import { MSGS } from "@/utils/messages"; // ✅ 메시지 상수 import
-import { useSignInWithOAuth } from "@/hook/use-sigin-in-oauth";
+import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
 import GitHubIcon from "@/assets/GitHubIcon";
+import { useLoginMutation } from "@/hook/mutation/use-login";
 
 export default function LoginPage() {
   const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =
     useSignInWithOAuth();
 
-  const handleSignInWithGitHubClick = async () => {
-    signInWithOAuth("github"); // ✅ Supabase가 자동으로 리다이렉트
-  };
-
   const navigate = useNavigate();
+  const loginMutation = useLoginMutation();
 
   // 입력 상태 관리
   const [form, setForm] = useState({
@@ -37,28 +32,16 @@ export default function LoginPage() {
   // 로그인 요청
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    loginMutation.mutate(
+      { email: form.email, password: form.password },
+      {
+        onSuccess: () => navigate("/"),
+      },
+    );
+  };
 
-    if (!form.email.trim() || !form.password.trim()) {
-      alert(MSGS.INVALID_CREDENTIALS); // 빈 입력 시에도 일관된 메시지 사용
-      return;
-    }
-
-    try {
-      const res = await api.post("/auth/login", {
-        email: form.email,
-        password: form.password,
-      });
-
-      // 토큰 저장
-      localStorage.setItem("access_token", res.data.access_token);
-
-      alert(MSGS.LOGIN_SUCCESS);
-      navigate("/"); // 로그인 후 홈으로 이동 (원하는 페이지로 수정 가능)
-    } catch (err) {
-      const error = err as AxiosError<{ detail?: string }>;
-      const msg = error.response?.data?.detail ?? MSGS.INVALID_CREDENTIALS; // 서버 메시지 없을 시 기본 메시지 사용
-      alert(msg);
-    }
+  const handleSignInWithGitHubClick = async () => {
+    signInWithOAuth("github"); // ✅ Supabase가 자동으로 리다이렉트
   };
 
   return (

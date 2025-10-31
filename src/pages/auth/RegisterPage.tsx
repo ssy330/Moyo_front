@@ -8,13 +8,17 @@ import { useDispatch } from "react-redux";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { useResendTimer } from "@/hook/useResendTimer";
 import { MSGS } from "@/utils/messages";
+import { useNavigate } from "react-router-dom";
+import {
+  useSendCode,
+  useSignup,
+  useVerifyCode,
+} from "@/hook/mutation/use-auth-mutation";
 // import { useNavigate } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? "/api/v1";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // ✅ 로컬 상태
   const [nickname, setNicknameLocal] = useState("");
@@ -33,11 +37,6 @@ const RegisterPage = () => {
   const [isPwValid, setIsPwValid] = useState<boolean | null>(null);
   const [isPwMatch, setIsPwMatch] = useState<boolean | null>(null);
 
-  // ✅ 로딩 상태
-  const [loadingSend, setLoadingSend] = useState(false);
-  const [loadingVerify, setLoadingVerify] = useState(false);
-  const [loadingSignup, setLoadingSignup] = useState(false);
-
   // ✅ 재전송 타이머
   const { isRunning, start, formatTime } = useResendTimer(60);
   const [resendKey, setResendKey] = useState(0);
@@ -50,115 +49,64 @@ const RegisterPage = () => {
       isPwValid === true &&
       isPwMatch === true &&
       isCodeValid === true,
-    [isNickValid, isEmailValid, isPwValid, isPwMatch, isCodeValid]
+    [isNickValid, isEmailValid, isPwValid, isPwMatch, isCodeValid],
   );
 
-  // ✅ 인증번호 발송
-  const handleSendCode = async () => {
-    if (!email.trim() || isEmailValid === false) {
-      alert(MSGS.INVALID_EMAIL);
-      return;
-    }
-    if (loadingSend || isRunning || isCodeValid === true) return;
+  const { mutate: sendCode, isPending: loadingSend } = useSendCode();
+  const { mutate: verifyCode, isPending: loadingVerify } = useVerifyCode();
+  const { mutate: signup, isPending: loadingSignup } = useSignup();
 
-    setLoadingSend(true);
-    try {
-      const res = await fetch(`${API_BASE}/auth/email/request`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+  const handleSendCode = () => {
+    if (!email.trim() || isEmailValid === false)
+      return alert(MSGS.INVALID_EMAIL);
+    if (isRunning || isCodeValid === true) return;
 
-      if (res.ok) {
+    sendCode(email, {
+      onSuccess: () => {
         setIsCodeSent(true);
         start();
         setResendKey((prev) => prev + 1);
         alert(MSGS.CODE_SENT);
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(err.detail || MSGS.TOO_MANY_REQUESTS);
-      }
-    } catch {
-      alert(MSGS.SERVER_ERROR);
-    } finally {
-      setLoadingSend(false);
-    }
+      },
+      onError: (err) => alert(err.message),
+    });
   };
 
-  // ✅ 인증번호 확인
-  const handleVerifyCode = async () => {
-    if (!inputCode.trim()) {
-      alert(MSGS.INVALID_OR_EXPIRED_CODE);
-      return;
-    }
-    if (loadingVerify || isCodeValid === true) return;
+  const handleVerifyCode = () => {
+    if (!inputCode.trim()) return alert(MSGS.INVALID_OR_EXPIRED_CODE);
+    if (isCodeValid === true) return;
 
-    setLoadingVerify(true);
-    try {
-      const res = await fetch(`${API_BASE}/auth/email/confirm`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: inputCode }),
-      });
-
-      if (res.ok) {
-        setIsCodeValid(true);
-        alert(MSGS.CODE_VERIFIED);
-      } else {
-        setIsCodeValid(false);
-        const err = await res.json().catch(() => ({}));
-        alert(err.detail || MSGS.INVALID_OR_EXPIRED_CODE);
-      }
-    } catch {
-      setIsCodeValid(false);
-      alert(MSGS.SERVER_ERROR);
-    } finally {
-      setLoadingVerify(false);
-    }
+    verifyCode(
+      { email, code: inputCode },
+      {
+        onSuccess: () => {
+          setIsCodeValid(true);
+          alert(MSGS.CODE_VERIFIED);
+        },
+        onError: (err) => {
+          setIsCodeValid(false);
+          alert(err.message);
+        },
+      },
+    );
   };
 
-  // ✅ 회원가입 제출 (UserCreate: { email, name, password })
-  const handleSubmit = async () => {
-    if (!isFormValid || loadingSignup) return;
-
-    setLoadingSignup(true);
-    try {
-      const res = await fetch(`${API_BASE}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          name: nickname,
-          password,
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json().catch(() => ({}));
-        dispatch(setNickname(nickname));
-        dispatch(setEmail(email));
-        dispatch(setPassword(password));
-        console.log("회원가입 성공:", data);
-        alert(MSGS.SIGNUP_SUCCESS);
-        // navigate("/login");
-      } else {
-        const err = await res.json().catch(() => ({}));
-        if (res.status === 409) {
-          alert(MSGS.EMAIL_ALREADY_REGISTERED);
-        } else if (
-          res.status === 400 &&
-          String(err.detail || "").startsWith("Email not verified")
-        ) {
-          alert(MSGS.EMAIL_NOT_VERIFIED);
-        } else {
-          alert(err.detail || MSGS.SERVER_ERROR);
-        }
-      }
-    } catch {
-      alert(MSGS.SERVER_ERROR);
-    } finally {
-      setLoadingSignup(false);
-    }
+  const handleSubmit = () => {
+    if (!isFormValid) return;
+    signup(
+      { email, nickname, password },
+      {
+        onSuccess: (data) => {
+          console.log("회원가입 성공:", data);
+          localStorage.setItem("token", data.access_token);
+          dispatch(setEmail(data.user.email));
+          dispatch(setNickname(data.user.name));
+          alert("회원가입 완료 및 로그인 성공!");
+          navigate("/");
+        },
+        onError: (err) => alert(err.message),
+      },
+    );
   };
 
   return (
@@ -209,19 +157,19 @@ const RegisterPage = () => {
                 isCodeValid === true
                   ? "cursor-not-allowed bg-gray-300 text-gray-600"
                   : isRunning || loadingSend
-                  ? "cursor-not-allowed"
-                  : ""
+                    ? "cursor-not-allowed"
+                    : ""
               }`}
             >
               {isCodeValid === true
                 ? "완료"
                 : loadingSend
-                ? "전송중..."
-                : isRunning
-                ? formatTime()
-                : isCodeSent
-                ? "재전송"
-                : "인증"}
+                  ? "전송중..."
+                  : isRunning
+                    ? formatTime()
+                    : isCodeSent
+                      ? "재전송"
+                      : "인증"}
             </Button>
           </div>
 
@@ -246,7 +194,11 @@ const RegisterPage = () => {
                 }
                 className="h-12 px-4 text-sm font-medium"
               >
-                {isCodeValid === true ? "완료" : loadingVerify ? "확인중..." : "확인"}
+                {isCodeValid === true
+                  ? "완료"
+                  : loadingVerify
+                    ? "확인중..."
+                    : "확인"}
               </Button>
             </div>
           )}
@@ -271,7 +223,10 @@ const RegisterPage = () => {
           />
 
           {/* 다음(회원가입) 버튼 */}
-          <Button disabled={!isFormValid || loadingSignup} onClick={handleSubmit}>
+          <Button
+            disabled={!isFormValid || loadingSignup}
+            onClick={handleSubmit}
+          >
             {loadingSignup ? "등록 중..." : "다음"}
           </Button>
         </form>
