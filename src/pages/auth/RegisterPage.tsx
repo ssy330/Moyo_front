@@ -2,7 +2,7 @@
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import { Button } from "@/components/ui/button";
-import { setNickname, setEmail, setPassword } from "@/features/authSlice";
+import { setNickname, setEmail } from "@/features/authSlice";
 import { useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import AuthInput from "@/components/authComponents/AuthInput";
@@ -14,7 +14,6 @@ import {
   useSignup,
   useVerifyCode,
 } from "@/hook/mutation/use-auth-mutation";
-// import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
