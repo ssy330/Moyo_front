@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { clearSession } from "@/features/sessionSlice";
+import { useAppDispatch, useAppSelector } from "@/hook/use-app-dispatch";
+import supabase from "@/lib/supabase";
+import { LogOut, Pencil } from "lucide-react";
+import { useState } from "react";
 
 // src/pages/profile/ProfilePage.tsx
 export default function ProfilePage() {

@@ -9,8 +9,17 @@ import { Button } from "@/components/ui/button";
 import type { AxiosError } from "axios";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { MSGS } from "@/utils/messages"; // ✅ 메시지 상수 import
+import { useSignInWithOAuth } from "@/hook/use-sigin-in-oauth";
+import GitHubIcon from "@/assets/GitHubIcon";
 
 export default function LoginPage() {
+  const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =
+    useSignInWithOAuth();
+
+  const handleSignInWithGitHubClick = async () => {
+    signInWithOAuth("github"); // ✅ Supabase가 자동으로 리다이렉트
+  };
+
   const navigate = useNavigate();
 
   // 입력 상태 관리
@@ -47,9 +56,7 @@ export default function LoginPage() {
       navigate("/"); // 로그인 후 홈으로 이동 (원하는 페이지로 수정 가능)
     } catch (err) {
       const error = err as AxiosError<{ detail?: string }>;
-      const msg =
-        error.response?.data?.detail ??
-        MSGS.INVALID_CREDENTIALS; // 서버 메시지 없을 시 기본 메시지 사용
+      const msg = error.response?.data?.detail ?? MSGS.INVALID_CREDENTIALS; // 서버 메시지 없을 시 기본 메시지 사용
       alert(msg);
     }
   };
@@ -102,6 +109,19 @@ export default function LoginPage() {
                   <KakaoTalkIcon />
                 </span>
                 카카오계정으로 시작하기
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 w-full"
+                disabled={isSignInWithOAuthPending}
+                onClick={handleSignInWithGitHubClick}
+              >
+                <span className="mr-2">
+                  <GitHubIcon />
+                </span>
+                깃허브계정으로 로그인하기
               </Button>
             </div>
 
