@@ -1,7 +1,13 @@
 import { useState } from "react";
 
 export const useValidation = (
-  type: "nickname" | "email" | "password" | "passwordConfirm" | "authCode",
+  type:
+    | "name"
+    | "nickname"
+    | "email"
+    | "password"
+    | "passwordConfirm"
+    | "authCode",
   passwordValue?: string,
 ) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -21,12 +27,19 @@ export const useValidation = (
       return;
     }
 
+    if (type === "name") {
+      const result = value.trim().length >= 2; // 2글자 이상만 허용
+      setIsValid(result);
+      return;
+    }
+
     // ✅ 나머지 정규식 검사
     const result = rules[type].test(value);
     setIsValid(result);
   };
 
   const messages = {
+    name: ["이름은 한글 또는 영문 2글자 이상이어야 합니다", ""],
     nickname: [
       "닉네임은 2글자 이상, 한글/영문만 가능합니다",
       "사용 가능한 닉네임입니다",

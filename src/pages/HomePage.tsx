@@ -3,7 +3,7 @@ import GroupPanel from "@/components/HomePageComponents/GroupPanel";
 import ViewModeButtonGroup from "@/components/HomePageComponents/ViewModeButtonGroup";
 import { useEffect, useState } from "react";
 
-const HomePage = () => {
+export default function HomePage() {
   const [viewMode, setViewMode] = useState<"both" | "panel" | "chat">("both");
 
   useEffect(() => {
@@ -49,6 +49,4 @@ const HomePage = () => {
       </div>
     </div>
   );
-};
-
-export default HomePage;
+}

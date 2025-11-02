@@ -1,14 +1,14 @@
 // src/pages/LoginPage.tsx
+import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
+import GitHubIcon from "@/assets/GitHubIcon";
+import MoyoLogo from "@/components/authComponents/MoyoLogo";
+import AuthLinks from "@/components/authComponents/AuthLinks";
+import AuthInput from "@/components/authComponents/AuthInput";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
-import AuthLinks from "@/components/authComponents/AuthLinks";
-import MoyoLogo from "@/components/authComponents/MoyoLogo";
-import { Button } from "@/components/ui/button";
-import AuthInput from "@/components/authComponents/AuthInput";
-import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
-import GitHubIcon from "@/assets/GitHubIcon";
 import { useLoginMutation } from "@/hook/mutation/use-login";
+import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
 
 export default function LoginPage() {
   const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =

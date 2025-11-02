@@ -11,7 +11,7 @@ const API_BASE = import.meta.env.VITE_API_BASE ?? "/api/v1";
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
 
-  const [nickname, setNickname] = useState("Hoping");
+  const [nickname, setNickname] = useState("");
   const [name, setName] = useState<string>("이름 없음");
   const [email, setEmail] = useState<string>("이메일 없음");
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -28,6 +28,7 @@ export default function ProfilePage() {
         if (session) {
           // ✅ Supabase 로그인 상태
           const user = session.user;
+          setNickname(user?.user_metadata?.name ?? "이름 없음");
           setName(user?.user_metadata?.name ?? "이름 없음");
           setEmail(user?.email ?? "이메일 없음");
           setAvatar(user?.user_metadata?.avatar_url ?? null);
@@ -40,6 +41,7 @@ export default function ProfilePage() {
             });
             if (res.ok) {
               const me = await res.json();
+              setNickname(me.name);
               setName(me.name);
               setEmail(me.email);
               setAvatar(null); // 백엔드에 아바타 없으면 null
@@ -111,8 +113,15 @@ export default function ProfilePage() {
               <Pencil className="h-4 w-4" />
             </button>
           </div>
-          <div className="text-xl font-semibold">{name}</div>
-          <div className="text-sm text-gray-500">{email}</div>
+
+          {/* 이름 + 닉네임 + 이메일 */}
+          <div className="flex flex-col items-center text-center">
+            <div className="flex items-center space-x-1 text-xl font-semibold">
+              <span>{name}</span>
+              <span className="text-sm text-gray-500">@{nickname}</span>
+            </div>
+            <div className="text-sm text-gray-500">{email}</div>
+          </div>
         </div>
 
         {/* 닉네임 수정 */}

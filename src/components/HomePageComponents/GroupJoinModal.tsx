@@ -22,12 +22,12 @@ const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
 
         {/* 제목 */}
         <h2 className="mb-4 text-center text-2xl font-bold text-green-700">
-          서버 참가하기
+          그룹 참가하기
         </h2>
 
         {/* 안내 문구 */}
         <p className="mb-2 text-center text-sm text-gray-600">
-          초대 코드를 입력하여 기존 서버에 참가하세요.
+          초대 코드를 입력하여 기존 그룹에 참가하세요.
         </p>
         <p className="mb-6 text-center text-sm text-gray-500">
           초대 코드는 이렇게 생겼습니다:

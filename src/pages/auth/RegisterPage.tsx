@@ -1,25 +1,26 @@
 // src/pages/auth/RegisterPage.tsx
-import AuthLinks from "@/components/authComponents/AuthLinks";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
+import AuthLinks from "@/components/authComponents/AuthLinks";
+import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
-import { setNickname, setEmail } from "@/features/authSlice";
+import { setNickname, setEmail, setName } from "@/features/authSlice";
 import { useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import AuthInput from "@/components/authComponents/AuthInput";
+import { useNavigate } from "react-router-dom";
 import { useResendTimer } from "@/hook/useResendTimer";
 import { MSGS } from "@/utils/messages";
-import { useNavigate } from "react-router-dom";
 import {
   useSendCode,
   useSignup,
   useVerifyCode,
 } from "@/hook/mutation/use-auth-mutation";
 
-const RegisterPage = () => {
+export default function RegisterPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // ✅ 로컬 상태
+  const [name, setNameLocal] = useState("");
   const [nickname, setNicknameLocal] = useState("");
   const [email, setEmailLocal] = useState("");
   const [password, setPasswordLocal] = useState("");
@@ -31,6 +32,7 @@ const RegisterPage = () => {
   const [isCodeValid, setIsCodeValid] = useState<boolean | null>(null);
 
   // ✅ 유효성 상태
+  const [isNameValid, setIsNameValid] = useState<boolean | null>(null);
   const [isNickValid, setIsNickValid] = useState<boolean | null>(null);
   const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
   const [isPwValid, setIsPwValid] = useState<boolean | null>(null);
@@ -43,12 +45,13 @@ const RegisterPage = () => {
   // ✅ 전체 폼 유효
   const isFormValid = useMemo(
     () =>
+      isNameValid === true &&
       isNickValid === true &&
       isEmailValid === true &&
       isPwValid === true &&
       isPwMatch === true &&
       isCodeValid === true,
-    [isNickValid, isEmailValid, isPwValid, isPwMatch, isCodeValid],
+    [isNameValid, isNickValid, isEmailValid, isPwValid, isPwMatch, isCodeValid],
   );
 
   const { mutate: sendCode, isPending: loadingSend } = useSendCode();
@@ -98,6 +101,7 @@ const RegisterPage = () => {
         onSuccess: (data) => {
           console.log("회원가입 성공:", data);
           localStorage.setItem("token", data.access_token);
+          dispatch(setName(data.user.name));
           dispatch(setEmail(data.user.email));
           dispatch(setNickname(data.user.name));
           alert("회원가입 완료 및 로그인 성공!");
@@ -121,6 +125,15 @@ const RegisterPage = () => {
           className="flex w-full flex-col space-y-4"
           onSubmit={(e) => e.preventDefault()}
         >
+          {/* 이름 */}
+          <AuthInput
+            name="name"
+            placeholder="이름을 입력하세요"
+            value={name}
+            onChange={(e) => setNameLocal(e.target.value)}
+            onValidChange={setIsNameValid}
+          />
+
           {/* 닉네임 */}
           <AuthInput
             name="nickname"
@@ -239,6 +252,4 @@ const RegisterPage = () => {
       </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}

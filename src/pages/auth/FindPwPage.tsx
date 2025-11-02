@@ -1,11 +1,11 @@
-import { useState } from "react";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 import { useResendTimer } from "@/hook/useResendTimer";
+import { useState } from "react";
 import { MSGS } from "@/utils/messages";
 
-const FindPwPage = () => {
+export default function FindPwPage() {
   const [email, setEmail] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [authCode, setAuthCode] = useState("");
@@ -75,10 +75,10 @@ const FindPwPage = () => {
               {isCodeValid === true
                 ? "완료"
                 : isRunning
-                ? formatTime()
-                : isCodeSent
-                ? "재전송"
-                : "인증"}
+                  ? formatTime()
+                  : isCodeSent
+                    ? "재전송"
+                    : "인증"}
             </Button>
           </div>
 
@@ -108,6 +108,4 @@ const FindPwPage = () => {
       </div>
     </div>
   );
-};
-
-export default FindPwPage;
+}
