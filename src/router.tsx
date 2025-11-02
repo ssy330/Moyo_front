@@ -7,7 +7,7 @@ import AppLayout from "./AppLayout";
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
-const GroupsPage = lazy(() => import("./pages/groups/GroupsPage"));
+const MoyoGroupLayout = lazy(() => import("./pages/groups/MoyoGroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/groups", element: <GroupsPage /> },
+      { path: "/groups", element: <MoyoGroupLayout /> },
       { path: "/groups/new", element: <GroupCreatePage /> },
       { path: "/groups/:id", element: <GroupDetailPage /> },
       { path: "/profile/:id", element: <ProfilePage /> },

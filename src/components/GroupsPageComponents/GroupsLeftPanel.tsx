@@ -9,63 +9,58 @@ const GroupsLeftPanel = () => {
 
   return (
     <>
-      {/* 왼쪽 패널 */}
-      <aside className="mt-[76px] space-y-4">
-        <div className="relative rounded-md bg-neutral-200 p-4">
-          {/* 커버사진 영역 */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded bg-neutral-300">
-            {/* ⚙️ Settings 아이콘 */}
+      <aside className="space-y-5">
+        {/* 커버 */}
+        <div className="relative overflow-hidden rounded-2xl shadow-sm">
+          <div className="flex aspect-[4/3] w-full items-center justify-center bg-gradient-to-br from-neutral-200 to-neutral-300 text-neutral-500">
+            <span>그룹 커버 이미지</span>
             <button
-              className="absolute right-3 bottom-3 text-neutral-600 opacity-60 transition hover:text-neutral-800 hover:opacity-100"
-              aria-label="그룹 관리"
+              aria-label="그룹 설정"
+              className="absolute right-3 bottom-3 rounded-full bg-white/80 p-2 text-neutral-700 transition hover:bg-white"
             >
-              <Settings size={22} strokeWidth={1.8} />
+              <Settings size={20} strokeWidth={1.8} />
             </button>
           </div>
         </div>
 
         {/* 그룹 정보 */}
-        <div className="space-y-2 rounded-md bg-white p-4 shadow-sm">
-          <div className="text-xl font-extrabold tracking-tight">
-            GROUP 이름
-          </div>
-          <div className="mt-2 text-sm leading-relaxed text-neutral-600">
-            여기는 그룹 소개가 들어가는 영역입니다.
-          </div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500">
-            <button className="cursor-pointer rounded bg-neutral-100 px-2 py-1">
-              멤버: 93,128명
-            </button>
+        <div className="rounded-2xl bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-neutral-900">🌸 MOYO 그룹</h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+            함께하는 순간을 기록하는 Moyo Group에 오신 것을 환영합니다.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-neutral-600">
+            <span className="rounded-full bg-neutral-100 px-3 py-1">
+              멤버 93,128명
+            </span>
             <button
-              className="cursor-pointer rounded bg-neutral-100 px-2 py-1"
               onClick={() => setOpenInviteCode(true)}
+              className="rounded-full bg-rose-50 px-3 py-1 text-rose-600 transition hover:bg-rose-100"
             >
-              초대코드
+              초대 코드
             </button>
           </div>
         </div>
 
-        {/* 게시판 글 작성 */}
-        <div
-          className="cursor-pointer rounded-md bg-white p-4 text-center shadow-sm"
+        {/* 글쓰기 */}
+        <button
           onClick={() => setOpenWriteModal(true)}
+          className="w-full rounded-2xl bg-gradient-to-br from-green-100 to-green-50 py-3 font-semibold shadow-md transition hover:opacity-70"
         >
-          <span className="flex-1 text-xl font-semibold">게시판 글 작성</span>
-        </div>
+          ✏️ 게시글 작성하기
+        </button>
 
         {/* 카테고리 */}
-        <div className="mt-3 rounded bg-neutral-100 p-6 text-center text-sm text-neutral-500">
-          게시판 나누기 (카테고리)
+        <div className="rounded-2xl bg-white p-5 text-sm text-neutral-600 shadow-sm">
+          카테고리 / 게시판 분류 영역
         </div>
       </aside>
 
-      {/* 글쓰기 모달 */}
+      {/* 모달 */}
       <WritePostModal
         isOpen={openWriteModal}
         onClose={() => setOpenWriteModal(false)}
       />
-
-      {/* 초대 코드 모델 */}
       <InviteCodeModal
         isOpen={openInviteCode}
         onClose={() => setOpenInviteCode(false)}
