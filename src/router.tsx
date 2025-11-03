@@ -2,65 +2,73 @@
 import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "./AppLayout";
-import GlobalLoader from "@/components/global-loader"; // ✅ 추가
+import GlobalLoader from "@/components/layouts/global-loader";
 
-// --- 페이지 컴포넌트 (lazy 로드) ---
+// ✅ 보호 레이아웃 import
+import MemberOnlyLayout from "@/components/layouts/member-only-layout";
+import GuestOnlyLayout from "@/components/layouts/guest-only-layout";
+
+// --- 페이지 (lazy 로드) ---
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
+const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
 const Notifications = lazy(() => import("./pages/NotificationsPage"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 const CalendarPage = lazy(() => import("./pages/calendar/CalendarPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 // --- 라우터 정의 ---
 export const router = createBrowserRouter([
+  // ✅ 로그인된 사용자만 접근 가능한 라우트
   {
     element: (
-      // ✅ 전체 레이아웃 Suspense로 감싸기
       <Suspense fallback={<GlobalLoader />}>
-        <AppLayout />
+        <MemberOnlyLayout />
       </Suspense>
     ),
     children: [
-      { path: "/", element: <HomePage /> },
-      { path: "/groups", element: <GroupLayout /> },
-      { path: "/groups/new", element: <GroupCreatePage /> },
-      { path: "/groups/:id", element: <GroupDetailPage /> },
-      { path: "/profile/:id", element: <ProfilePage /> },
-      { path: "/notifications/:id", element: <Notifications /> },
-      { path: "/calendar", element: <CalendarPage /> }, // ✅ calender → calendar 오타 수정
-      { path: "/settings", element: <SettingsLayout /> },
+      {
+        element: <AppLayout />, // 앱 공통 레이아웃
+        children: [
+          { path: "/", element: <HomePage /> },
+          { path: "/groups", element: <GroupLayout /> },
+          { path: "/groups/new", element: <GroupCreatePage /> },
+          { path: "/groups/:id", element: <GroupDetailPage /> },
+          { path: "/profile/:id", element: <ProfilePage /> },
+          { path: "/notifications/:id", element: <Notifications /> },
+          { path: "/calendar", element: <CalendarPage /> },
+          { path: "/settings", element: <SettingsLayout /> },
+        ],
+      },
     ],
   },
+
+  // ✅ 비로그인 사용자만 접근 가능한 라우트
   {
-    path: "/login",
     element: (
       <Suspense fallback={<GlobalLoader />}>
-        <LoginPage />
+        <GuestOnlyLayout />
+      </Suspense>
+    ),
+    children: [
+      { path: "/login", element: <LoginPage /> },
+      { path: "/register", element: <RegisterPage /> },
+      { path: "/find/password", element: <FindPwPage /> },
+    ],
+  },
+
+  // ✅ 404
+  {
+    path: "*",
+    element: (
+      <Suspense fallback={<GlobalLoader />}>
+        <NotFoundPage />
       </Suspense>
     ),
   },
-  {
-    path: "/register",
-    element: (
-      <Suspense fallback={<GlobalLoader />}>
-        <RegisterPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/find/password",
-    element: (
-      <Suspense fallback={<GlobalLoader />}>
-        <FindPwPage />
-      </Suspense>
-    ),
-  },
-  { path: "*", element: <NotFoundPage /> },
 ]);
