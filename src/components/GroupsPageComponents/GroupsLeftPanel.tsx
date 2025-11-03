@@ -1,13 +1,9 @@
 import { Settings } from "lucide-react";
-import { useState } from "react";
-import WritePostModal from "./WriteModal";
-import InviteCodeModal from "./InviteCodeModal";
-import GroupSettingModal from "./GroupSettingsModal";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/features/modalSlice";
 
 const GroupsLeftPanel = () => {
-  const [openWriteModal, setOpenWriteModal] = useState(false);
-  const [openInviteCode, setOpenInviteCode] = useState(false);
-  const [openGroupSetting, setOpenGroupSetting] = useState(false);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -19,7 +15,7 @@ const GroupsLeftPanel = () => {
             <button
               aria-label="그룹 설정"
               className="absolute right-3 bottom-3 rounded-full bg-white/80 p-2 text-neutral-700 transition hover:bg-white"
-              onClick={() => setOpenGroupSetting(true)}
+              onClick={() => dispatch(openModal("groupSetting"))}
             >
               <Settings size={20} strokeWidth={1.8} />
             </button>
@@ -37,7 +33,7 @@ const GroupsLeftPanel = () => {
               멤버 93,128명
             </span>
             <button
-              onClick={() => setOpenInviteCode(true)}
+              onClick={() => dispatch(openModal("invite"))}
               className="rounded-full bg-rose-50 px-3 py-1 text-rose-600 transition hover:bg-rose-100"
             >
               초대 코드
@@ -47,7 +43,7 @@ const GroupsLeftPanel = () => {
 
         {/* 글쓰기 */}
         <button
-          onClick={() => setOpenWriteModal(true)}
+          onClick={() => dispatch(openModal("write"))}
           className="w-full rounded-2xl bg-gradient-to-br from-green-100 to-green-50 py-3 font-semibold shadow-md transition hover:opacity-70"
         >
           ✏️ 게시글 작성하기
@@ -58,20 +54,6 @@ const GroupsLeftPanel = () => {
           카테고리 / 게시판 분류 영역
         </div>
       </aside>
-
-      {/* 모달 */}
-      <WritePostModal
-        isOpen={openWriteModal}
-        onClose={() => setOpenWriteModal(false)}
-      />
-      <InviteCodeModal
-        isOpen={openInviteCode}
-        onClose={() => setOpenInviteCode(false)}
-      />
-      <GroupSettingModal
-        isOpen={openGroupSetting}
-        onClose={() => setOpenGroupSetting(false)}
-      />
     </>
   );
 };

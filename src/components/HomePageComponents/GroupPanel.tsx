@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import GroupActionButton from "./GroupActionButton";
 import GroupCard from "./GroupCard";
-import GroupJoinModal from "./GroupJoinModal";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/features/modalSlice";
 
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
@@ -14,10 +14,9 @@ const groupMockData = [
   { id: 3, title: "KIS", memberNum: 12, imageUrl: "/images/kis.jpg" },
 ];
 
-const GroupPanel = ({ viewMode }: GroupPanelProps) => {
+export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const nav = useNavigate();
-
-  const [openGroupJoin, setOpenGroupJoin] = useState(false);
+  const dispatch = useDispatch();
 
   const handleClickGroup = (id: number) => {
     console.log(`Navigate to group detail: ${id}`);
@@ -43,7 +42,7 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
           />
           <GroupActionButton
             label="참여하기"
-            onClick={() => setOpenGroupJoin(true)}
+            onClick={() => dispatch(openModal("groupJoin"))}
           />
 
           {/* 그룹 카드들 */}
@@ -59,12 +58,6 @@ const GroupPanel = ({ viewMode }: GroupPanelProps) => {
           ))}
         </div>
       </div>
-      <GroupJoinModal
-        isOpen={openGroupJoin}
-        onClose={() => setOpenGroupJoin(false)}
-      />
     </>
   );
-};
-
-export default GroupPanel;
+}

@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import supabase from "./lib/supabase";
 import { setSession } from "./features/sessionSlice";
+import ModalProvider from "./pages/provider/modal-provider";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +18,9 @@ supabase.auth.onAuthStateChange((_event, session) => {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <ModalProvider>
+        <RouterProvider router={router} />
+      </ModalProvider>
     </Provider>
   </QueryClientProvider>,
 );
