@@ -1,7 +1,7 @@
-import CloseButton from "../CloseButton";
 import type { ModalProps } from "@/types/types";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { X } from "lucide-react";
 
 const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
   const [inviteCode, setInviteCode] = useState("");
@@ -18,7 +18,13 @@ const GroupJoinModal = ({ isOpen, onClose }: ModalProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 */}
-        <CloseButton onClick={onClose} />
+        <button
+          onClick={onClose}
+          aria-label="닫기"
+          className="absolute top-4 right-4 rounded-full p-1 text-neutral-500 hover:bg-neutral-100"
+        >
+          <X size={18} />
+        </button>
 
         {/* 제목 */}
         <h2 className="mb-4 text-center text-2xl font-bold text-green-700">

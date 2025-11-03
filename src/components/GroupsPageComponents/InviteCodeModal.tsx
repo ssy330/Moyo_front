@@ -1,6 +1,5 @@
 import type { ModalProps } from "@/types/types";
-import CloseButton from "../CloseButton";
-import { Copy } from "lucide-react";
+import { Copy, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const InviteCodeModal = ({ isOpen, onClose }: ModalProps) => {
@@ -32,7 +31,13 @@ const InviteCodeModal = ({ isOpen, onClose }: ModalProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 */}
-        <CloseButton onClick={onClose} />
+        <button
+          onClick={onClose}
+          aria-label="닫기"
+          className="absolute top-4 right-4 rounded-full p-1 text-neutral-500 hover:bg-neutral-100"
+        >
+          <X size={18} />
+        </button>
 
         {/* 제목 */}
         <h2 className="mb-5 text-center text-2xl font-bold text-emerald-600">

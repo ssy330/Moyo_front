@@ -2,10 +2,12 @@ import { Settings } from "lucide-react";
 import { useState } from "react";
 import WritePostModal from "./WriteModal";
 import InviteCodeModal from "./InviteCodeModal";
+import GroupSettingModal from "./GroupSettingsModal";
 
 const GroupsLeftPanel = () => {
   const [openWriteModal, setOpenWriteModal] = useState(false);
   const [openInviteCode, setOpenInviteCode] = useState(false);
+  const [openGroupSetting, setOpenGroupSetting] = useState(false);
 
   return (
     <>
@@ -17,6 +19,7 @@ const GroupsLeftPanel = () => {
             <button
               aria-label="그룹 설정"
               className="absolute right-3 bottom-3 rounded-full bg-white/80 p-2 text-neutral-700 transition hover:bg-white"
+              onClick={() => setOpenGroupSetting(true)}
             >
               <Settings size={20} strokeWidth={1.8} />
             </button>
@@ -64,6 +67,10 @@ const GroupsLeftPanel = () => {
       <InviteCodeModal
         isOpen={openInviteCode}
         onClose={() => setOpenInviteCode(false)}
+      />
+      <GroupSettingModal
+        isOpen={openGroupSetting}
+        onClose={() => setOpenGroupSetting(false)}
       />
     </>
   );

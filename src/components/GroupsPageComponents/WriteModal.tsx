@@ -1,9 +1,8 @@
 /**
  * 그룹 만들 때, 입력 폼
  */
-import { Camera, Video, Smile, ListChecks } from "lucide-react";
+import { Camera, Video, Smile, ListChecks, X } from "lucide-react";
 import type { ModalProps } from "@/types/types";
-import CloseButton from "../CloseButton";
 
 const WritePostModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
@@ -18,7 +17,13 @@ const WritePostModal = ({ isOpen, onClose }: ModalProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 */}
-        <CloseButton onClick={onClose} />
+        <button
+          onClick={onClose}
+          aria-label="닫기"
+          className="absolute top-4 right-4 rounded-full p-1 text-neutral-500 hover:bg-neutral-100"
+        >
+          <X size={18} />
+        </button>
 
         {/* 제목 */}
         <h2 className="mb-4 text-center text-xl font-bold">글쓰기</h2>

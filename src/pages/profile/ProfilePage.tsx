@@ -15,12 +15,10 @@ export default function ProfilePage() {
   const [name, setName] = useState<string>("이름 없음");
   const [email, setEmail] = useState<string>("이메일 없음");
   const [avatar, setAvatar] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
   // ✅ 1. Supabase 세션 먼저 확인
   useEffect(() => {
     const loadProfile = async () => {
-      setLoading(true);
       try {
         const { data } = await supabase.auth.getSession();
         const session = data.session;
@@ -52,8 +50,6 @@ export default function ProfilePage() {
         }
       } catch (err) {
         console.error("프로필 불러오기 실패:", err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -84,10 +80,6 @@ export default function ProfilePage() {
     dispatch(clearSession());
     window.location.href = "/login";
   };
-
-  if (loading) {
-    return <div className="mt-20 text-gray-600">불러오는 중...</div>;
-  }
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-50 py-12">

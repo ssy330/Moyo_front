@@ -36,7 +36,7 @@ const AppLayout = () => {
           </button>
 
           <button
-            onClick={() => navigate("/calender")}
+            onClick={() => navigate("/calendar")}
             className="rounded-xl bg-green-200 p-2 transition hover:bg-green-300"
             title="캘린더"
           >

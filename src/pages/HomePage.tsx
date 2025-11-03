@@ -12,11 +12,11 @@ export default function HomePage() {
       const width = window.innerWidth;
 
       setViewMode((prev) => {
-        // 📱 좁아졌을 때
+        // 좁아졌을 때
         if (width < 1024) {
           return prev === "both" ? "panel" : prev;
         }
-        // 💻 넓어졌을 때
+        // 넓어 졌을 때
         else {
           return prev === "panel" ? "both" : prev;
         }
