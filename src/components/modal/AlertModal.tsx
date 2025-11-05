@@ -1,25 +1,47 @@
 import {
   AlertDialog,
-  AlertDialogCancel,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-} from "../ui/alert-dialog";
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { closeAlert } from "@/features/alertSlice";
 
 export default function AlertModal() {
+  const dispatch = useDispatch();
+  const alert = useSelector((state: RootState) => state.alert);
+
+  if (!alert.isOpen) return null;
+
+  const handleCancelClick = () => {
+    alert.onNegative?.();
+    dispatch(closeAlert());
+  };
+
+  const handleActionClick = () => {
+    alert.onPositive?.();
+    dispatch(closeAlert());
+  };
+
   return (
-    <AlertDialog>
+    <AlertDialog open={alert.isOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>헤더</AlertDialogTitle>
-          <AlertDialogDescription>설명</AlertDialogDescription>
+          <AlertDialogTitle>{alert.title}</AlertDialogTitle>
+          <AlertDialogDescription>{alert.description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>취소</AlertDialogCancel>
-          <AlertDialogAction>확인</AlertDialogAction>
+          <AlertDialogCancel onClick={handleCancelClick}>
+            취소
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={handleActionClick}>
+            확인
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -13,6 +13,7 @@ import { closeModal } from "@/features/modalSlice";
 import { useCreatePost } from "@/hook/mutation/use-create-post-mutation";
 import { toast } from "sonner";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import { closeAlert, openAlert } from "@/features/alertSlice";
 
 type Image = {
   file: File;
@@ -65,6 +66,20 @@ export default function WriteModal() {
 
   // 모달 닫기 버튼
   const handleCloseModal = () => {
+    if (text !== "" || images.length !== 0) {
+      dispatch(
+        openAlert({
+          title: "삭제하시겠어요?",
+          description: "이 작업은 되돌릴 수 없습니다.",
+          onPositive: () => {
+            dispatch(closeModal());
+            dispatch(closeAlert());
+          },
+        }),
+      );
+      return;
+    }
+
     dispatch(closeModal());
   };
 
@@ -106,7 +121,10 @@ export default function WriteModal() {
 
   return (
     <Dialog open={open} onOpenChange={handleCloseModal}>
-      <DialogContent className="max-h-[90vh] w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <DialogContent
+        className="max-h-[90vh] w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        aria-describedby={undefined}
+      >
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold text-neutral-900">
             글쓰기

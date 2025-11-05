@@ -5,6 +5,7 @@ import InviteCodeModal from "@/components/modal/InviteCodeModal";
 import WritePostModal from "@/components/modal/WriteModal";
 import GroupSettingModal from "@/components/modal/GroupSettingsModal";
 import GroupJoinModal from "@/components/modal/GroupJoinModal";
+import AlertModal from "@/components/modal/AlertModal";
 
 export default function ModalProvider({
   children,
@@ -23,6 +24,7 @@ export default function ModalProvider({
           {currentModal === "write" && <WritePostModal />}
           {currentModal === "groupSetting" && <GroupSettingModal />}
           {currentModal === "groupJoin" && <GroupJoinModal />}
+          <AlertModal />
         </>,
         document.getElementById("modal-root")!,
       )}
