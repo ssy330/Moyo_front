@@ -22,12 +22,14 @@ export function useUserQuery() {
       }
 
       // ✅ FastAPI 로그인 상태 확인
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       if (!token) throw new Error("로그인되지 않음");
 
       const res = await api.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(res);
+
       return { ...res.data, provider: "fastapi" };
     },
     retry: false,

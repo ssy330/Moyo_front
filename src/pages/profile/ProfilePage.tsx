@@ -32,7 +32,7 @@ export default function ProfilePage() {
           setAvatar(user?.user_metadata?.avatar_url ?? null);
         } else {
           // ✅ FastAPI 로그인 상태 확인
-          const token = localStorage.getItem("token");
+          const token = localStorage.getItem("access_token");
           if (token) {
             const res = await fetch(`${API_BASE}/auth/me`, {
               headers: { Authorization: `Bearer ${token}` },

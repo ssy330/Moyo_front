@@ -1,4 +1,3 @@
-// src/lib/supapi.ts
 import type { Provider } from "@supabase/supabase-js";
 import supabase from "./supabase";
 

@@ -13,13 +13,14 @@ export function useLoginMutation() {
     mutationFn: async (form: { email: string; password: string }) => {
       const res = await api.post("/auth/login", form);
       const token = res.data.access_token;
-      localStorage.setItem("token", token);
+      localStorage.setItem("access_token", token);
 
       // ✅ 토큰으로 유저 정보 요청
       const me = await api.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      console.log(me.data);
       // ✅ Redux 상태 갱신
       dispatch(setSession(me.data));
 

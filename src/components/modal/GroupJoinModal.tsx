@@ -39,7 +39,7 @@ export default function GroupJoinModal() {
         <div className="mb-6 text-center text-sm text-gray-500">
           초대 코드는 이렇게 생겼습니다:
           <br />
-          <span className="text-blue-600">https://moyo.gg/invite/</span>
+          <span className="text-blue-600">영문+숫자 6자리</span>
         </div>
 
         {/* 입력창 */}
