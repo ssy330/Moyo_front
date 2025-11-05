@@ -122,7 +122,7 @@ export default function WriteModal() {
   return (
     <Dialog open={open} onOpenChange={handleCloseModal}>
       <DialogContent
-        className="max-h-[90vh] w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        className="max-h-[90vh] w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl"
         aria-describedby={undefined}
       >
         <DialogHeader>
@@ -207,7 +207,7 @@ export default function WriteModal() {
               (images.length === 0 && text.trim() === "") || isCreatePostPending
             }
             onClick={handleCreatePostClick}
-            className="rounded-lg bg-neutral-900 px-5 py-2 font-medium text-white hover:bg-neutral-700"
+            className="rounded-lg px-5 py-2 font-medium text-white"
           >
             게시
           </Button>

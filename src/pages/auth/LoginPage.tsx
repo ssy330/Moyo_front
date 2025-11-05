@@ -7,7 +7,7 @@ import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "@/hook/mutation/use-login";
+import { useLoginMutation } from "@/hook/mutation/use-login-mutation";
 import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
 
 export default function LoginPage() {
