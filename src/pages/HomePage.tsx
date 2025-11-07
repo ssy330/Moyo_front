@@ -46,7 +46,7 @@ export default function HomePage() {
   const isOverlayChat = isMobile && viewMode === "chat";
 
   return (
-    <div className="relative px-4 pt-16 sm:px-8 lg:px-20">
+    <div className="relative px-4 pt-16">
       {/* 뷰모드 버튼 */}
       <div className="absolute top-1 right-1">
         <ViewModeButtonGroup
@@ -102,24 +102,24 @@ export default function HomePage() {
             </div>
 
             {/* ✅ 채팅방 */}
-            <div
-              className={`${
-                !isOverlayChat && viewMode === "chat"
-                  ? "min-w-0 flex-1"
-                  : "absolute inset-0 z-10 bg-white transition-all duration-300"
-              } ${
-                !isOverlayChat &&
-                viewMode !== "chat" &&
-                (selectedChat
-                  ? "translate-x-0 opacity-100"
-                  : "translate-x-full opacity-0")
-              }`}
-            >
-              <ChatRoomPanel
-                chatId={selectedChat}
-                onBack={() => setSelectedChat(null)}
-              />
-            </div>
+            {selectedChat && (
+              <div
+                className={`${
+                  !isOverlayChat && viewMode === "chat"
+                    ? "min-w-0 flex-1"
+                    : "absolute inset-0 z-10 bg-white transition-all duration-300"
+                } ${
+                  !isOverlayChat && viewMode !== "chat"
+                    ? "translate-x-0 opacity-100"
+                    : ""
+                }`}
+              >
+                <ChatRoomPanel
+                  chatId={selectedChat}
+                  onBack={() => setSelectedChat(null)}
+                />
+              </div>
+            )}
           </aside>
         )}
       </div>
