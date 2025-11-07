@@ -1,3 +1,5 @@
+import { ArrowLeft } from "lucide-react";
+
 interface ChatRoomPanelProps {
   chatId: string | null;
   onBack: () => void;
@@ -17,8 +19,8 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
     <div className="flex h-[calc(90vh)] flex-col rounded-2xl border border-neutral-200 bg-white shadow-lg">
       {/* 헤더 */}
       <div className="flex h-12 items-center justify-between border-b bg-white px-4">
-        <button onClick={onBack} className="text-sm text-neutral-500 lg:hidden">
-          ←
+        <button onClick={onBack} className="text-sm text-neutral-500">
+          <ArrowLeft className="h-4 w-4" />
         </button>
         <div className="font-semibold text-neutral-800">{chatName}</div>
         <button className="text-sm text-neutral-500 hover:text-neutral-800">

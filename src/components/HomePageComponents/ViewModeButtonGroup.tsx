@@ -1,6 +1,10 @@
 /**
- * 채팅과 그룹 보여주는 것 설정.
+ * ViewModeButtonGroup.tsx
+ *
+ * - 상단 오른쪽에 떠 있는 뷰모드 전환 버튼 (패널 / 채팅 / 둘다)
+ * - pill 스타일로 개선 (라운드, 그라데이션, 부드러운 hover)
  */
+
 type ViewMode = "both" | "panel" | "chat";
 
 interface ButtonOption {
@@ -15,33 +19,34 @@ interface Props {
 }
 
 const defaultOptions: ButtonOption[] = [
-  { key: "panel", label: "패널만" },
-  { key: "chat", label: "채팅만" },
-  { key: "both", label: "둘 다" },
+  { key: "panel", label: "패널" },
+  { key: "chat", label: "채팅" },
+  { key: "both", label: "모두" },
 ];
 
-const ViewModeButtonGroup = ({
+export default function ViewModeButtonGroup({
   value,
   onChange,
   options = defaultOptions,
-}: Props) => {
+}: Props) {
   return (
-    <div className="absolute top-4 right-10 flex items-center gap-3">
-      {options.map(({ key, label }) => (
-        <button
-          key={key}
-          onClick={() => onChange(key)}
-          className={`rounded-md border px-3 py-1 transition-colors ${
-            value === key
-              ? "border-rose-400 bg-rose-200"
-              : "border-gray-300 bg-white hover:bg-gray-100"
-          }`}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="mt-2 mr-7 flex items-center rounded-full border border-neutral-200 bg-white/80 shadow-sm backdrop-blur-md">
+      {options.map(({ key, label }) => {
+        const isActive = value === key;
+        return (
+          <button
+            key={key}
+            onClick={() => onChange(key)}
+            className={`relative px-5 py-2 text-sm font-medium transition-all duration-200 ${
+              isActive
+                ? "bg-gradient-to-r from-green-400 to-green-500 text-white shadow-sm"
+                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800"
+            } rounded-full`}
+          >
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
-};
-
-export default ViewModeButtonGroup;
+}
