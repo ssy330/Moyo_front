@@ -1,28 +1,22 @@
 import ChattingPanel from "@/components/HomePageComponents/ChattingPanel";
+import ChatRoomPanel from "@/components/HomePageComponents/ChatRoomPanel";
 import GroupPanel from "@/components/HomePageComponents/GroupPanel";
 import ViewModeButtonGroup from "@/components/HomePageComponents/ViewModeButtonGroup";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function HomePage() {
   const [viewMode, setViewMode] = useState<"both" | "panel" | "chat">("both");
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
 
   useEffect(() => {
     if (viewMode === "chat") return;
     const handleResize = () => {
       const width = window.innerWidth;
-
       setViewMode((prev) => {
-        // 좁아졌을 때
-        if (width < 1024) {
-          return prev === "both" ? "panel" : prev;
-        }
-        // 넓어 졌을 때
-        else {
-          return prev === "panel" ? "both" : prev;
-        }
+        if (width < 1024) return prev === "both" ? "panel" : prev;
+        else return prev === "panel" ? "both" : prev;
       });
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -30,11 +24,9 @@ export default function HomePage() {
 
   return (
     <div className="relative px-4 pt-12 sm:px-8 lg:px-20">
-      {/* 필터 버튼 */}
       <ViewModeButtonGroup value={viewMode} onChange={setViewMode} />
 
-      {/* 메인 레이아웃 */}
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
+      <div className="flex flex-col gap-6 lg:flex-row">
         {(viewMode === "both" || viewMode === "panel") && (
           <section className="w-full flex-1">
             <GroupPanel viewMode={viewMode} />
@@ -42,8 +34,18 @@ export default function HomePage() {
         )}
 
         {(viewMode === "both" || viewMode === "chat") && (
-          <aside className="w-full shrink-0 lg:w-[420px] xl:w-[450px]">
-            <ChattingPanel />
+          <aside className="flex w-full shrink-0 gap-4 lg:w-[850px]">
+            {/* 왼쪽: 채팅 목록 */}
+            <div className="w-[320px] shrink-0">
+              <ChattingPanel onSelectChat={setSelectedChat} />
+            </div>
+            {/* 오른쪽: 채팅방 본문 */}
+            <div className="flex-1">
+              <ChatRoomPanel
+                chatId={selectedChat}
+                onBack={() => setSelectedChat(null)}
+              />
+            </div>
           </aside>
         )}
       </div>
