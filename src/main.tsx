@@ -8,6 +8,7 @@ import { setSession } from "./features/sessionSlice";
 import ModalProvider from "./pages/provider/modal-provider";
 import supabase from "./lib/supabase";
 import "./index.css";
+import SessionProvider from "./pages/provider/session-provider";
 
 const queryClient = new QueryClient();
 
@@ -18,9 +19,11 @@ supabase.auth.onAuthStateChange((_event, session) => {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
-      <ModalProvider>
-        <RouterProvider router={router} />
-      </ModalProvider>
+      <SessionProvider>
+        <ModalProvider>
+          <RouterProvider router={router} />
+        </ModalProvider>
+      </SessionProvider>
     </Provider>
   </QueryClientProvider>,
 );

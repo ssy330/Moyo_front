@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import { Plus } from "lucide-react";
+import PostFeed from "@/components/GroupsPageComponents/post-feed";
 
 export default function MoyoGroupLayout() {
   const [fabOpen, setFabOpen] = useState(false);
@@ -50,6 +51,7 @@ export default function MoyoGroupLayout() {
               <div className="text-sm text-neutral-500">
                 아직 작성된 게시글이 없습니다.
               </div>
+              <PostFeed />
             </section>
           </main>
         </div>

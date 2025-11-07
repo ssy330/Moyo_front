@@ -47,7 +47,7 @@ export default function WriteModal() {
     },
   });
 
-  // ✅ textarea 자동 높이 조정
+  // textarea 자동 높이 조정
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -56,8 +56,12 @@ export default function WriteModal() {
     }
   }, [text]);
 
-  // ✅ 모달 열릴 때 자동 포커스
+  // 모달 열릴 때 자동 포커스
   useEffect(() => {
+    // 메모리 누수를 막기위한 코드
+    images.forEach((image) => {
+      URL.revokeObjectURL(image.previewUrl);
+    });
     if (!open) return;
     textareaRef.current?.focus();
     setText("");
@@ -83,7 +87,7 @@ export default function WriteModal() {
     dispatch(closeModal());
   };
 
-  // ✅ 게시 버튼 클릭
+  // 게시 버튼 클릭
   const handleCreatePostClick = () => {
     if (text.trim() === "") return;
     createPost({
@@ -93,11 +97,12 @@ export default function WriteModal() {
     });
   };
 
-  // ✅ 카메라 아이콘 클릭 → 파일 선택
+  // 카메라 아이콘 클릭 → 파일 선택
   const handleCameraClick = () => {
     fileInputRef.current?.click();
   };
 
+  // 사진 선택 핸들러.
   const handleSelectImages = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
@@ -117,6 +122,8 @@ export default function WriteModal() {
     setImages((prevImages) =>
       prevImages.filter((item) => item.previewUrl !== image.previewUrl),
     );
+    // x 버튼 누른 이미지 삭제
+    URL.revokeObjectURL(image.previewUrl);
   };
 
   return (
