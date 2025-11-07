@@ -7,41 +7,43 @@ import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "@/hook/mutation/use-login-mutation";
+import { useSignInWithEmail } from "@/hook/mutation/use-login-mutation";
 import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
 
 export default function LoginPage() {
-  const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =
-    useSignInWithOAuth();
-
-  const navigate = useNavigate();
-  const loginMutation = useLoginMutation();
-
   // 입력 상태 관리
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  // 입력값 업데이트
+  const navigate = useNavigate();
+
+  const { mutate: signInWithEmail, isPending: isSignInWithEmailPending } =
+    useSignInWithEmail();
+  const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =
+    useSignInWithOAuth();
+
+  // 입력 값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   // 로그인 요청
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignInWithEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate(
+    signInWithEmail(
       { email: form.email, password: form.password },
       {
-        onSuccess: () => navigate("/"),
+        onSuccess: () => navigate("/", { replace: true }),
       },
     );
   };
 
-  const handleSignInWithGitHubClick = async () => {
-    signInWithOAuth("github"); // ✅ Supabase가 자동으로 리다이렉트
+  // 깃허브 소셜 로그인
+  const handleSignInWithGitHub = async () => {
+    signInWithOAuth("github"); // Supabase가 자동으로 리다이렉트
   };
 
   return (
@@ -55,7 +57,7 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-white">
         <div className="w-full max-w-sm p-6">
           {/* 로그인 폼 */}
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSignInWithEmail}>
             {/* 입력 + 버튼 묶음 */}
             <div className="mb-4 flex flex-col gap-3">
               <AuthInput
@@ -77,7 +79,11 @@ export default function LoginPage() {
               />
 
               {/* 로그인 버튼 */}
-              <Button type="submit" className="h-12 w-full text-base">
+              <Button
+                type="submit"
+                className="h-12 w-full text-base"
+                disabled={isSignInWithEmailPending}
+              >
                 로그인
               </Button>
 
@@ -99,7 +105,7 @@ export default function LoginPage() {
                 variant="outline"
                 className="h-12 w-full"
                 disabled={isSignInWithOAuthPending}
-                onClick={handleSignInWithGitHubClick}
+                onClick={handleSignInWithGitHub}
               >
                 <span className="mr-2">
                   <GitHubIcon />

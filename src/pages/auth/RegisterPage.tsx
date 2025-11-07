@@ -13,7 +13,7 @@ import {
   useSendCode,
   useSignup,
   useVerifyCode,
-} from "@/hook/mutation/use-auth-mutation";
+} from "@/hook/mutation/use-signup-mutation";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
