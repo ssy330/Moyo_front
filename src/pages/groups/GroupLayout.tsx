@@ -17,7 +17,7 @@ export default function MoyoGroupLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-neutral-100 text-neutral-900">
+    <div className="min-h-screen text-neutral-900">
       <div className="mx-auto max-w-[1200px] px-4 py-8">
         <div className="grid gap-8 md:grid-cols-[260px_1fr]">
           {/* 왼쪽 패널 */}
@@ -30,7 +30,7 @@ export default function MoyoGroupLayout() {
             {/* 공지사항 */}
             <section className="rounded-2xl bg-white/70 px-6 py-5 shadow-sm backdrop-blur">
               <h2 className="mb-2 text-lg font-semibold text-neutral-800">
-                📢 공지 사항
+                공지 사항
               </h2>
               <p className="text-sm text-neutral-600">
                 아직 등록된 공지사항이 없습니다.
@@ -40,17 +40,13 @@ export default function MoyoGroupLayout() {
             {/* 게시판 */}
             <section className="min-h-[420px] rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-neutral-800">
-                  📝 게시글
-                </h2>
+                <h2 className="text-lg font-bold text-neutral-800">게시글</h2>
                 <div className="flex gap-2">
                   <div className="h-5 w-5 rounded-md bg-neutral-200" />
                   <div className="h-5 w-5 rounded-md bg-neutral-200" />
                 </div>
               </div>
-              <div className="text-sm text-neutral-500">
-                아직 작성된 게시글이 없습니다.
-              </div>
+
               <PostFeed />
             </section>
           </main>

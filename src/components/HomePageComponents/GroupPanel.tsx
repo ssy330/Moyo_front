@@ -19,7 +19,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
   const handleClickGroup = (id: number) => {
     console.log(`Navigate to group detail: ${id}`);
-    nav("/groups");
+    nav(`/groups/${id}/board`);
   };
 
   return (

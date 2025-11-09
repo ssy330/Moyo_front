@@ -15,7 +15,6 @@ const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
-const GroupDetailPage = lazy(() => import("./pages/groups/GroupDetailPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
 const Notifications = lazy(() => import("./pages/NotificationsPage"));
@@ -36,9 +35,8 @@ export const router = createBrowserRouter([
         element: <AppLayout />, // 앱 공통 레이아웃
         children: [
           { path: "/", element: <HomePage /> },
-          { path: "/groups", element: <GroupLayout /> },
+          { path: "/groups/:id/board", element: <GroupLayout /> },
           { path: "/groups/new", element: <GroupCreatePage /> },
-          { path: "/groups/:id", element: <GroupDetailPage /> },
           { path: "/profile/:id", element: <ProfilePage /> },
           { path: "/notifications/:id", element: <Notifications /> },
           { path: "/calendar", element: <CalendarPage /> },

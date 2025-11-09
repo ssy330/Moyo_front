@@ -24,7 +24,7 @@ const GroupsLeftPanel = () => {
 
         {/* 그룹 정보 */}
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-neutral-900">🌸 MOYO 그룹</h2>
+          <h2 className="text-lg font-bold text-neutral-900">MOYO 그룹</h2>
           <p className="mt-2 text-sm leading-relaxed text-neutral-600">
             함께하는 순간을 기록하는 Moyo Group에 오신 것을 환영합니다.
           </p>
