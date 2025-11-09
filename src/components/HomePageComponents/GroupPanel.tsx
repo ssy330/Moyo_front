@@ -1,25 +1,43 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { openModal } from "@/features/modalSlice";
 import { PlusCircle, Users } from "lucide-react";
 
+// 백엔드 베이스 URL: Vite .env에 VITE_API_BASE 설정해두면 좋음
+const API_BASE =
+  import.meta.env.VITE_API_BASE ?? "http://localhost:8000/api/v1";
+
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
 };
 
-const groupMockData = [
-  { id: 1, title: "MOTIV", memberNum: 22, imageUrl: "/images/motiv.jpg" },
-  { id: 2, title: "AUNAE", memberNum: 32, imageUrl: "/images/aunae.jpg" },
-  { id: 3, title: "KIS", memberNum: 12, imageUrl: "/images/kis.jpg" },
-];
+type Group = {
+  id: number;
+  name: string;
+  description?: string | null;
+  image_url?: string | null;
+  requires_approval: boolean;
+  identity_mode: string; // "REALNAME" | "NICKNAME"
+  creator_id: number;
+  created_at: string;
+  updated_at: string;
+
+  // 백엔드가 멤버 수를 주면 사용 (없으면 프론트에서 숨기거나 0 처리)
+  member_count?: number;
+};
 
 export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const nav = useNavigate();
   const dispatch = useDispatch();
 
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
+
   const handleClickGroup = (id: number) => {
     console.log(`Navigate to group detail: ${id}`);
-    nav(`/groups/${id}/board`);
+    nav("/groups");
   };
 
   return (
@@ -27,9 +45,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-neutral-800">내 그룹</h2>
-        <p className="text-sm text-neutral-500">
-          {groupMockData.length}개의 그룹이 있습니다
-        </p>
+        <p className="text-sm text-neutral-500">{countText}</p>
       </div>
 
       {/* 만들기 / 참여하기 버튼 */}
@@ -51,41 +67,76 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
         </button>
       </div>
 
-      {/* 그룹 카드 리스트 */}
-      <div
-        className={`grid gap-6 ${
-          viewMode === "both"
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-            : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-5"
-        }`}
-      >
-        {groupMockData.map((group) => (
-          <div
-            key={group.id}
-            onClick={() => handleClickGroup(group.id)}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition hover:-translate-y-1 hover:shadow-lg"
-          >
-            {/* 이미지 */}
-            <div className="aspect-video overflow-hidden">
-              <img
-                src={group.imageUrl}
-                alt={group.title}
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-              />
-            </div>
+      {/* 오류 메시지 */}
+      {errMsg && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errMsg}
+        </div>
+      )}
 
-            {/* 내용 */}
-            <div className="flex flex-col items-start p-4">
-              <h3 className="text-lg font-semibold text-neutral-800">
-                {group.title}
-              </h3>
-              <p className="mt-1 text-sm text-neutral-500">
-                멤버 {group.memberNum}명
-              </p>
+      {/* 스켈레톤 */}
+      {loading && (
+        <div
+          className={`grid gap-6 ${
+            viewMode === "both"
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-5"
+          }`}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="animate-pulse overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50"
+            >
+              <div className="aspect-video bg-neutral-200" />
+              <div className="p-4">
+                <div className="h-4 w-2/3 rounded bg-neutral-200" />
+                <div className="mt-2 h-3 w-1/3 rounded bg-neutral-200" />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* 그룹 카드 리스트 */}
+      {!loading && (
+        <div
+          className={`grid gap-6 ${
+            viewMode === "both"
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-5"
+          }`}
+        >
+          {groups.map((group) => (
+            <div
+              key={group.id}
+              onClick={() => handleClickGroup(group.id)}
+              className="group relative cursor-pointer overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              {/* 이미지 */}
+              <div className="aspect-video overflow-hidden">
+                <img
+                  src={group.image_url || "/images/placeholder-group.jpg"}
+                  alt={group.name}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* 내용 */}
+              <div className="flex flex-col items-start p-4">
+                <h3 className="text-lg font-semibold text-neutral-800">
+                  {group.name}
+                </h3>
+                {typeof group.member_count === "number" ? (
+                  <p className="mt-1 text-sm text-neutral-500">
+                    멤버 {group.member_count}명
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

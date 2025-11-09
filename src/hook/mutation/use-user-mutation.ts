@@ -1,4 +1,3 @@
-// src/hook/queries/use-user.ts
 import { useQuery } from "@tanstack/react-query";
 import supabase from "@/lib/supabase";
 import { api } from "@/lib/api";
@@ -25,7 +24,7 @@ export function useUserQuery() {
       const token = localStorage.getItem("access_token");
       if (!token) throw new Error("로그인되지 않음");
 
-      const res = await api.get("/auth/me", {
+      const res = await api.get("/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(res);

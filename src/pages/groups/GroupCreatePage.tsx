@@ -1,33 +1,63 @@
+// src/pages/groups/GroupCreatePage.tsx
+
 import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRadio";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { createGroupMultipart } from "@/lib/api"; // ✅ FormData 전송용 함수
+import { useNavigate } from "react-router-dom";
 
 export default function GroupCreatePage() {
-  const [approval, setApproval] = useState("auto");
+  const [approval, setApproval] = useState<"auto" | "manual">("auto");
   const [nicknameAllowed, setNicknameAllowed] = useState(false);
   const [privacy, setPrivacy] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState<File | null>(null); // ✅ 이미지 상태 추가
+  const [submitting, setSubmitting] = useState(false);
 
-  // ✅ 모든 조건이 충족될 때만 다음 버튼 활성화
+  const navigate = useNavigate();
+
+  // ✅ 모든 조건이 충족될 때만 "만들기" 버튼 활성화
   const isFormValid =
     groupName.trim() !== "" && description.trim() !== "" && privacy === true;
 
-  const handleCreate = () => {
-    if (!isFormValid) return;
+  // ✅ 그룹 생성
+  const handleCreate = async () => {
+    if (!isFormValid || submitting) return;
 
-    // 임시
-    const info = `
-      📌 모임 생성 정보
+    // FormData 구성 (multipart/form-data)
+    const formData = new FormData();
+    formData.append("name", groupName.trim());
+    formData.append("description", description.trim());
+    formData.append("requires_approval", String(approval === "manual"));
+    formData.append("identity_mode", nicknameAllowed ? "nickname" : "realname");
+    if (image) formData.append("image", image);
 
-      모임 이름: ${groupName}
-      가입 승인 방식: ${approval === "auto" ? "바로 승인" : "가입 승인 필요"}
-      닉네임 사용: ${nicknameAllowed ? "닉네임 가능" : "실명만 가능"}
-      모임 설명: ${description}
-      개인정보 동의: ${privacy ? "동의함 ✅" : "미동의 ❌"}
-    `;
+    try {
+      setSubmitting(true);
+      const { data, location } = await createGroupMultipart(formData); // ✅ 수정된 부분
 
-    alert(info);
+      alert("모임이 생성되었어요!");
+
+      // 그룹 ID 추출
+      let groupId: string | number | undefined = data?.id;
+      if (location) {
+        const m = location.match(/\/groups\/(\d+)$/);
+        if (m) groupId = m[1];
+      }
+
+      if (groupId) navigate(`/groups/${groupId}`);
+      else navigate(`/groups`);
+    } catch (e: any) {
+      if (e?.message === "NO_TOKEN") {
+        alert("로그인이 필요해요. 로그인 페이지로 이동합니다.");
+        navigate("/login");
+        return;
+      }
+      alert(`생성 실패: ${e?.message ?? "알 수 없는 오류"}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -35,9 +65,25 @@ export default function GroupCreatePage() {
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow">
         {/* 사진 + 이름 */}
         <div className="mb-6 flex flex-col items-center">
-          <div className="mb-3 flex h-24 w-24 items-center justify-center rounded-full bg-neutral-200 text-neutral-500">
-            사진
-          </div>
+          {/* ✅ 파일 선택 + 미리보기 */}
+          <label className="mb-3 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-neutral-200 text-neutral-500">
+            {image ? (
+              <img
+                src={URL.createObjectURL(image)}
+                alt="미리보기"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              "사진"
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setImage(e.target.files?.[0] || null)}
+            />
+          </label>
+
           <input
             type="text"
             placeholder="모임 이름"
@@ -55,14 +101,14 @@ export default function GroupCreatePage() {
               name="approval"
               value="auto"
               checked={approval === "auto"}
-              onChange={(e) => setApproval(e.target.value)}
-              title={"바로 승인"}
+              onChange={(e) => setApproval(e.target.value as "auto" | "manual")}
+              title="바로 승인"
             />
             <GroupsCreateRadio
               name="approval"
               value="manual"
               checked={approval === "manual"}
-              onChange={(e) => setApproval(e.target.value)}
+              onChange={(e) => setApproval(e.target.value as "auto" | "manual")}
               title="가입 승인"
             />
           </div>
@@ -129,10 +175,10 @@ export default function GroupCreatePage() {
 
           <Button
             className="w-[48%]"
-            disabled={!isFormValid}
+            disabled={!isFormValid || submitting}
             onClick={handleCreate}
           >
-            만들기
+            {submitting ? "만드는 중..." : "만들기"}
           </Button>
         </div>
       </div>
