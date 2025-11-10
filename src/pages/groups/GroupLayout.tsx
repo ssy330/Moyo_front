@@ -2,10 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import { Plus } from "lucide-react";
 import PostFeed from "@/components/GroupsPageComponents/post-feed";
+import { useParams } from "react-router-dom";
 
 export default function MoyoGroupLayout() {
   const [fabOpen, setFabOpen] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
+
+  const { id } = useParams<string>();
 
   // ✅ 외부 클릭 시 FAB 닫기
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function MoyoGroupLayout() {
       <div className="mx-auto max-w-[1200px] px-4 py-8">
         <div className="grid gap-8 md:grid-cols-[260px_1fr]">
           {/* 왼쪽 패널 */}
-          <GroupsLeftPanel />
+          <GroupsLeftPanel groupId={id} />
 
           {/* 오른쪽 메인 */}
           <main className="w-full max-w-[680px] space-y-6">

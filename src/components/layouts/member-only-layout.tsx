@@ -3,9 +3,7 @@ import { useAppSelector } from "@/hook/use-app-dispatch";
 import GlobalLoader from "./global-loader";
 
 export default function MemberOnlyLayout() {
-  const { session, isLoaded, source } = useAppSelector(
-    (state) => state.session,
-  );
+  const { session, isLoaded } = useAppSelector((state) => state.session);
 
   // ✅ 1️⃣ 세션 확인 전엔 로딩 표시
   if (!isLoaded) {
