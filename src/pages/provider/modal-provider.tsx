@@ -21,7 +21,9 @@ export default function ModalProvider({
       {createPortal(
         <>
           {currentModal === "invite" && <InviteCodeModal />}
-          {currentModal === "write" && <WritePostModal />}
+          {(currentModal === "write" || currentModal === "edit") && (
+            <WritePostModal />
+          )}
           {currentModal === "groupSetting" && <GroupSettingModal />}
           {currentModal === "groupJoin" && <GroupJoinModal />}
           <AlertModal />

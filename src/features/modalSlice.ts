@@ -27,7 +27,6 @@ const modalSlice = createSlice({
     openModal: (state, action: PayloadAction<ModalPayload>) => {
       state.currentModal = action.payload;
     },
-    editModal: (state, action: PayloadAction<ModalData>) => {},
     closeModal: (state) => {
       state.currentModal = null;
     },

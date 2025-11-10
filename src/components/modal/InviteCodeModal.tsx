@@ -16,7 +16,7 @@ import { useCreateInvite } from "@/hook/mutation/use-invite-mutation";
 export default function InviteCodeModal() {
   const dispatch = useDispatch();
   const open = useSelector(
-    (state: RootState) => state.modal.currentModal === "invite",
+    (state: RootState) => state.modal.currentModal?.type === "invite",
   );
 
   const { mutate: create, isPending } = useCreateInvite();

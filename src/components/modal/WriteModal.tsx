@@ -14,6 +14,7 @@ import { useCreatePost } from "@/hook/mutation/use-create-post-mutation";
 import { toast } from "sonner";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { closeAlert, openAlert } from "@/features/alertSlice";
+import { useEditPost } from "@/hook/mutation/use-update-post-mutation";
 
 type Image = {
   file: File;
@@ -25,6 +26,18 @@ export default function WriteModal() {
   const open = useSelector(
     (state: RootState) => state.modal.currentModal?.type === "write",
   );
+
+  // 수정모드 일 때.
+  const currentModal = useSelector(
+    (state: RootState) => state.modal.currentModal,
+  );
+  const isEditMode = currentModal?.type === "edit";
+
+  const { mutate: editPost, isPending: isEditPostPending } = useEditPost({
+    onSuccess: () => {
+      dispatch(closeModal());
+    },
+  });
 
   const [images, setImages] = useState<Image[]>([]);
   const [text, setText] = useState("");
@@ -68,6 +81,30 @@ export default function WriteModal() {
     setImages([]);
   }, [open]);
 
+  useEffect(() => {
+    if (!currentModal) return;
+
+    if (isEditMode && currentModal.data) {
+      const { content, imageUrls } = currentModal.data;
+      setText(content ?? "");
+
+      if (imageUrls && imageUrls.length > 0) {
+        const loadedImages = imageUrls.map((url) => ({
+          file: null as unknown as File, // 수정 시 실제 File은 없음
+          previewUrl: url,
+        }));
+        setImages(loadedImages);
+      }
+    } else {
+      setText("");
+      setImages([]);
+    }
+
+    if (currentModal.type === "write" || currentModal.type === "edit") {
+      textareaRef.current?.focus();
+    }
+  }, [currentModal]);
+
   // 모달 닫기 버튼
   const handleCloseModal = () => {
     if (text !== "" || images.length !== 0) {
@@ -88,13 +125,24 @@ export default function WriteModal() {
   };
 
   // 게시 버튼 클릭
-  const handleCreatePostClick = () => {
+  const handleSubmit = () => {
     if (text.trim() === "") return;
-    createPost({
-      content: text,
-      images: images.map((image) => image.file),
-      userId: userId!,
-    });
+
+    if (isEditMode) {
+      // ✏️ 수정 API 호출
+      editPost({
+        postId: currentModal?.data?.postId!,
+        content: text,
+        images: images.map((img) => img.file).filter(Boolean),
+      });
+    } else {
+      // 📝 새 글 작성
+      createPost({
+        content: text,
+        images: images.map((img) => img.file),
+        userId: userId!,
+      });
+    }
   };
 
   // 카메라 아이콘 클릭 → 파일 선택
@@ -210,13 +258,15 @@ export default function WriteModal() {
 
           {/* 게시 버튼 */}
           <Button
+            onClick={handleSubmit}
             disabled={
-              (images.length === 0 && text.trim() === "") || isCreatePostPending
+              (images.length === 0 && text.trim() === "") ||
+              isCreatePostPending ||
+              isEditPostPending
             }
-            onClick={handleCreatePostClick}
             className="rounded-lg px-5 py-2 font-medium text-white"
           >
-            게시
+            {isEditMode ? "수정 완료" : "게시"}
           </Button>
         </div>
       </DialogContent>
