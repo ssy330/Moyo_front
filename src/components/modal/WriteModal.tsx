@@ -23,7 +23,7 @@ type Image = {
 export default function WriteModal() {
   const dispatch = useDispatch();
   const open = useSelector(
-    (state: RootState) => state.modal.currentModal === "write",
+    (state: RootState) => state.modal.currentModal?.type === "write",
   );
 
   const [images, setImages] = useState<Image[]>([]);

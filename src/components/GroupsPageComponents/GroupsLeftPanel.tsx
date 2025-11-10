@@ -51,7 +51,7 @@ export default function GroupsLeftPanel() {
         <button
           aria-label="그룹 설정"
           className="absolute right-3 bottom-3 rounded-full bg-white/80 p-2 text-neutral-700 transition hover:bg-white"
-          onClick={() => dispatch(openModal("groupSetting"))}
+          onClick={() => dispatch(openModal({ type: "groupSetting" }))}
         >
           <Settings size={20} strokeWidth={1.8} />
         </button>
@@ -75,7 +75,7 @@ export default function GroupsLeftPanel() {
           </button>
 
           <button
-            onClick={() => dispatch(openModal("invite"))} // ✅ 초대코드 모달
+            onClick={() => dispatch(openModal({ type: "invite" }))} // ✅ 초대코드 모달
             className="rounded-full bg-rose-50 px-3 py-1 text-rose-600 transition hover:bg-rose-100"
           >
             초대 코드
@@ -85,7 +85,7 @@ export default function GroupsLeftPanel() {
 
       {/* 글쓰기 버튼 */}
       <button
-        onClick={() => dispatch(openModal("write"))}
+        onClick={() => dispatch(openModal({ type: "write" }))}
         className="w-full rounded-2xl bg-gradient-to-br from-green-100 to-green-50 py-3 font-semibold shadow-md transition hover:opacity-70"
       >
         ✏️ 게시글 작성하기

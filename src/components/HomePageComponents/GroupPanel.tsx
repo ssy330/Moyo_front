@@ -36,7 +36,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
         </button>
 
         <button
-          onClick={() => dispatch(openModal("groupJoin"))}
+          onClick={() => dispatch(openModal({ type: "groupJoin" }))}
           className="flex min-w-[160px] flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
         >
           <Users className="h-5 w-5" />

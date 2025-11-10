@@ -1,9 +1,7 @@
-// src/pages/groups/GroupCreatePage.tsx
 import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRadio";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { createGroupMultipart } from "@/lib/api"; // ✅ FormData 전송용 함수
-import { useNavigate } from "react-router-dom";
+import { useCreateGroup } from "@/hook/use-create-group";
 
 export default function GroupCreatePage() {
   const [approval, setApproval] = useState<"auto" | "manual">("auto");
@@ -12,17 +10,17 @@ export default function GroupCreatePage() {
   const [groupName, setGroupName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null); // ✅ 이미지 상태 추가
-  const [submitting, setSubmitting] = useState(false);
 
-  const navigate = useNavigate();
+  const { mutate: createGroup, isPending: createGroupIsPending } =
+    useCreateGroup();
 
-  // ✅ 모든 조건이 충족될 때만 "만들기" 버튼 활성화
+  // 모든 조건이 충족될 때만 "만들기" 버튼 활성화
   const isFormValid =
     groupName.trim() !== "" && description.trim() !== "" && privacy === true;
 
-  // ✅ 그룹 생성
+  // 그룹 생성
   const handleCreate = async () => {
-    if (!isFormValid || submitting) return;
+    if (!isFormValid || createGroupIsPending) return;
 
     // FormData 구성 (multipart/form-data)
     const formData = new FormData();
@@ -32,31 +30,7 @@ export default function GroupCreatePage() {
     formData.append("identity_mode", nicknameAllowed ? "nickname" : "realname");
     if (image) formData.append("image", image);
 
-    try {
-      setSubmitting(true);
-      const { data, location } = await createGroupMultipart(formData); // ✅ 수정된 부분
-
-      alert("모임이 생성되었어요!");
-
-      // 그룹 ID 추출
-      let groupId: string | number | undefined = data?.id;
-      if (location) {
-        const m = location.match(/\/groups\/(\d+)$/);
-        if (m) groupId = m[1];
-      }
-
-      if (groupId) navigate(`/groups/${groupId}`);
-      else navigate(`/groups`);
-    } catch (e: any) {
-      if (e?.message === "NO_TOKEN") {
-        alert("로그인이 필요해요. 로그인 페이지로 이동합니다.");
-        navigate("/login");
-        return;
-      }
-      alert(`생성 실패: ${e?.message ?? "알 수 없는 오류"}`);
-    } finally {
-      setSubmitting(false);
-    }
+    createGroup(formData);
   };
 
   return (
@@ -174,10 +148,10 @@ export default function GroupCreatePage() {
 
           <Button
             className="w-[48%]"
-            disabled={!isFormValid || submitting}
+            disabled={!isFormValid || createGroupIsPending}
             onClick={handleCreate}
           >
-            {submitting ? "만드는 중..." : "만들기"}
+            {createGroupIsPending ? "만드는 중..." : "만들기"}
           </Button>
         </div>
       </div>

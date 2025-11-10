@@ -17,7 +17,7 @@ export default function GroupJoinModal() {
 
   // Redux 상태 관리
   const open = useSelector(
-    (state: RootState) => state.modal.currentModal === "groupJoin",
+    (state: RootState) => state.modal.currentModal?.type === "groupJoin",
   );
 
   // 모달 닫기 함수

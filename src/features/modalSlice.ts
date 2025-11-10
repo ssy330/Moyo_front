@@ -1,9 +1,18 @@
-// src/features/modalSlice.ts
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+interface ModalData {
+  postId?: number;
+  content?: string;
+  imageUrls?: string[] | null;
+}
+
+interface ModalPayload {
+  type: "invite" | "groupSetting" | "write" | "groupJoin" | "edit";
+  data?: ModalData;
+}
 
 interface ModalState {
-  currentModal: "invite" | "groupSetting" | "write" | "groupJoin" | null;
+  currentModal: ModalPayload | null;
 }
 
 const initialState: ModalState = {
@@ -14,9 +23,11 @@ const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    openModal: (state, action: PayloadAction<ModalState["currentModal"]>) => {
+    // ✅ PayloadAction<ModalPayload> 로 변경
+    openModal: (state, action: PayloadAction<ModalPayload>) => {
       state.currentModal = action.payload;
     },
+    editModal: (state, action: PayloadAction<ModalData>) => {},
     closeModal: (state) => {
       state.currentModal = null;
     },
