@@ -13,7 +13,7 @@ export default function ModalProvider({
   children: React.ReactNode;
 }) {
   const currentModal = useSelector(
-    (state: RootState) => state.modal.currentModal,
+    (state: RootState) => state.modal.currentModal?.type,
   );
 
   return (
