@@ -1,42 +1,106 @@
+// ✅ SessionProvider.tsx (안정화 최종 버전)
 import GlobalLoader from "@/components/layouts/global-loader";
 import { useProfileData } from "@/hook/use-profile-data";
 import supabase from "@/lib/supabase";
-import { setSession } from "@/features/sessionSlice"; // ✅ Redux 액션 import
+import { setSession, clearSession } from "@/features/sessionSlice";
 import type { RootState } from "@/store/store";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { api } from "@/lib/api";
 
 export default function SessionProvider({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
 
-  // ✅ Redux에서 세션 상태 가져오기
-  const session = useSelector((state: RootState) => state.session.session);
-  const isSessionLoaded = useSelector(
-    (state: RootState) => state.session.isLoaded,
+  const [loading, setLoading] = useState(true);
+  const [loginSource, setLoginSource] = useState<"fastapi" | "supabase" | null>(
+    null,
   );
 
-  // ✅ 세션 변경 감시 → Redux 업데이트
-  useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        dispatch(setSession(session));
-      },
-    );
+  const session = useSelector((state: RootState) => state.session.session);
 
-    // ✅ cleanup
+  // ✅ 1️⃣ 로그인 직후 fastapi 토큰이 이미 존재하면 즉시 "임시 세션" 표기
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token && !session) {
+      dispatch(setSession({ user: null, source: "fastapi" }));
+    }
+  }, [dispatch, session]);
+
+  // ✅ 2️⃣ 실제 세션 복원 절차
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    const initSession = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+
+        // ✅ FastAPI 세션 복원
+        if (token) {
+          try {
+            const res = await api.get("/auth/me", {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            dispatch(setSession({ user: res.data, source: "fastapi" }));
+            setLoginSource("fastapi");
+          } catch (err) {
+            console.error("FastAPI 세션 복원 실패:", err);
+            localStorage.removeItem("access_token");
+            dispatch(clearSession());
+          } finally {
+            setLoading(false);
+          }
+          return;
+        }
+
+        // ✅ Supabase 세션 감시 시작
+        const { data: listener } = supabase.auth.onAuthStateChange(
+          (_event, session) => {
+            if (session) {
+              dispatch(setSession({ user: session.user, source: "supabase" }));
+              setLoginSource("supabase");
+            } else {
+              dispatch(clearSession());
+              setLoginSource(null);
+            }
+          },
+        );
+
+        unsubscribe = () => listener.subscription.unsubscribe();
+
+        // ✅ 초기 Supabase 세션 확인
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          dispatch(setSession({ user: data.session.user, source: "supabase" }));
+          setLoginSource("supabase");
+        } else {
+          dispatch(clearSession());
+        }
+      } catch (err) {
+        console.error("세션 복원 실패:", err);
+        localStorage.removeItem("access_token");
+        dispatch(clearSession());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initSession();
+
     return () => {
-      listener.subscription.unsubscribe();
+      if (unsubscribe) unsubscribe();
     };
   }, [dispatch]);
 
-  // ✅ 프로필 데이터 로드
-  const { data: profile, isLoading: isProfileLoading } = useProfileData(
-    session?.user?.id,
+  // ✅ 3️⃣ Supabase 로그인 시 프로필 요청
+  const shouldFetchProfile = loginSource === "supabase" && !!session?.id;
+  const { isLoading: isProfileLoading } = useProfileData(
+    shouldFetchProfile ? session.id : undefined,
   );
 
-  // ✅ 로딩 중이면 전역 로더 표시
-  if (!isSessionLoaded) return <GlobalLoader />;
-  if (isProfileLoading) return <GlobalLoader />;
+  // ✅ 4️⃣ 로딩 스피너 조건
+  if (loading || (shouldFetchProfile && isProfileLoading)) {
+    return <GlobalLoader />;
+  }
 
   return <>{children}</>;
 }

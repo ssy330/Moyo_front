@@ -5,7 +5,7 @@ import type { AxiosError } from "axios";
 import { store } from "@/store/store"; // ✅ dispatch 위해 store 직접 임포트
 
 // ✅ 순수 API 로직
-export async function signInWithEmail(form: {
+export async function signInWithEmailApi(form: {
   email: string;
   password: string;
 }) {
@@ -13,6 +13,7 @@ export async function signInWithEmail(form: {
     const res = await api.post("/auth/login", form);
     const token = res.data.access_token;
     localStorage.setItem("access_token", token);
+    localStorage.setItem("refresh_token", res.data.refresh_token);
 
     // ✅ 유저 정보 요청
     const me = await api.get("/auth/me", {

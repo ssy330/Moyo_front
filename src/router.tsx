@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
         element: <AppLayout />, // 앱 공통 레이아웃
         children: [
           { path: "/", element: <HomePage /> },
-          { path: "/groups/:id/board", element: <GroupLayout /> },
+          { path: "/groups/:id", element: <GroupLayout /> },
           { path: "/groups/new", element: <GroupCreatePage /> },
           { path: "/profile/:id", element: <ProfilePage /> },
           { path: "/notifications/:id", element: <Notifications /> },
@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ✅ 비로그인 사용자만 접근 가능한 라우트
+  // 비로그인 사용자만 접근 가능한 라우트
   {
     element: (
       <Suspense fallback={<GlobalLoader />}>

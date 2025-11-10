@@ -12,9 +12,9 @@ import SessionProvider from "./pages/provider/session-provider";
 
 const queryClient = new QueryClient();
 
-supabase.auth.onAuthStateChange((_event, session) => {
-  store.dispatch(setSession(session));
-});
+// supabase.auth.onAuthStateChange((_event, session) => {
+//   store.dispatch(setSession(session));
+// });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>

@@ -1,5 +1,4 @@
 // src/pages/groups/GroupCreatePage.tsx
-
 import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRadio";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";

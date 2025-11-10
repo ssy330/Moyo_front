@@ -5,10 +5,11 @@ import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignInWithEmail } from "@/hook/mutation/use-login-mutation";
 import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
+import { checkServerConnection } from "@/lib/server-test";
 
 export default function LoginPage() {
   // 입력 상태 관리
@@ -16,6 +17,12 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    checkServerConnection().then((ok) => {
+      if (!ok) alert("⚠️ 백엔드 서버에 연결할 수 없습니다!");
+    });
+  }, []);
 
   const navigate = useNavigate();
 
@@ -110,7 +117,7 @@ export default function LoginPage() {
                 <span className="mr-2">
                   <GitHubIcon />
                 </span>
-                깃허브계정으로 로그인하기
+                깃허브계정으로 시작하기
               </Button>
             </div>
 

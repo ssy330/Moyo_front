@@ -34,7 +34,7 @@ export interface GroupResponse {
 
 /** (기존) JSON 전송 버전 — 필요 시 계속 사용 */
 export async function createGroupJSON(
-  payload: GroupCreatePayload
+  payload: GroupCreatePayload,
 ): Promise<{ data: GroupResponse; location: string | null }> {
   const res = await api.post<GroupResponse>("/groups/", payload);
   const location = (res.headers["location"] ?? null) as string | null;
@@ -43,7 +43,7 @@ export async function createGroupJSON(
 
 /** (신규) FormData 전송 버전 — 파일 업로드용 */
 export async function createGroupMultipart(
-  formData: FormData
+  formData: FormData,
 ): Promise<{ data: GroupResponse; location: string | null }> {
   const res = await api.post<GroupResponse>("/groups/", formData, {
     // axios는 FormData면 Content-Type 자동 설정하지만, 명시해도 됨

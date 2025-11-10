@@ -1,18 +1,25 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAppSelector } from "@/hook/use-app-dispatch"; // RTK용 커스텀 훅
+import { useAppSelector } from "@/hook/use-app-dispatch";
 import GlobalLoader from "./global-loader";
 
 export default function MemberOnlyLayout() {
-  const { session, isLoaded } = useAppSelector((state) => state.session);
+  const { session, isLoaded, source } = useAppSelector(
+    (state) => state.session,
+  );
 
-  // ✅ 세션 로드 전에는 로딩 화면 표시
+  // ✅ 1️⃣ 세션 확인 전엔 로딩 표시
   if (!isLoaded) {
     return <GlobalLoader />;
   }
 
-  // ✅ 이미 로그인된 경우 홈으로 리다이렉트
-  if (!session) return <Navigate to="/login" replace />;
+  // ✅ 2️⃣ FastAPI 토큰이 있는 경우엔 아직 세션 없어도 통과
+  const hasFastApiToken = !!localStorage.getItem("access_token");
 
-  // ✅ 비로그인 상태면 하위 라우트 표시
+  if (!session && !hasFastApiToken) {
+    // 완전히 비로그인 상태
+    return <Navigate to="/login" replace />;
+  }
+
+  // ✅ 3️⃣ 로그인 상태면 하위 라우트 표시
   return <Outlet />;
 }

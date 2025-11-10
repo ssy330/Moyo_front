@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { openModal } from "@/features/modalSlice";
 import { PlusCircle, Users } from "lucide-react";
 
-// 백엔드 베이스 URL: Vite .env에 VITE_API_BASE 설정해두면 좋음
 const API_BASE =
   import.meta.env.VITE_API_BASE ?? "http://localhost:8000/api/v1";
 
@@ -22,8 +21,6 @@ type Group = {
   creator_id: number;
   created_at: string;
   updated_at: string;
-
-  // 백엔드가 멤버 수를 주면 사용 (없으면 프론트에서 숨기거나 0 처리)
   member_count?: number;
 };
 
@@ -36,12 +33,52 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
   const handleClickGroup = (id: number) => {
-    console.log(`Navigate to group detail: ${id}`);
-    nav("/groups");
+    nav(`/groups/${id}`);
   };
 
+  useEffect(() => {
+    const fetchMyGroups = async () => {
+      try {
+        setLoading(true);
+        setErrMsg(null);
+
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`${API_BASE}/groups/my`, {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          setErrMsg("로그인이 필요합니다.");
+          return;
+        }
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          throw new Error(`Failed to load groups: ${res.status} ${text}`);
+        }
+
+        const data: Group[] = await res.json();
+        setGroups(data);
+      } catch (e: any) {
+        console.error(e);
+        setErrMsg(e.message ?? "그룹을 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyGroups();
+  }, []);
+
+  const countText = loading
+    ? "로딩 중..."
+    : `${groups.length}개의 그룹이 있습니다`;
+
   return (
-    <div className="flex min-h-[90vh] flex-col rounded-2xl border border-neutral-200 bg-white p-8 shadow-md transition duration-200 hover:shadow-lg">
+    <div className="flex max-h-[90vh] flex-col overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-8 shadow-md transition duration-200 hover:shadow-lg">
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-neutral-800">내 그룹</h2>
@@ -103,7 +140,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
         <div
           className={`grid gap-6 ${
             viewMode === "both"
-              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
               : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-5"
           }`}
         >
@@ -127,11 +164,11 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
                 <h3 className="text-lg font-semibold text-neutral-800">
                   {group.name}
                 </h3>
-                {typeof group.member_count === "number" ? (
+                {typeof group.member_count === "number" && (
                   <p className="mt-1 text-sm text-neutral-500">
                     멤버 {group.member_count}명
                   </p>
-                ) : null}
+                )}
               </div>
             </div>
           ))}

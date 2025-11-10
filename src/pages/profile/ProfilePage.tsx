@@ -69,7 +69,8 @@ export default function ProfilePage() {
   // ✅ Supabase 로그아웃
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
-    localStorage.removeItem("token"); // FastAPI 토큰도 같이 제거
+    localStorage.removeItem("access_token"); // FastAPI 토큰도 같이 제거
+    localStorage.removeItem("refreash_token");
 
     if (error) {
       console.error("로그아웃 실패:", error.message);
