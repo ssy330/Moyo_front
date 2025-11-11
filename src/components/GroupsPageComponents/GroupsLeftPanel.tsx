@@ -5,32 +5,11 @@ import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 export default function GroupsLeftPanel() {
-  const { data: groups, isLoading, error } = useMyGroups();
+  const { data: groups } = useMyGroups();
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
 
   const group = groups?.find((g) => g.id === Number(id));
-
-  if (isLoading)
-    return (
-      <aside className="rounded-2xl bg-white p-6 text-center text-neutral-500 shadow-sm">
-        그룹 정보를 불러오는 중...
-      </aside>
-    );
-
-  if (error)
-    return (
-      <aside className="rounded-2xl bg-white p-6 text-center text-rose-500 shadow-sm">
-        {(error as Error).message}
-      </aside>
-    );
-
-  if (!group)
-    return (
-      <aside className="rounded-2xl bg-white p-6 text-center text-neutral-500 shadow-sm">
-        그룹 정보를 찾을 수 없습니다.
-      </aside>
-    );
 
   return (
     <aside className="space-y-5">

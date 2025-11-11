@@ -22,7 +22,7 @@ const sessionSlice = createSlice({
       state,
       action: PayloadAction<{ user: any; source: "supabase" | "fastapi" }>,
     ) => {
-      state.session = action.payload.user; // 🟢 user만 저장
+      state.session = action.payload.user;
       state.source = action.payload.source;
       state.isLoaded = true; // 🟢 세션 로딩 완료
     },

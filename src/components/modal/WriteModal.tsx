@@ -40,7 +40,10 @@ export default function WriteModal() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const session = useSelector((state: RootState) => state.session.session);
-  const userId = session?.user?.id;
+  // const userId = session?.id;
+  const source = useSelector((state: RootState) => state.session.source);
+  const userId = source === "fastapi" ? session?.user_id : session?.id;
+  console.log("✅ userId:", session?.id);
 
   // ✅ API Mutation
   const { mutate: createPost, isPending: isCreatePostPending } = useCreatePost({
@@ -91,7 +94,6 @@ export default function WriteModal() {
     if (isEditMode && currentModal.data) {
       const { content, image_urls } = currentModal.data;
       setText(content ?? "");
-      console.log(image_urls);
 
       // ✅ 기존 서버 이미지 URL → previewUrl로 변환
       if (image_urls && image_urls.length > 0) {
