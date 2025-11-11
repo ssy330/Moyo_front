@@ -1,9 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ModalData {
-  postId?: number;
+  id?: number;
   content?: string;
-  imageUrls?: string[] | null;
+  image_urls?: string[] | null;
 }
 
 interface ModalPayload {

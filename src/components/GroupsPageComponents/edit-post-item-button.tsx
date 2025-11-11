@@ -11,9 +11,9 @@ export default function EditPostItemButton(props: PostEntity) {
       openModal({
         type: "edit",
         data: {
-          postId: props.id,
+          id: props.id,
           content: props.content,
-          imageUrls: props.image_urls,
+          image_urls: props.image_urls,
         },
       }),
     );

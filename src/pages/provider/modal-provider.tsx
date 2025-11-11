@@ -15,7 +15,6 @@ export default function ModalProvider({
   const currentModal = useSelector(
     (state: RootState) => state.modal.currentModal?.type,
   );
-
   return (
     <>
       {createPortal(

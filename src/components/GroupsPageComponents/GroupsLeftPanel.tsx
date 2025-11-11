@@ -36,10 +36,10 @@ export default function GroupsLeftPanel() {
     <aside className="space-y-5">
       {/* 커버 이미지 */}
       <div className="relative overflow-hidden rounded-2xl shadow-sm">
-        {group.image_url ? (
+        {group?.image_url ? (
           <img
             src={group.image_url}
-            alt={`${group.name} 커버`}
+            alt={`${group?.name ?? "그룹"} 커버`}
             className="aspect-[4/3] w-full object-cover"
           />
         ) : (
@@ -59,10 +59,12 @@ export default function GroupsLeftPanel() {
 
       {/* 그룹 정보 */}
       <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-bold text-neutral-900">{group.name}</h2>
+        <h2 className="text-lg font-bold text-neutral-900">
+          {group?.name ?? "이름없음"}
+        </h2>
 
         <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-          {group.description || "그룹 설명이 없습니다."}
+          {group?.description ?? "그룹 설명이 없습니다."}
         </p>
 
         {/* 멤버수 + 초대코드 */}
@@ -71,7 +73,7 @@ export default function GroupsLeftPanel() {
             onClick={() => alert("멤버 관리닷~")} // ✅ 멤버 관리 모달
             className="rounded-full bg-neutral-100 px-3 py-1 transition hover:bg-neutral-200"
           >
-            멤버 {group.member_count}명
+            멤버 {group?.member_count}명
           </button>
 
           <button

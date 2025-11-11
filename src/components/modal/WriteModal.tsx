@@ -4,17 +4,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Camera, Video, Smile, ListChecks, XIcon } from "lucide-react";
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
-import { closeModal } from "@/features/modalSlice";
-import { useCreatePost } from "@/hook/mutation/use-create-post-mutation";
-import { toast } from "sonner";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import { Camera, Video, Smile, ListChecks, XIcon } from "lucide-react";
+import { toast } from "sonner";
+import type { RootState } from "@/store/store";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { closeModal } from "@/features/modalSlice";
 import { closeAlert, openAlert } from "@/features/alertSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useEditPost } from "@/hook/mutation/use-update-post-mutation";
+import { useCreatePost } from "@/hook/mutation/use-create-post-mutation";
 
 type Image = {
   file: File;
@@ -23,21 +23,16 @@ type Image = {
 
 export default function WriteModal() {
   const dispatch = useDispatch();
-  const open = useSelector(
-    (state: RootState) => state.modal.currentModal?.type === "write",
-  );
+  const open = useSelector((state: RootState) => {
+    const type = state.modal.currentModal?.type;
+    return type === "write" || type === "edit";
+  });
 
-  // 수정모드 일 때.
   const currentModal = useSelector(
     (state: RootState) => state.modal.currentModal,
   );
-  const isEditMode = currentModal?.type === "edit";
 
-  const { mutate: editPost, isPending: isEditPostPending } = useEditPost({
-    onSuccess: () => {
-      dispatch(closeModal());
-    },
-  });
+  const isEditMode = currentModal?.type === "edit";
 
   const [images, setImages] = useState<Image[]>([]);
   const [text, setText] = useState("");
@@ -60,7 +55,14 @@ export default function WriteModal() {
     },
   });
 
-  // textarea 자동 높이 조정
+  // 수정 Mutation
+  const { mutate: editPost, isPending: isEditPostPending } = useEditPost({
+    onSuccess: () => {
+      dispatch(closeModal());
+    },
+  });
+
+  // 게시글 작성 - textarea 자동 높이 조정
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -69,7 +71,7 @@ export default function WriteModal() {
     }
   }, [text]);
 
-  // 모달 열릴 때 자동 포커스
+  // 게시글 작성 - 모달 열릴 때 자동 포커스
   useEffect(() => {
     // 메모리 누수를 막기위한 코드
     images.forEach((image) => {
@@ -81,27 +83,29 @@ export default function WriteModal() {
     setImages([]);
   }, [open]);
 
+  // 이미지 가져오기
   useEffect(() => {
     if (!currentModal) return;
+    console.log("currentModal.data =", currentModal.data);
 
     if (isEditMode && currentModal.data) {
-      const { content, imageUrls } = currentModal.data;
+      const { content, image_urls } = currentModal.data;
       setText(content ?? "");
+      console.log(image_urls);
 
-      if (imageUrls && imageUrls.length > 0) {
-        const loadedImages = imageUrls.map((url) => ({
-          file: null as unknown as File, // 수정 시 실제 File은 없음
-          previewUrl: url,
+      // ✅ 기존 서버 이미지 URL → previewUrl로 변환
+      if (image_urls && image_urls.length > 0) {
+        const loadedImages = image_urls.map((url) => ({
+          file: null as unknown as File,
+          previewUrl: url, // 서버 URL 그대로
         }));
         setImages(loadedImages);
+      } else {
+        setImages([]);
       }
     } else {
       setText("");
       setImages([]);
-    }
-
-    if (currentModal.type === "write" || currentModal.type === "edit") {
-      textareaRef.current?.focus();
     }
   }, [currentModal]);
 
@@ -130,10 +134,15 @@ export default function WriteModal() {
 
     if (isEditMode) {
       // ✏️ 수정 API 호출
+      if (!currentModal?.data?.id) {
+        console.error("❌ postId가 없습니다.");
+        return;
+      }
+
       editPost({
-        postId: currentModal?.data?.postId!,
+        id: currentModal.data.id,
         content: text,
-        images: images.map((img) => img.file).filter(Boolean),
+        image_urls: images.map((img) => img.previewUrl),
       });
     } else {
       // 📝 새 글 작성
@@ -182,7 +191,7 @@ export default function WriteModal() {
       >
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold text-neutral-900">
-            글쓰기
+            {isEditMode ? "수정하기" : "글쓰기"}
           </DialogTitle>
         </DialogHeader>
 
@@ -198,22 +207,24 @@ export default function WriteModal() {
           />
         </div>
 
-        {images.length > 0 && (
+        {open && (isEditMode || images.length > 0) && (
           <Carousel>
             <CarouselContent>
-              {images.map((image) => (
-                <CarouselItem key={image.previewUrl} className="basis-2/5">
+              {images.map((image, index) => (
+                <CarouselItem key={index} className="basis-2/5">
                   <div className="relative">
                     <img
                       src={image.previewUrl}
+                      alt="preview"
                       className="h-full w-full rounded-sm object-cover"
                     />
-                    <div
+                    {/* 삭제 버튼 */}
+                    <button
                       onClick={() => handleDeleteImage(image)}
-                      className="absolute top-0 right-0 m-1 cursor-pointer rounded-full bg-black/30 p-1"
+                      className="absolute top-0 right-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
                     >
                       <XIcon className="h-4 w-4 text-white" />
-                    </div>
+                    </button>
                   </div>
                 </CarouselItem>
               ))}
@@ -266,7 +277,7 @@ export default function WriteModal() {
             }
             className="rounded-lg px-5 py-2 font-medium text-white"
           >
-            {isEditMode ? "수정 완료" : "게시"}
+            {isEditMode ? "수정" : "게시"}
           </Button>
         </div>
       </DialogContent>

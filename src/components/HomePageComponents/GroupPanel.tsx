@@ -46,7 +46,10 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
       {/* 에러 */}
       {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          className="mb-7 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          onClick={() => nav(`/groups/2`)}
+        >
           {(error as Error).message}
         </div>
       )}
