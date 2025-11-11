@@ -219,12 +219,14 @@ export default function WriteModal() {
                       className="h-full w-full rounded-sm object-cover"
                     />
                     {/* 삭제 버튼 */}
-                    <button
-                      onClick={() => handleDeleteImage(image)}
-                      className="absolute top-0 right-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
-                    >
-                      <XIcon className="h-4 w-4 text-white" />
-                    </button>
+                    {!isEditMode && (
+                      <button
+                        onClick={() => handleDeleteImage(image)}
+                        className="absolute top-0 right-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
+                      >
+                        <XIcon className="h-4 w-4 text-white" />
+                      </button>
+                    )}
                   </div>
                 </CarouselItem>
               ))}
@@ -241,6 +243,7 @@ export default function WriteModal() {
               ref={fileInputRef}
               onChange={handleSelectImages}
               accept="image/*"
+              disabled={isEditMode}
               multiple
               className="hidden"
             />
@@ -249,7 +252,11 @@ export default function WriteModal() {
             <button
               onClick={handleCameraClick}
               disabled={isCreatePostPending}
-              className="transition-transform hover:scale-110 hover:text-neutral-800"
+              className={
+                !isEditMode
+                  ? "transition-transform hover:scale-110 hover:text-neutral-800"
+                  : "text-neutral-400"
+              }
               title="사진 추가"
             >
               <Camera size={22} strokeWidth={1.8} />
