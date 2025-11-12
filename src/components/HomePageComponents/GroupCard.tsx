@@ -1,51 +1,38 @@
-/**
- * 메인에 있는 그룹에 들어갈 수 있는 버튼(카드)
- */
+import { useNavigate } from "react-router-dom";
 
-type GroupCardProps = {
+interface GroupProps {
   id: number;
-  title: string;
-  memberNum: number;
-  imageUrl?: string;
-  onClick?: (id: number) => void;
-};
+  name: string;
+  image_url?: string | null;
+  member_count?: number;
+}
 
-const GroupCard = ({
+export default function GroupCard({
   id,
-  title,
-  memberNum,
-  imageUrl,
-  onClick,
-}: GroupCardProps) => {
+  name,
+  image_url,
+  member_count,
+}: GroupProps) {
+  const nav = useNavigate();
   return (
     <div
-      onClick={() => onClick?.(id)}
-      className="cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition duration-200 hover:shadow-md"
+      key={id}
+      onClick={() => nav(`/groups/${id}`)}
+      className="group cursor-pointer overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition hover:-translate-y-1 hover:shadow-lg"
     >
-      {/* 상단 이미지 */}
-      <div className="h-32 w-full bg-gray-100">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={title}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
-            No Image
-          </div>
-        )}
+      <div className="aspect-video overflow-hidden">
+        <img
+          src={image_url || "/images/placeholder-group.jpg"}
+          alt={name}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+        />
       </div>
-
-      {/* 하단 정보 */}
-      <div className="p-3">
-        <h3 className="truncate text-sm font-semibold text-gray-800">
-          {title}
-        </h3>
-        <p className="mt-1 text-xs text-gray-500">멤버 {memberNum}</p>
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-neutral-800">{name}</h3>
+        {typeof member_count === "number" && (
+          <p className="mt-1 text-sm text-neutral-500">멤버 {member_count}명</p>
+        )}
       </div>
     </div>
   );
-};
-
-export default GroupCard;
+}

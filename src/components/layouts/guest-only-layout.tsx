@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAppSelector } from "@/hook/use-app-dispatch"; // RTK용 커스텀 훅
+import { useAppSelector } from "@/hook/queries/use-app-dispatch"; // RTK용 커스텀 훅
 import GlobalLoader from "./global-loader";
 
 export default function GuestOnlyLayout() {

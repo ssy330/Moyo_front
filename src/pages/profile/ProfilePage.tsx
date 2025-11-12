@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearSession } from "@/features/sessionSlice";
-import { useAppDispatch } from "@/hook/use-app-dispatch";
+import { useAppDispatch } from "@/hook/queries/use-app-dispatch";
 import supabase from "@/lib/supabase";
 import { LogOut, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";

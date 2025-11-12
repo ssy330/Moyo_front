@@ -3,7 +3,7 @@ import Loader from "../loader";
 import PostItem from "./post-item";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import { useInfinitePostsData } from "@/hook/use-infinite-posts-data";
+import { useInfinitePostsData } from "@/hook/queries/use-infinite-posts-data";
 
 export default function PostFeed() {
   const { data, error, isPending, fetchNextPage, isFetchingNextPage } =

@@ -7,8 +7,8 @@ import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSignInWithEmail } from "@/hook/mutation/use-login-mutation";
-import { useSignInWithOAuth } from "@/hook/mutation/use-git-oauth-mutation";
+import { useSignInWithEmail } from "@/hook/mutation/auth/use-login-mutation";
+import { useSignInWithOAuth } from "@/hook/mutation/auth/use-git-oauth-mutation";
 import { checkServerConnection } from "@/lib/server-test";
 
 export default function LoginPage() {

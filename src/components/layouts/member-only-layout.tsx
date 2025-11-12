@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAppSelector } from "@/hook/use-app-dispatch";
+import { useAppSelector } from "@/hook/queries/use-app-dispatch";
 import GlobalLoader from "./global-loader";
 
 export default function MemberOnlyLayout() {

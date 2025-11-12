@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { closeModal } from "@/features/modalSlice";
-import { useCreateInvite } from "@/hook/mutation/use-invite-mutation";
+import { useCreateInvite } from "@/hook/mutation/invite/use-invite-mutation";
 
 export default function InviteCodeModal() {
   const dispatch = useDispatch();

@@ -1,12 +1,20 @@
-// ✅ SessionProvider.tsx (안정화 최종 버전)
+// ✅ src/components/providers/SessionProvider.tsx
 import GlobalLoader from "@/components/layouts/global-loader";
-import { useProfileData } from "@/hook/use-profile-data";
+import { useProfileData } from "@/hook/queries/use-profile-data";
 import supabase from "@/lib/supabase";
 import { setSession, clearSession } from "@/features/sessionSlice";
 import type { RootState } from "@/store/store";
 import { useEffect, type ReactNode, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { api } from "@/lib/api";
+
+// ✅ 유저 ID 안전 추출 헬퍼
+function getUserId(session: any): string | number | undefined {
+  if (!session) return undefined;
+  if ("user_id" in session) return session.user_id; // FastAPI user
+  if ("id" in session) return session.id; // Supabase user
+  return undefined;
+}
 
 export default function SessionProvider({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
@@ -18,7 +26,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
 
   const session = useSelector((state: RootState) => state.session.session);
 
-  // ✅ 1️⃣ 로그인 직후 fastapi 토큰이 이미 존재하면 즉시 "임시 세션" 표기
+  // ✅ 1️⃣ 로그인 직후 fastapi 토큰이 이미 존재하면 임시 세션 표기
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token && !session) {
@@ -92,9 +100,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   }, [dispatch]);
 
   // ✅ 3️⃣ Supabase 로그인 시 프로필 요청
-  const shouldFetchProfile = loginSource === "supabase" && !!session?.id;
+  const userId = getUserId(session);
+  const shouldFetchProfile =
+    loginSource === "supabase" && typeof userId === "string";
   const { isLoading: isProfileLoading } = useProfileData(
-    shouldFetchProfile ? session.id : undefined,
+    shouldFetchProfile ? (userId as string) : undefined,
   );
 
   // ✅ 4️⃣ 로딩 스피너 조건

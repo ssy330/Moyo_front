@@ -1,7 +1,7 @@
 import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRadio";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useCreateGroup } from "@/hook/use-create-group";
+import { useCreateGroup } from "@/hook/mutation/post/use-create-group";
 
 export default function GroupCreatePage() {
   const [approval, setApproval] = useState<"auto" | "manual">("auto");

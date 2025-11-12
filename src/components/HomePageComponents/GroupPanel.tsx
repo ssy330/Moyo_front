@@ -3,6 +3,9 @@ import { useDispatch } from "react-redux";
 import { openModal } from "@/features/modalSlice";
 import { PlusCircle, Users } from "lucide-react";
 import { useMyGroups } from "@/hook/use-my-groups";
+import GroupCard from "./GroupCard";
+import GroupLoader from "./GroupLoader";
+import GroupError from "./GroupError";
 
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
@@ -45,32 +48,10 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
       </div>
 
       {/* 에러 */}
-      {error && (
-        <div
-          className="mb-7 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-          onClick={() => nav(`/groups/2`)}
-        >
-          {(error as Error).message}
-        </div>
-      )}
+      {error && <GroupError error={error} />}
 
       {/* 스켈레톤 */}
-      {isLoading && (
-        <div className="grid grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse rounded-2xl border bg-neutral-50"
-            >
-              <div className="aspect-video bg-neutral-200" />
-              <div className="p-4">
-                <div className="h-4 w-2/3 rounded bg-neutral-200" />
-                <div className="mt-2 h-3 w-1/3 rounded bg-neutral-200" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {isLoading && <GroupLoader />}
 
       {/* 그룹 카드 */}
       {!isLoading && groups && (
@@ -78,33 +59,11 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
           className={`grid gap-6 ${
             viewMode === "both"
               ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
-              : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-5"
+              : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4"
           }`}
         >
           {groups.map((group) => (
-            <div
-              key={group.id}
-              onClick={() => nav(`/groups/${group.id}`)}
-              className="group cursor-pointer overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="aspect-video overflow-hidden">
-                <img
-                  src={group.image_url || "/images/placeholder-group.jpg"}
-                  alt={group.name}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-neutral-800">
-                  {group.name}
-                </h3>
-                {typeof group.member_count === "number" && (
-                  <p className="mt-1 text-sm text-neutral-500">
-                    멤버 {group.member_count}명
-                  </p>
-                )}
-              </div>
-            </div>
+            <GroupCard key={group.id} {...group} />
           ))}
         </div>
       )}

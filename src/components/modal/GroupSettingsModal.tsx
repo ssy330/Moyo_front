@@ -20,7 +20,7 @@ import { Trash2 } from "lucide-react";
 export default function GroupSettingModal() {
   const dispatch = useDispatch();
   const open = useSelector(
-    (state: RootState) => state.modal.currentModal === "groupSetting",
+    (state: RootState) => state.modal.currentModal?.type === "groupSetting",
   );
 
   const [groupName, setGroupName] = useState("");

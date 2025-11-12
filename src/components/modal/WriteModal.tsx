@@ -13,8 +13,8 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { closeModal } from "@/features/modalSlice";
 import { closeAlert, openAlert } from "@/features/alertSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEditPost } from "@/hook/mutation/use-update-post-mutation";
-import { useCreatePost } from "@/hook/mutation/use-create-post-mutation";
+import { useEditPost } from "@/hook/mutation/post/use-update-post";
+import { useCreatePost } from "@/hook/mutation/post/use-create-post-mutation";
 
 type Image = {
   file: File;
@@ -42,8 +42,8 @@ export default function WriteModal() {
   const session = useSelector((state: RootState) => state.session.session);
   // const userId = session?.id;
   const source = useSelector((state: RootState) => state.session.source);
+
   const userId = source === "fastapi" ? session?.user_id : session?.id;
-  console.log("✅ userId:", session?.id);
 
   // ✅ API Mutation
   const { mutate: createPost, isPending: isCreatePostPending } = useCreatePost({
@@ -151,7 +151,7 @@ export default function WriteModal() {
       createPost({
         content: text,
         images: images.map((img) => img.file),
-        userId: userId!,
+        userId: String(userId),
       });
     }
   };
