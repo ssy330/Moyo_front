@@ -11,27 +11,28 @@ import {
   type InviteOut,
   type VerifyOut,
 } from "@/lib/invite-api";
+import type { AxiosError } from "axios";
 
 export function useCreateInvite() {
-  return useMutation<InviteOut, any, CreateInviteIn>({
+  return useMutation<InviteOut, AxiosError, CreateInviteIn>({
     mutationFn: createInvite,
   });
 }
 
 export function useVerifyInvite() {
-  return useMutation<VerifyOut, any, VerifyIn>({
+  return useMutation<VerifyOut, AxiosError, VerifyIn>({
     mutationFn: verifyInvite,
   });
 }
 
 export function useRedeemInvite() {
-  return useMutation<VerifyOut, any, RedeemIn>({
+  return useMutation<VerifyOut, AxiosError, RedeemIn>({
     mutationFn: redeemInvite,
   });
 }
 
 export function useRotateInvite() {
-  return useMutation<InviteOut, any, string>({
+  return useMutation<InviteOut, AxiosError, string>({
     mutationFn: rotateInvite,
   });
 }

@@ -15,6 +15,7 @@ import { closeAlert, openAlert } from "@/features/alertSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEditPost } from "@/hook/mutation/post/use-update-post";
 import { useCreatePost } from "@/hook/mutation/post/use-create-post-mutation";
+import { getUserId } from "@/utils/session";
 
 type Image = {
   file: File;
@@ -40,10 +41,8 @@ export default function WriteModal() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const session = useSelector((state: RootState) => state.session.session);
-  // const userId = session?.id;
-  const source = useSelector((state: RootState) => state.session.source);
 
-  const userId = source === "fastapi" ? session?.user_id : session?.id;
+  const userId = getUserId(session);
 
   // ✅ API Mutation
   const { mutate: createPost, isPending: isCreatePostPending } = useCreatePost({

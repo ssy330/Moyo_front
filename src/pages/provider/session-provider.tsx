@@ -7,14 +7,7 @@ import type { RootState } from "@/store/store";
 import { useEffect, type ReactNode, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { api } from "@/lib/api";
-
-// ✅ 유저 ID 안전 추출 헬퍼
-function getUserId(session: any): string | number | undefined {
-  if (!session) return undefined;
-  if ("user_id" in session) return session.user_id; // FastAPI user
-  if ("id" in session) return session.id; // Supabase user
-  return undefined;
-}
+import { getUserId } from "@/utils/session";
 
 export default function SessionProvider({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
