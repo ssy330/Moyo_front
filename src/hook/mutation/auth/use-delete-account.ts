@@ -1,4 +1,3 @@
-// src/hook/mutation/auth/use-delete-account.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteMyAccount } from "@/lib/api";
 import { useDispatch } from "react-redux";

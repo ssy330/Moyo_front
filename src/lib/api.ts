@@ -60,3 +60,9 @@ export async function deleteMyAccount() {
   const res = await api.delete("/auth/me");
   return res.data; // 204라면 빈 문자열일 수도 있음
 }
+
+// 그룹 탈퇴
+export async function leaveGroup(groupId: number) {
+  const res = await api.delete(`/groups/${groupId}/leave`);
+  return res.data;
+}

@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import InviteCodeModal from "@/components/modal/InviteCodeModal";
 import WritePostModal from "@/components/modal/WriteModal";
-import GroupSettingModal from "@/components/modal/GroupSettingsModal";
 import GroupJoinModal from "@/components/modal/GroupJoinModal";
 import AlertModal from "@/components/modal/AlertModal";
 
@@ -23,7 +22,6 @@ export default function ModalProvider({
           {(currentModal === "write" || currentModal === "edit") && (
             <WritePostModal />
           )}
-          {currentModal === "groupSetting" && <GroupSettingModal />}
           {currentModal === "groupJoin" && <GroupJoinModal />}
           <AlertModal />
         </>,

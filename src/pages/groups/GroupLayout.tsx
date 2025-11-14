@@ -1,27 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
-import { Plus } from "lucide-react";
-import PostFeed from "@/components/GroupsPageComponents/post-feed";
+import { MessageCircle } from "lucide-react";
 import GroupBoardEmbed from "@/components/GroupsPageComponents/GroupBoardEmbed";
 import { useParams } from "react-router-dom";
+import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";
 
 export default function GroupLayout() {
   const { id } = useParams();
   const groupId = Number(id);
 
-  const [boardMode, setBoardMode] = useState<"list" | "write">("list");
-
-  const [fabOpen, setFabOpen] = useState(false);
-  const fabRef = useRef<HTMLDivElement>(null);
-
-  // ✅ 외부 클릭 시 FAB 닫기
-  useEffect(() => {
-    const handle = (e: MouseEvent) => {
-      if (!fabRef.current?.contains(e.target as Node)) setFabOpen(false);
-    };
-    document.addEventListener("click", handle);
-    return () => document.removeEventListener("click", handle);
-  }, []);
+  const [chatOpen, setChatOpen] = useState(false);
 
   return (
     <div className="min-h-screen text-neutral-900">
@@ -32,8 +20,6 @@ export default function GroupLayout() {
 
           {/* 오른쪽 메인 */}
           <main className="w-full max-w-[680px] space-y-6">
-            {/* ✅ 세로형 스토리 */}
-
             {/* 공지사항 */}
             <section className="rounded-2xl bg-white/70 px-6 py-5 shadow-sm backdrop-blur">
               <h2 className="mb-2 text-lg font-semibold text-neutral-800">
@@ -48,40 +34,44 @@ export default function GroupLayout() {
             <section className="min-h-[420px] rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-neutral-800">게시글</h2>
-                <div className="flex gap-2">
-                  <div className="h-5 w-5 rounded-md bg-neutral-200" />
-                  <div className="h-5 w-5 rounded-md bg-neutral-200" />
-                </div>
+                {/* 여기 사진첩/캘린더 아이콘은 그대로 두거나 나중에 상태 연결 */}
               </div>
-              {/* 게시판 피드 */}
-              {/* <PostFeed /> */}
+
               <GroupBoardEmbed groupId={groupId} />
             </section>
           </main>
         </div>
       </div>
 
-      {/* ✅ FAB */}
-      <div ref={fabRef} className="fixed right-6 bottom-6">
-        {fabOpen && (
-          <div className="animate-fadeIn mb-3 w-40 rounded-xl border border-neutral-200 bg-white shadow-xl">
-            <button className="w-full rounded-lg px-4 py-2 text-left text-sm text-neutral-700 transition hover:bg-neutral-100">
-              📸 사진첩
-            </button>
-            <button className="w-full rounded-lg px-4 py-2 text-left text-sm text-neutral-700 transition hover:bg-neutral-100">
-              📅 캘린더
-            </button>
-          </div>
-        )}
+      {/* ✅ 채팅 오버레이 (인스타 DM 느낌) */}
+      {chatOpen && (
+        <>
+          {/* 배경 딤 처리 */}
+          <div
+            className="fixed inset-0 z-40 bg-black/30"
+            onClick={() => setChatOpen(false)}
+          />
 
+          {/* 데스크탑: 오른쪽 아래 카드 / 모바일: 아래에서 올라오는 패널 느낌 */}
+          <div className="fixed right-0 bottom-0 left-0 z-50 mx-auto max-w-md rounded-t-2xl bg-white shadow-2xl md:right-6 md:bottom-6 md:left-auto md:w-[380px] md:rounded-2xl">
+            <GroupChatPanel
+              groupId={groupId}
+              onClose={() => setChatOpen(false)}
+            />
+          </div>
+        </>
+      )}
+
+      {/* 채팅 열기 */}
+      {!chatOpen && (
         <button
-          aria-label="메뉴 열기"
-          onClick={() => setFabOpen((v) => !v)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105"
+          aria-label="채팅 열기"
+          onClick={() => setChatOpen((v) => !v)}
+          className="fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105"
         >
-          <Plus size={24} />
+          <MessageCircle className="h-6 w-6" />
         </button>
-      </div>
+      )}
     </div>
   );
 }

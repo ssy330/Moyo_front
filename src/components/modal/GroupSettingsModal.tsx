@@ -16,22 +16,42 @@ import type { RootState } from "@/store/store";
 import { closeModal } from "@/features/modalSlice";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useLeaveGroup } from "@/hook/mutation/group-delete-mutation";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function GroupSettingModal() {
+export default function GroupSettingModal({ groupId }: { groupId: number }) {
   const dispatch = useDispatch();
   const open = useSelector(
-    (state: RootState) => state.modal.currentModal?.type === "groupSetting",
+    (state: RootState) => state.modal?.currentModal?.type === "groupSetting",
   );
 
   const [groupName, setGroupName] = useState("");
   const [groupDesc, setGroupDesc] = useState("");
   const [groupImage, setGroupImage] = useState<File | null>(null);
 
+  const { mutate: leaveGroup, isPending: isLeaveGroupPending } =
+    useLeaveGroup();
+
+  const nav = useNavigate();
+  console.log("modal 쪽 Id", groupId);
+
+  const queryClient = useQueryClient();
+
   const handleLeaveGroup = () => {
     if (confirm("정말 이 그룹을 탈퇴하시겠습니까?")) {
-      // 🔥 그룹 탈퇴 로직 추가 (API 연동 시 사용)
-      console.log("탈퇴 완료");
-      dispatch(closeModal());
+      leaveGroup(groupId, {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ["my-groups"] });
+
+          // ✅ 진짜 성공했을 때만 닫고 이동
+          dispatch(closeModal());
+          nav("/", { replace: true });
+        },
+        onError: (error) => {
+          console.error("그룹 탈퇴 실패:", error);
+        },
+      });
     }
   };
 
@@ -109,6 +129,7 @@ export default function GroupSettingModal() {
               variant="destructive"
               onClick={handleLeaveGroup}
               className="gap-2 text-white"
+              disabled={isLeaveGroupPending}
             >
               <Trash2 className="h-4 w-4" />
               그룹 탈퇴
