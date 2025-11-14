@@ -53,6 +53,18 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
       {/* 스켈레톤 */}
       {isLoading && <GroupLoader />}
 
+      {/* 그룹이 하나도 없을 때 */}
+      {!isLoading && !error && (groups?.length ?? 0) === 0 && (
+        <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-neutral-300 bg-neutral-50 py-10 text-center">
+          <p className="mb-2 text-base font-semibold text-neutral-800">
+            아직 참여 중인 그룹이 없습니다.
+          </p>
+          <p className="mb-4 text-sm text-neutral-500">
+            새로운 그룹을 만들거나 초대 코드를 입력해 모임에 참여해 보세요.
+          </p>
+        </div>
+      )}
+
       {/* 그룹 카드 */}
       {!isLoading && groups && (
         <div

@@ -1,21 +1,10 @@
+// AccountDeletePage.tsx
 import { useState } from "react";
+import DeleteAccountButton from "./DeleteAccountButton";
 
 export default function AccountDeletePage() {
-  const [password, setPassword] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
-
-  const handleDelete = () => {
-    if (!confirmed) {
-      alert("탈퇴 안내를 확인하고 동의해 주세요.");
-      return;
-    }
-    if (!password) {
-      alert("비밀번호를 입력해주세요.");
-      return;
-    }
-    // 실제 탈퇴 요청 로직(API) 연결 가능
-    alert("계정이 성공적으로 탈퇴되었습니다.");
-  };
+  const [confirmText, setConfirmText] = useState("");
+  const [agreed, setAgreed] = useState(false);
 
   return (
     <div className="mx-auto max-w-xl rounded-lg bg-white p-8 shadow-md">
@@ -35,40 +24,30 @@ export default function AccountDeletePage() {
       <div className="mb-4 flex items-center">
         <input
           type="checkbox"
-          id="confirm"
-          checked={confirmed}
-          onChange={(e) => setConfirmed(e.target.checked)}
+          id="agree"
+          checked={agreed}
+          onChange={(e) => setAgreed(e.target.checked)}
           className="h-4 w-4 accent-green-500"
         />
-        <label htmlFor="confirm" className="ml-2 text-sm text-gray-700">
+        <label htmlFor="agree" className="ml-2 text-sm text-gray-700">
           위 내용을 모두 확인하였으며, 계정 탈퇴에 동의합니다.
         </label>
       </div>
 
       <div className="mb-6">
         <label className="mb-2 block text-sm font-medium text-gray-700">
-          비밀번호 입력
+          아래 문구를 정확히 입력해주세요
         </label>
         <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="비밀번호를 입력하세요"
+          type="text"
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}
+          placeholder="탈퇴하겠습니다."
           className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500"
         />
       </div>
 
-      <button
-        onClick={handleDelete}
-        className={`w-full rounded-md px-4 py-3 text-sm font-semibold text-white transition-all ${
-          confirmed
-            ? "bg-red-500 hover:bg-red-600"
-            : "cursor-not-allowed bg-gray-300"
-        }`}
-        disabled={!confirmed}
-      >
-        계정 영구 탈퇴하기
-      </button>
+      <DeleteAccountButton confirmed={agreed} confirmText={confirmText} />
     </div>
   );
 }

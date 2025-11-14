@@ -4,11 +4,9 @@ import { router } from "./router";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { setSession } from "./features/sessionSlice";
 import ModalProvider from "./pages/provider/modal-provider";
-import supabase from "./lib/supabase";
-import "./index.css";
 import SessionProvider from "./pages/provider/session-provider";
+import "./index.css";
 
 const queryClient = new QueryClient();
 

@@ -1,107 +1,74 @@
-// ✅ src/components/providers/SessionProvider.tsx
 import GlobalLoader from "@/components/layouts/global-loader";
-import { useProfileData } from "@/hook/queries/use-profile-data";
-import supabase from "@/lib/supabase";
-import { setSession, clearSession } from "@/features/sessionSlice";
-import type { RootState } from "@/store/store";
-import { useEffect, type ReactNode, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { api } from "@/lib/api";
+import supabase from "@/lib/supabase";
+import type { RootState } from "@/store/store";
+import { useProfileData } from "@/hook/queries/use-profile-data";
+import { setSession, clearSession } from "@/features/sessionSlice";
+import { useEffect, type ReactNode } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { getUserId } from "@/utils/session";
 
+// ✅ SessionProvider.tsx (수정)
 export default function SessionProvider({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
-
-  const [loading, setLoading] = useState(true);
-  const [loginSource, setLoginSource] = useState<"fastapi" | "supabase" | null>(
-    null,
+  const { session, isLoaded, source } = useSelector(
+    (state: RootState) => state.session,
   );
 
-  const session = useSelector((state: RootState) => state.session.session);
-
-  // ✅ 1️⃣ 로그인 직후 fastapi 토큰이 이미 존재하면 임시 세션 표기
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token && !session) {
-      dispatch(setSession({ user: null, source: "fastapi" }));
-    }
-  }, [dispatch, session]);
-
-  // ✅ 2️⃣ 실제 세션 복원 절차
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
     const initSession = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("access_token");
 
-        // ✅ FastAPI 세션 복원
-        if (token) {
-          try {
-            const res = await api.get("/auth/me", {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            dispatch(setSession({ user: res.data, source: "fastapi" }));
-            setLoginSource("fastapi");
-          } catch (err) {
-            console.error("FastAPI 세션 복원 실패:", err);
-            localStorage.removeItem("access_token");
-            dispatch(clearSession());
-          } finally {
-            setLoading(false);
-          }
+      if (token) {
+        try {
+          const res = await api.get("/auth/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          dispatch(setSession({ user: res.data, source: "fastapi" }));
           return;
+        } catch (err) {
+          console.error("FastAPI 세션 복원 실패:", err);
+          localStorage.removeItem("access_token");
         }
+      }
 
-        // ✅ Supabase 세션 감시 시작
-        const { data: listener } = supabase.auth.onAuthStateChange(
-          (_event, session) => {
-            if (session) {
-              dispatch(setSession({ user: session.user, source: "supabase" }));
-              setLoginSource("supabase");
-            } else {
-              dispatch(clearSession());
-              setLoginSource(null);
-            }
-          },
-        );
+      // ✅ Supabase 세션 감시
+      const { data: listener } = supabase.auth.onAuthStateChange(
+        (_event, session) => {
+          if (session) {
+            dispatch(setSession({ user: session.user, source: "supabase" }));
+          } else {
+            dispatch(clearSession());
+          }
+        },
+      );
+      unsubscribe = () => listener.subscription.unsubscribe();
 
-        unsubscribe = () => listener.subscription.unsubscribe();
-
-        // ✅ 초기 Supabase 세션 확인
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          dispatch(setSession({ user: data.session.user, source: "supabase" }));
-          setLoginSource("supabase");
-        } else {
-          dispatch(clearSession());
-        }
-      } catch (err) {
-        console.error("세션 복원 실패:", err);
-        localStorage.removeItem("access_token");
+      // ✅ 초기 Supabase 세션 확인
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        dispatch(setSession({ user: data.session.user, source: "supabase" }));
+      } else {
         dispatch(clearSession());
-      } finally {
-        setLoading(false);
       }
     };
 
     initSession();
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    return () => unsubscribe?.();
   }, [dispatch]);
 
-  // ✅ 3️⃣ Supabase 로그인 시 프로필 요청
+  // ✅ 프로필 fetch 조건
   const userId = getUserId(session);
   const shouldFetchProfile =
-    loginSource === "supabase" && typeof userId === "string";
+    source === "supabase" && typeof userId === "string";
   const { isLoading: isProfileLoading } = useProfileData(
     shouldFetchProfile ? (userId as string) : undefined,
   );
 
-  // ✅ 4️⃣ 로딩 스피너 조건
-  if (loading || (shouldFetchProfile && isProfileLoading)) {
+  // ✅ Redux에서 세션 로드 완료 & 프로필까지 완료될 때만 렌더링
+  if (!isLoaded || (shouldFetchProfile && isProfileLoading)) {
     return <GlobalLoader />;
   }
 

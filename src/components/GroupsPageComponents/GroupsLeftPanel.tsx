@@ -10,6 +10,7 @@ export default function GroupsLeftPanel() {
   const dispatch = useDispatch();
 
   const group = groups?.find((g) => g.id === Number(id));
+  console.log(group);
 
   return (
     <aside className="space-y-5">

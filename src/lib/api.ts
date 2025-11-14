@@ -52,3 +52,11 @@ export async function createGroupMultipart(
   const location = (res.headers["location"] ?? null) as string | null;
   return { data: res.data, location };
 }
+
+// 계정 탈퇴.
+export async function deleteMyAccount() {
+  // 백엔드 라우터 prefix에 맞게 경로 조정해줘
+  // 예: @router = APIRouter(prefix="/auth") 이면 "/auth/me"
+  const res = await api.delete("/auth/me");
+  return res.data; // 204라면 빈 문자열일 수도 있음
+}

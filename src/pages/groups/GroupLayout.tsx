@@ -2,8 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import { Plus } from "lucide-react";
 import PostFeed from "@/components/GroupsPageComponents/post-feed";
+import GroupBoardEmbed from "@/components/GroupsPageComponents/GroupBoardEmbed";
+import { useParams } from "react-router-dom";
 
-export default function MoyoGroupLayout() {
+export default function GroupLayout() {
+  const { id } = useParams();
+  const groupId = Number(id);
+
+  const [boardMode, setBoardMode] = useState<"list" | "write">("list");
+
   const [fabOpen, setFabOpen] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
 
@@ -46,8 +53,9 @@ export default function MoyoGroupLayout() {
                   <div className="h-5 w-5 rounded-md bg-neutral-200" />
                 </div>
               </div>
-
-              <PostFeed />
+              {/* 게시판 피드 */}
+              {/* <PostFeed /> */}
+              <GroupBoardEmbed groupId={groupId} />
             </section>
           </main>
         </div>

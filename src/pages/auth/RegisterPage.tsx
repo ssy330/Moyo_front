@@ -96,14 +96,14 @@ export default function RegisterPage() {
   const handleSubmit = () => {
     if (!isFormValid) return;
     signup(
-      { email, nickname, password },
+      { email, nickname, name, password },
       {
         onSuccess: (data) => {
           console.log("회원가입 성공:", data);
-          localStorage.setItem("token", data.access_token);
+          localStorage.setItem("access_token", data.access_token);
           dispatch(setName(data.user.name));
           dispatch(setEmail(data.user.email));
-          dispatch(setNickname(data.user.name));
+          dispatch(setNickname(data.user.nickname));
           alert("회원가입 완료 및 로그인 성공!");
           navigate("/");
         },
@@ -144,7 +144,7 @@ export default function RegisterPage() {
           />
 
           {/* 이메일 + 인증버튼 */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-start gap-2">
             <div className="flex-1">
               <AuthInput
                 name="email"
@@ -165,13 +165,13 @@ export default function RegisterPage() {
                 isCodeValid === true ||
                 loadingSend
               }
-              className={`h-12 w-15 px-4 text-sm font-medium transition-colors ${
+              className={`flex h-12 w-15 shrink-0 items-center justify-center px-3 text-xs font-medium transition-colors ${
                 isCodeValid === true
-                  ? "cursor-not-allowed bg-gray-300 text-gray-600"
+                  ? "cursor-not-allowed"
                   : isRunning || loadingSend
                     ? "cursor-not-allowed"
                     : ""
-              }`}
+              } `}
             >
               {isCodeValid === true
                 ? "완료"
@@ -187,15 +187,17 @@ export default function RegisterPage() {
 
           {/* 인증번호 입력 */}
           {isCodeSent && (
-            <div className="flex items-center gap-2">
-              <AuthInput
-                name="authCode"
-                placeholder="인증번호를 입력하세요."
-                value={inputCode}
-                onChange={(e) => setInputCode(e.target.value)}
-                disabled={isCodeValid === true || loadingVerify}
-                resendKey={resendKey}
-              />
+            <div className="flex items-start gap-2">
+              <div className="flex-1">
+                <AuthInput
+                  name="authCode"
+                  placeholder="인증번호를 입력하세요."
+                  value={inputCode}
+                  onChange={(e) => setInputCode(e.target.value)}
+                  disabled={isCodeValid === true || loadingVerify}
+                  resendKey={resendKey}
+                />
+              </div>
               <Button
                 type="button"
                 onClick={handleVerifyCode}
@@ -204,7 +206,7 @@ export default function RegisterPage() {
                   isCodeValid === true ||
                   loadingVerify
                 }
-                className="h-12 px-4 text-sm font-medium"
+                className="flex h-12 w-15 shrink-0 items-center justify-center px-3 text-xs font-medium"
               >
                 {isCodeValid === true
                   ? "완료"

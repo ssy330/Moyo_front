@@ -26,7 +26,8 @@ export default function ProfilePage() {
         if (session) {
           // ✅ Supabase 로그인 상태
           const user = session.user;
-          setNickname(user?.user_metadata?.name ?? "이름 없음");
+
+          setNickname(user?.user_metadata?.nickname ?? "이름 없음");
           setName(user?.user_metadata?.name ?? "이름 없음");
           setEmail(user?.email ?? "이메일 없음");
           setAvatar(user?.user_metadata?.avatar_url ?? null);
@@ -39,7 +40,8 @@ export default function ProfilePage() {
             });
             if (res.ok) {
               const me = await res.json();
-              setNickname(me.name);
+              console.log(me);
+              setNickname(me.nickname);
               setName(me.name);
               setEmail(me.email);
               setAvatar(null); // 백엔드에 아바타 없으면 null
@@ -55,6 +57,7 @@ export default function ProfilePage() {
 
     loadProfile();
   }, []);
+  console.log(nickname);
 
   // ✅ 닉네임 수정
   const handleNicknameEdit = () => {

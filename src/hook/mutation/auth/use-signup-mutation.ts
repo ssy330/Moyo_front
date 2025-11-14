@@ -39,18 +39,21 @@ export const useSignup = () =>
   useMutation({
     mutationFn: async ({
       email,
+      name,
       nickname,
       password,
     }: {
       email: string;
+      name: string;
       nickname: string;
       password: string;
     }) => {
       const res = await fetch(`${API_BASE}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: nickname, password }),
+        body: JSON.stringify({ email, name, nickname, password }),
       });
+      console.log(res);
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Signup failed");

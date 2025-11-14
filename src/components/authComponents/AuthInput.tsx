@@ -1,3 +1,4 @@
+// src/components/authComponents/AuthInput.tsx
 import { useState, useEffect } from "react";
 import { useValidation } from "@/hook/useValidation";
 import { Input } from "@/components/ui/input";
@@ -34,9 +35,8 @@ export default function AuthInput({
   resendKey,
   validateOnChange = true,
 }: AuthInputProps) {
-  // 유효성 검사
   const { isValid, validate, messages } = useValidation(name, passwordValue);
-  // 비밀번호가 보였을 때,
+
   const [showPw, setShowPw] = useState(false);
   const isPassword = name.includes("password");
   const isAuthCode = name.includes("authCode");
@@ -46,7 +46,6 @@ export default function AuthInput({
     onValidChange?.(isValid);
   }, [isValid, onValidChange]);
 
-  // ✅ 필드 타입별 autoComplete 값 설정
   const getAutoCompleteValue = () => {
     if (autoComplete) return autoComplete;
     switch (name) {
@@ -67,7 +66,7 @@ export default function AuthInput({
 
   return (
     <div className="flex flex-col space-y-1">
-      {/* Input + 토글 버튼 */}
+      {/* Input + 토글/카운트다운 */}
       <div className="relative">
         <Input
           id={name}
@@ -82,10 +81,12 @@ export default function AuthInput({
           disabled={disabled}
           maxLength={name === "authCode" ? 6 : undefined}
           autoComplete={getAutoCompleteValue()}
-          className={`h-12 ${isAuthCode ? "pr-20 md:pr-24" : "pr-12"} ${
-            isValid === false ? "border-red-400" : ""
-          }`}
+          className={`h-12 pr-12 ${
+            isAuthCode ? "pr-20 md:pr-24" : ""
+          } ${isValid === false ? "border-red-400" : ""}`}
         />
+
+        {/* 비밀번호 보기/숨김 */}
         {isPassword && (
           <button
             type="button"
@@ -95,18 +96,22 @@ export default function AuthInput({
             {showPw ? "숨김" : "보기"}
           </button>
         )}
-        {isAuthCode &&
-          !disabled && ( // 인증 완료 시 disabled = true 라면 숨김
-            <div className="absolute top-1/2 right-3 ml-0 -translate-y-1/2">
-              <AuthCountdown key={resendKey} initialTime={300} />
-            </div>
-          )}
+
+        {/* 인증번호 타이머 (폭 고정) */}
+        {isAuthCode && !disabled && (
+          <div className="absolute top-1/2 right-3 flex h-6 w-16 -translate-y-1/2 items-center justify-center text-xs">
+            <AuthCountdown key={resendKey} initialTime={300} />
+          </div>
+        )}
       </div>
 
-      {/* 메시지 */}
+      {/* 메시지 영역: 항상 높이 고정 */}
+
       {isValid !== null && (
         <p
-          className={`truncate text-xs leading-4 ${isValid ? "text-green-500" : "text-red-500"}`}
+          className={`mt-1 text-xs leading-4 ${
+            isValid ? "text-green-500" : "text-red-500"
+          }`}
         >
           {isValid ? messages[name][1] : messages[name][0]}
         </p>

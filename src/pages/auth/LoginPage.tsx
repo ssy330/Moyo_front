@@ -1,6 +1,4 @@
-// src/pages/LoginPage.tsx
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
-import GitHubIcon from "@/assets/GitHubIcon";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import AuthInput from "@/components/authComponents/AuthInput";
@@ -8,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignInWithEmail } from "@/hook/mutation/auth/use-login-mutation";
-import { useSignInWithOAuth } from "@/hook/mutation/auth/use-git-oauth-mutation";
 import { checkServerConnection } from "@/lib/server-test";
 
 export default function LoginPage() {
@@ -28,8 +25,6 @@ export default function LoginPage() {
 
   const { mutate: signInWithEmail, isPending: isSignInWithEmailPending } =
     useSignInWithEmail();
-  const { mutate: signInWithOAuth, isPending: isSignInWithOAuthPending } =
-    useSignInWithOAuth();
 
   // 입력 값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +41,6 @@ export default function LoginPage() {
         onSuccess: () => navigate("/", { replace: true }),
       },
     );
-  };
-
-  // 깃허브 소셜 로그인
-  const handleSignInWithGitHub = async () => {
-    signInWithOAuth("github"); // Supabase가 자동으로 리다이렉트
   };
 
   return (
@@ -105,19 +95,6 @@ export default function LoginPage() {
                   <KakaoTalkIcon />
                 </span>
                 카카오계정으로 시작하기
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="h-12 w-full"
-                disabled={isSignInWithOAuthPending}
-                onClick={handleSignInWithGitHub}
-              >
-                <span className="mr-2">
-                  <GitHubIcon />
-                </span>
-                깃허브계정으로 시작하기
               </Button>
             </div>
 
