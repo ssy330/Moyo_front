@@ -10,10 +10,6 @@ import "./index.css";
 
 const queryClient = new QueryClient();
 
-// supabase.auth.onAuthStateChange((_event, session) => {
-//   store.dispatch(setSession(session));
-// });
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>

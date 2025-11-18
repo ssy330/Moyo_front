@@ -2,24 +2,19 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface FastAPIUser {
-  user_id: number;
+  user_id: number; // 백엔드 /auth/me 응답에 맞춰서
   email?: string;
   username?: string;
 }
 
-interface SupabaseUser {
-  id: string;
-  email?: string | null;
-  user_metadata?: Record<string, unknown>;
-}
-
-export type SessionUser = FastAPIUser | SupabaseUser;
+export type SessionUser = FastAPIUser;
 
 export interface SessionState {
   session: SessionUser | null;
   isLoaded: boolean;
-  source: "supabase" | "fastapi" | null;
+  source: "fastapi" | null;
 }
+
 const initialState: SessionState = {
   session: null,
   isLoaded: false,
@@ -30,22 +25,21 @@ const sessionSlice = createSlice({
   name: "session",
   initialState,
   reducers: {
-    // ✅ 항상 { user, source } 형태로 받는다
     setSession: (
       state,
       action: PayloadAction<{
         user: SessionUser | null;
-        source: "supabase" | "fastapi";
+        source: "fastapi";
       }>,
     ) => {
       state.session = action.payload.user;
       state.source = action.payload.source;
-      state.isLoaded = true; // 🟢 세션 로딩 완료
+      state.isLoaded = true; // 세션 로딩 완료
     },
     clearSession: (state) => {
       state.session = null;
       state.source = null;
-      state.isLoaded = true; // 🟢 "없다는 것"도 확인 완료
+      state.isLoaded = true; // "없다"는 것도 확인 완료
     },
   },
 });

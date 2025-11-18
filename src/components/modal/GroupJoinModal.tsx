@@ -7,24 +7,90 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
-import { closeModal } from "@/features/modalSlice";
 
-export default function GroupJoinModal() {
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { api } from "@/lib/api";
+import axios from "axios";
+
+type GroupJoinModalProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
+export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
   const [inviteCode, setInviteCode] = useState("");
-  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const nav = useNavigate();
 
-  // Redux 상태 관리
-  const open = useSelector(
-    (state: RootState) => state.modal.currentModal?.type === "groupJoin",
-  );
+  const handleClose = () => {
+    setInviteCode(""); // 닫을 때 입력값도 초기화하고 싶으면
+    onClose();
+  };
 
-  // 모달 닫기 함수
-  const handleClose = () => dispatch(closeModal());
+  // 그룹 참여
+  const handleJoin = async () => {
+    const code = inviteCode.trim();
+    if (!code) {
+      toast.warning("초대 코드를 입력해주세요.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await api.post("/groups/join-by-invite", { code });
+
+      const group = res.data; // GroupDetailOut 형태라고 가정: { id, name, ... }
+
+      toast.success(`"${group.name}" 그룹에 참가했어요!`);
+      handleClose();
+
+      // 그룹 상세 페이지로 이동
+      nav(`/groups/${group.id}`);
+    } catch (error) {
+      let message = "초대 코드로 그룹 참가에 실패했어요.";
+
+      if (axios.isAxiosError(error)) {
+        const reason = error.response?.data?.detail;
+
+        switch (reason) {
+          case "NOT_FOUND":
+            message = "존재하지 않는 초대 코드입니다.";
+            break;
+          case "EXPIRED":
+            message = "만료된 초대 코드입니다.";
+            break;
+          case "EXHAUSTED":
+            message = "사용 횟수가 모두 소진된 초대 코드입니다.";
+            break;
+          case "REVOKED":
+            message = "관리자에 의해 취소된 초대 코드입니다.";
+            break;
+          case "INVALID_PURPOSE":
+            message = "이 초대 코드는 그룹 참여용이 아닙니다.";
+            break;
+          case "BAD_PAYLOAD":
+          case "GROUP_ID_MISSING":
+          case "GROUP_NOT_FOUND":
+            message = "이 초대 코드에 연결된 그룹 정보를 찾을 수 없습니다.";
+            break;
+        }
+      }
+
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) handleClose();
+      }}
+    >
       <DialogContent className="max-w-md rounded-2xl border border-neutral-200 bg-white p-8 shadow-xl">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-green-700">
@@ -60,17 +126,18 @@ export default function GroupJoinModal() {
             variant="outline"
             onClick={handleClose}
             className="text-gray-600"
+            disabled={loading}
           >
             취소
           </Button>
 
           <Button
             onClick={() => {
-              alert(`참여 코드: ${inviteCode}`);
-              handleClose();
+              handleJoin();
             }}
+            disabled={loading}
           >
-            참가
+            {loading ? "참가 중..." : "참가"}
           </Button>
         </div>
       </DialogContent>

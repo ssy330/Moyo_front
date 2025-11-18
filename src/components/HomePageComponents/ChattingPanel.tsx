@@ -21,8 +21,6 @@ const ChattingPanel = ({
   const [rooms, setRooms] = useState<Room[]>([]);
   const [newRoomName, setNewRoomName] = useState("");
 
-  console.log("채팅 패널의 Id : ", selectedChatId);
-
   // 방 목록 불러오기
   useEffect(() => {
     fetch(`${API_URL}/rooms/`)

@@ -1,4 +1,3 @@
-// src/hooks/useChatSocket.ts
 import { useEffect, useRef, useState, useCallback } from "react";
 
 export interface ChatMessage {
@@ -7,31 +6,32 @@ export interface ChatMessage {
   user_id: number | null;
   content: string;
   created_at: string;
-  nickname?: string | null; // 🔹 서버에서 내려주는 닉네임
+  nickname?: string | null; // 서버에서 내려주는 닉네임
 }
 
 interface UseChatSocketProps {
-  roomId: number;
+  groupId: number; // 🔹 이제 groupId만 받음
   onMessage?: (msg: ChatMessage) => void;
 }
 
 type OutgoingPayload = {
-  content: string; // ✔️ 이제 닉네임은 서버에서 처리하니까 content만 보내도 됨
+  content: string;
+  created_at?: string;
 };
 
-export function useChatSocket({ roomId, onMessage }: UseChatSocketProps) {
+export function useChatSocket({ groupId, onMessage }: UseChatSocketProps) {
   const [connected, setConnected] = useState(false);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!groupId) return;
 
-    // 🔹 로그인 때 저장해둔 토큰 꺼내오기 (예: localStorage)
     const token = localStorage.getItem("access_token") ?? "";
 
     const API_BASE = import.meta.env.VITE_API_BASE; // http://localhost:8000/api/v1
     const WS_BASE = API_BASE.replace(/^http/, "ws").replace(/\/api\/v1$/, "");
-    const url = `${WS_BASE}/ws/rooms/${roomId}?token=${encodeURIComponent(
+    // 🔹 groupId를 그냥 room id처럼 사용
+    const url = `${WS_BASE}/ws/rooms/${groupId}?token=${encodeURIComponent(
       token,
     )}`;
 
@@ -70,7 +70,7 @@ export function useChatSocket({ roomId, onMessage }: UseChatSocketProps) {
         ws.close();
       }
     };
-  }, [roomId, onMessage]);
+  }, [groupId, onMessage]);
 
   const sendMessage = useCallback((payload: OutgoingPayload) => {
     if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {

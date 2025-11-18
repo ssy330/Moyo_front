@@ -40,7 +40,6 @@ export default function ProfilePage() {
             });
             if (res.ok) {
               const me = await res.json();
-              console.log(me);
               setNickname(me.nickname);
               setName(me.name);
               setEmail(me.email);

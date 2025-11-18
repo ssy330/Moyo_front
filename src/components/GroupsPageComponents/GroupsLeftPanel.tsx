@@ -4,6 +4,8 @@ import { useMyGroups } from "@/hook/use-my-groups";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import GroupSettingModal from "../modal/GroupSettingsModal";
+import { useState } from "react";
+import InviteCodeModal from "../modal/InviteCodeModal";
 
 export default function GroupsLeftPanel() {
   const { data: groups } = useMyGroups();
@@ -11,8 +13,9 @@ export default function GroupsLeftPanel() {
   const dispatch = useDispatch();
 
   const groupId = Number(id);
-
   const group = groups?.find((g) => g.id === Number(id));
+
+  const [openInvite, setOpenInvite] = useState(false);
 
   return (
     <>
@@ -60,7 +63,7 @@ export default function GroupsLeftPanel() {
             </button>
 
             <button
-              onClick={() => dispatch(openModal({ type: "invite" }))} // ✅ 초대코드 모달
+              onClick={() => setOpenInvite(true)} // ✅ 초대코드 모달
               className="rounded-full bg-rose-50 px-3 py-1 text-rose-600 transition hover:bg-rose-100"
             >
               초대 코드
@@ -83,6 +86,12 @@ export default function GroupsLeftPanel() {
       </aside>
       {/* ✅ 이 그룹에 대한 설정 모달 (내부 모달처럼 같이 렌더) */}
       {groupId && <GroupSettingModal groupId={groupId} />}
+
+      <InviteCodeModal
+        open={openInvite}
+        onClose={() => setOpenInvite(false)}
+        groupId={groupId}
+      />
     </>
   );
 }

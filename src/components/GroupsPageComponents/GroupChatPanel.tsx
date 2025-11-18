@@ -14,13 +14,30 @@ import { useChatSocket, type ChatMessage } from "@/hook/useChatSocket";
 
 interface GroupChatPanelProps {
   groupId: number;
-  roomId: number;
   onClose: () => void;
+}
+
+const formatTime = (iso: string | Date) => {
+  const date = typeof iso === "string" ? new Date(iso) : iso;
+  return new Intl.DateTimeFormat("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true, // 오전/오후
+  }).format(date);
+};
+
+// 🔹 백엔드 메시지 응답 타입 (any[] 제거용)
+interface ChatMessageDTO {
+  id: number;
+  room_id: number;
+  user_id: number | null;
+  content: string;
+  created_at: string;
+  user_nickname?: string | null;
 }
 
 export default function GroupChatPanel({
   groupId,
-  roomId,
   onClose,
 }: GroupChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -29,32 +46,41 @@ export default function GroupChatPanel({
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ 1) Redux에서 내 id 꺼내오기
+  // ✅ Redux에서 내 id 꺼내오기
   const myUserId = useSelector((state: RootState) => state.auth.id);
 
   const handleIncomingMessage = useCallback((msg: ChatMessage) => {
-    setMessages((prev) => [...prev, msg]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        ...msg,
+        created_at: msg.created_at ?? new Date().toISOString(),
+      },
+    ]);
   }, []);
 
-  // ✅ WebSocket 연결
+  // ✅ WebSocket 연결 (이제 groupId 기준)
   const { connected, sendMessage } = useChatSocket({
-    roomId,
+    groupId,
     onMessage: handleIncomingMessage,
   });
 
   // ✅ 처음 들어왔을 때 기존 메시지 REST로 가져오기
   useEffect(() => {
-    if (!roomId) return;
+    if (!groupId) return;
 
     let cancelled = false;
 
     (async () => {
       try {
-        const res = await api.get(`/messages/rooms/${roomId}`);
+        // 프론트에서 groupId를 그대로 "room id"처럼 사용
+        const res = await api.get<ChatMessageDTO[]>(
+          `/messages/rooms/${groupId}`,
+        );
 
         if (cancelled) return;
 
-        const raw = res.data as any[];
+        const raw = res.data;
 
         const mapped: ChatMessage[] = raw.map((m) => ({
           id: m.id,
@@ -76,7 +102,7 @@ export default function GroupChatPanel({
     return () => {
       cancelled = true;
     };
-  }, [roomId]);
+  }, [groupId]);
 
   // ✅ 메시지 바뀔 때마다 맨 아래로 스크롤
   useEffect(() => {
@@ -87,7 +113,12 @@ export default function GroupChatPanel({
     const text = input.trim();
     if (!text) return;
 
-    sendMessage({ content: text });
+    const now = new Date().toISOString();
+
+    sendMessage({
+      content: text,
+      created_at: now,
+    });
     setInput("");
   };
 
@@ -131,10 +162,10 @@ export default function GroupChatPanel({
         ) : (
           <div className="space-y-2">
             {messages.map((msg) => {
-              const timeLabel = new Date(msg.created_at).toLocaleTimeString();
+              const timeLabel = formatTime(msg.created_at || new Date());
               const nickname = msg.nickname ?? "익명";
 
-              // ✅ 2) 내 메시지인지 판단
+              // ✅ 내 메시지인지 판단
               const isMine =
                 myUserId !== null && msg.user_id === Number(myUserId);
 
@@ -155,9 +186,9 @@ export default function GroupChatPanel({
                       <span>{timeLabel}</span>
                     </div>
                     <div
-                      className={`rounded-2xl px-3 py-2 text-[13px] ${
+                      className={`block w-fit max-w-[80%] rounded-2xl px-3 py-2 text-[13px] break-words ${
                         isMine
-                          ? "rounded-br-sm bg-emerald-500 text-white"
+                          ? "ml-auto rounded-br-sm bg-emerald-500 text-white"
                           : "rounded-bl-sm bg-neutral-100 text-neutral-800"
                       }`}
                     >

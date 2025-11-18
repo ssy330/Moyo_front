@@ -109,7 +109,6 @@ export default function GroupLayout() {
           <div className="fixed right-0 bottom-0 left-0 z-50 mx-auto max-w-md rounded-t-2xl bg-white shadow-2xl md:right-6 md:bottom-6 md:left-auto md:w-[380px] md:rounded-2xl">
             <GroupChatPanel
               groupId={groupId}
-              roomId={roomId}
               onClose={() => setChatOpen(false)}
             />
           </div>

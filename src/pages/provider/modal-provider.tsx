@@ -1,9 +1,7 @@
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-import InviteCodeModal from "@/components/modal/InviteCodeModal";
 import WritePostModal from "@/components/modal/WriteModal";
-import GroupJoinModal from "@/components/modal/GroupJoinModal";
 import AlertModal from "@/components/modal/AlertModal";
 
 export default function ModalProvider({
@@ -18,11 +16,9 @@ export default function ModalProvider({
     <>
       {createPortal(
         <>
-          {currentModal === "invite" && <InviteCodeModal />}
           {(currentModal === "write" || currentModal === "edit") && (
             <WritePostModal />
           )}
-          {currentModal === "groupJoin" && <GroupJoinModal />}
           <AlertModal />
         </>,
         document.getElementById("modal-root")!,
