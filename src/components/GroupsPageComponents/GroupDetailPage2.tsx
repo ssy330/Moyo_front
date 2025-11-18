@@ -38,7 +38,6 @@ export default function GroupDetailPage({ groupId }: { groupId: string }) {
   const boardPath = group.boardPath ?? `group_${groupId}_board`;
 
   const boardUrl = `${RHYMIX_BASE_URL}/${boardPath}`;
-  console.log(boardUrl);
 
   return (
     <div className="group-detail-page">

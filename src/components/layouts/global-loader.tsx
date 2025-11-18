@@ -1,6 +1,19 @@
 import logo from "@/assets/Moyo_logo.png";
 
-export default function GlobalLoader() {
+type GlobalLoaderProps = {
+  textType?: string; // 나중에 "page" 같은 것도 추가할 수 있음
+};
+
+export default function GlobalLoader({ textType = "wait" }: GlobalLoaderProps) {
+  let text;
+  switch (textType) {
+    case "data":
+      text = "데이터를 불러오는 중입니다.🌿";
+      break;
+    case "wait":
+      text = "잠시만 기다려 주세요.🌿";
+      break;
+  }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-gradient-to-br from-emerald-100 via-emerald-50 to-white">
       {/* 로고 + 텍스트 */}
@@ -11,7 +24,7 @@ export default function GlobalLoader() {
           className="w-28 animate-pulse drop-shadow-sm"
         />
         <p className="animate-fade-in text-base font-medium tracking-wide text-gray-600">
-          잠시만 기다려주세요 🌿
+          {text}
         </p>
       </div>
 

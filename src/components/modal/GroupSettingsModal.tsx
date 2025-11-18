@@ -43,7 +43,7 @@ export default function GroupSettingModal({ groupId }: { groupId: number }) {
       leaveGroup(groupId, {
         onSuccess: async () => {
           await queryClient.invalidateQueries({ queryKey: ["my-groups"] });
-
+          await new Promise((resolve) => setTimeout(resolve, 300));
           // ✅ 진짜 성공했을 때만 닫고 이동
           dispatch(closeModal());
           nav("/", { replace: true });

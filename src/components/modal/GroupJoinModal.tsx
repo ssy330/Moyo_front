@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 type GroupJoinModalProps = {
   open: boolean;
@@ -22,13 +23,13 @@ export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
   const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
+  const queryClient = useQueryClient(); // ✅ react-query 클라이언트
 
   const handleClose = () => {
-    setInviteCode(""); // 닫을 때 입력값도 초기화하고 싶으면
+    setInviteCode("");
     onClose();
   };
 
-  // 그룹 참여
   const handleJoin = async () => {
     const code = inviteCode.trim();
     if (!code) {
@@ -39,14 +40,23 @@ export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
     try {
       setLoading(true);
 
+      // 1) 초대 코드로 그룹 참여
       const res = await api.post("/groups/join-by-invite", { code });
 
-      const group = res.data; // GroupDetailOut 형태라고 가정: { id, name, ... }
+      // 🔹 join-by-invite 응답 구조: { group, members, boardUrl, boardMid }
+      const { group } = res.data;
+
+      // 2) 내 그룹 목록 쿼리 무효화 → 다시 가져오게
+      await queryClient.invalidateQueries({ queryKey: ["myGroups"] });
+
+      // (선택) 정말 약간의 딜레이를 주고 싶다면:
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       toast.success(`"${group.name}" 그룹에 참가했어요!`);
+
       handleClose();
 
-      // 그룹 상세 페이지로 이동
+      // 3) 그룹 상세로 이동
       nav(`/groups/${group.id}`);
     } catch (error) {
       let message = "초대 코드로 그룹 참가에 실패했어요.";
@@ -131,12 +141,7 @@ export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
             취소
           </Button>
 
-          <Button
-            onClick={() => {
-              handleJoin();
-            }}
-            disabled={loading}
-          >
+          <Button onClick={handleJoin} disabled={loading}>
             {loading ? "참가 중..." : "참가"}
           </Button>
         </div>

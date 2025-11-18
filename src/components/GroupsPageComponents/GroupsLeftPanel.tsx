@@ -1,31 +1,41 @@
+// GroupsLeftPanel.tsx
+
 import { Settings } from "lucide-react";
 import { openModal } from "@/features/modalSlice";
-import { useMyGroups } from "@/hook/use-my-groups";
-import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import GroupSettingModal from "../modal/GroupSettingsModal";
 import { useState } from "react";
 import InviteCodeModal from "../modal/InviteCodeModal";
 
-export default function GroupsLeftPanel() {
-  const { data: groups } = useMyGroups();
-  const { id } = useParams<{ id: string }>();
+type Group = {
+  id: number;
+  name: string;
+  description?: string | null;
+  image_url?: string | null;
+  member_count?: number;
+};
+
+type GroupsLeftPanelProps = {
+  group: Group;
+};
+
+export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
   const dispatch = useDispatch();
-
-  const groupId = Number(id);
-  const group = groups?.find((g) => g.id === Number(id));
-
   const [openInvite, setOpenInvite] = useState(false);
+
+  console.log(group);
+
+  const groupId = group.id;
 
   return (
     <>
       <aside className="space-y-5">
         {/* 커버 이미지 */}
         <div className="relative overflow-hidden rounded-2xl shadow-sm">
-          {group?.image_url ? (
+          {group.image_url ? (
             <img
               src={group.image_url}
-              alt={`${group?.name ?? "그룹"} 커버`}
+              alt={`${group.name} 커버`}
               className="aspect-[4/3] w-full object-cover"
             />
           ) : (
@@ -46,24 +56,24 @@ export default function GroupsLeftPanel() {
         {/* 그룹 정보 */}
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <h2 className="text-lg font-bold text-neutral-900">
-            {group?.name ?? "이름없음"}
+            {group.name ?? "이름없음"}
           </h2>
 
           <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-            {group?.description ?? "그룹 설명이 없습니다."}
+            {group.description ?? "그룹 설명이 없습니다."}
           </p>
 
           {/* 멤버수 + 초대코드 */}
           <div className="mt-10 flex flex-wrap items-center gap-2 text-xs text-neutral-600">
             <button
-              onClick={() => alert("멤버 관리닷~")} // ✅ 멤버 관리 모달
+              onClick={() => alert("멤버 관리닷~")} // TODO: 멤버 관리 모달
               className="rounded-full bg-neutral-100 px-3 py-1 transition hover:bg-neutral-200"
             >
-              멤버 {group?.member_count}명
+              멤버 {group.member_count ?? 0}명
             </button>
 
             <button
-              onClick={() => setOpenInvite(true)} // ✅ 초대코드 모달
+              onClick={() => setOpenInvite(true)}
               className="rounded-full bg-rose-50 px-3 py-1 text-rose-600 transition hover:bg-rose-100"
             >
               초대 코드
@@ -84,9 +94,11 @@ export default function GroupsLeftPanel() {
           카테고리 / 게시판 분류 영역
         </div>
       </aside>
-      {/* ✅ 이 그룹에 대한 설정 모달 (내부 모달처럼 같이 렌더) */}
+
+      {/* 그룹 설정 모달 */}
       {groupId && <GroupSettingModal groupId={groupId} />}
 
+      {/* 초대 코드 모달 */}
       <InviteCodeModal
         open={openInvite}
         onClose={() => setOpenInvite(false)}
