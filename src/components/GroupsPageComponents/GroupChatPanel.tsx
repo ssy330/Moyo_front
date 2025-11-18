@@ -22,7 +22,7 @@ const formatTime = (iso: string | Date) => {
   return new Intl.DateTimeFormat("ko-KR", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: true, // 오전/오후
+    hour12: true,
   }).format(date);
 };
 
@@ -165,7 +165,6 @@ export default function GroupChatPanel({
               const timeLabel = formatTime(msg.created_at || new Date());
               const nickname = msg.nickname ?? "익명";
 
-              // ✅ 내 메시지인지 판단
               const isMine =
                 myUserId !== null && msg.user_id === Number(myUserId);
 
@@ -174,21 +173,25 @@ export default function GroupChatPanel({
                   key={msg.id}
                   className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                 >
-                  <div className="max-w-[80%]">
-                    <div
-                      className={`mb-[1px] flex items-baseline gap-2 text-[11px] text-neutral-400 ${
-                        isMine ? "justify-end" : ""
-                      }`}
-                    >
+                  {/* 🔹 이 래퍼는 말풍선 크기만큼만 차지하게 */}
+                  <div
+                    className={`flex flex-col ${
+                      isMine ? "items-end" : "items-start"
+                    }`}
+                  >
+                    {/* 닉네임 + 시간 */}
+                    <div className="mb-[1px] flex items-baseline gap-2 text-[11px] text-neutral-400">
                       <span className="font-medium">
                         {isMine ? "나" : nickname}
                       </span>
                       <span>{timeLabel}</span>
                     </div>
+
+                    {/* 말풍선 */}
                     <div
-                      className={`block w-fit max-w-[80%] rounded-2xl px-3 py-2 text-[13px] break-words ${
+                      className={`inline-block max-w-[80%] rounded-2xl px-3 py-2 text-[13px] break-words whitespace-pre-wrap ${
                         isMine
-                          ? "ml-auto rounded-br-sm bg-emerald-500 text-white"
+                          ? "rounded-br-sm bg-emerald-500 text-white"
                           : "rounded-bl-sm bg-neutral-100 text-neutral-800"
                       }`}
                     >

@@ -87,7 +87,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   }, []);
 
   const { connected, sendMessage } = useChatSocket({
-    roomId: roomId ?? 0,
+    groupId: roomId ?? 0,
     onMessage: handleIncomingMessage,
   });
 
