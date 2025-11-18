@@ -15,6 +15,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { data: groups, isLoading, error } = useMyGroups();
+  console.log(groups);
 
   const countText = isLoading
     ? "로딩 중..."

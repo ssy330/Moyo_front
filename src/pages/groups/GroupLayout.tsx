@@ -1,15 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import { MessageCircle } from "lucide-react";
-import GroupBoardEmbed from "@/components/GroupsPageComponents/GroupBoardEmbed";
 import { useParams } from "react-router-dom";
 import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";
+import PostFeed from "@/components/GroupsPageComponents/post-feed";
 
 export default function GroupLayout() {
   const { id } = useParams();
   const groupId = Number(id);
 
   const [chatOpen, setChatOpen] = useState(false);
+
+  // ✅ 이 그룹에 대응되는 채팅방 id
+  const [roomId, setRoomId] = useState<number | null>(null);
+  const [loadingRoom, setLoadingRoom] = useState(true);
+
+  useEffect(() => {
+    if (!groupId) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        // POST /api/v1/rooms/by-group/:group_id
+        const res = await api.post(`/rooms/by-group/${groupId}`);
+        if (cancelled) return;
+        setRoomId(res.data.id); // RoomOut.id
+      } catch (err) {
+        console.error("그룹 채팅방 생성/조회 실패:", err);
+      } finally {
+        if (!cancelled) setLoadingRoom(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [groupId]);
 
   return (
     <div className="min-h-screen text-neutral-900">
@@ -36,8 +63,9 @@ export default function GroupLayout() {
                 <h2 className="text-lg font-bold text-neutral-800">게시글</h2>
                 {/* 여기 사진첩/캘린더 아이콘은 그대로 두거나 나중에 상태 연결 */}
               </div>
-
-              <GroupBoardEmbed groupId={groupId} />
+              <PostFeed />
+              {/* <GroupBoardEmbed groupId={groupId} /> */}
+              {/* <GroupDetailPage groupId={String(id)} /> */}
             </section>
           </main>
         </div>

@@ -88,7 +88,6 @@ export default function WriteModal() {
   // 이미지 가져오기
   useEffect(() => {
     if (!currentModal) return;
-    console.log("currentModal.data =", currentModal.data);
 
     if (isEditMode && currentModal.data) {
       const { content, image_urls } = currentModal.data;

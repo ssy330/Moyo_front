@@ -57,7 +57,6 @@ export default function ProfilePage() {
 
     loadProfile();
   }, []);
-  console.log(nickname);
 
   // ✅ 닉네임 수정
   const handleNicknameEdit = () => {
