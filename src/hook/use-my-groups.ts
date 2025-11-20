@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-
-const API_BASE =
-  import.meta.env.VITE_API_BASE ?? "http://localhost:8000/api/v1";
+import { API_URL } from "@/lib/api-link";
 
 export type Group = {
   id: number;
@@ -16,10 +14,18 @@ export type Group = {
   member_count?: number;
 };
 
+export class AuthError extends Error {
+  code = "UNAUTHORIZED" as const;
+  constructor(message = "로그인이 필요합니다.") {
+    super(message);
+    this.name = "AuthError";
+  }
+}
+
 async function fetchMyGroups(): Promise<Group[]> {
   const token = localStorage.getItem("access_token");
 
-  const res = await fetch(`${API_BASE}/groups/my`, {
+  const res = await fetch(`${API_URL}/groups/my`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -28,9 +34,13 @@ async function fetchMyGroups(): Promise<Group[]> {
   });
 
   if (!res.ok) {
+    // 🔹 로그인 관련 에러
     if (res.status === 401 || res.status === 403) {
-      throw new Error("로그인이 필요합니다.");
+      // 토큰은 더 이상 의미 없으니까 지워버리기
+      localStorage.removeItem("access_token");
+      throw new AuthError("세션이 만료되었습니다. 다시 로그인해 주세요.");
     }
+
     const text = await res.text().catch(() => "");
     throw new Error(`Failed to load groups: ${res.status} ${text}`);
   }

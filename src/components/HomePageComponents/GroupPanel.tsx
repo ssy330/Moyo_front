@@ -1,25 +1,39 @@
 import { useNavigate } from "react-router-dom";
 import { PlusCircle, Users } from "lucide-react";
-import { useMyGroups } from "@/hook/use-my-groups";
+import { AuthError, useMyGroups } from "@/hook/use-my-groups";
 import GroupCard from "./GroupCard";
 import GroupLoader from "./GroupLoader";
 import GroupError from "./GroupError";
 import GroupJoinModal from "../modal/GroupJoinModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
 };
 
 export default function GroupPanel({ viewMode }: GroupPanelProps) {
-  const [joinOpen, setJoinOpen] = useState(false);
-
   const nav = useNavigate();
+
+  const [joinOpen, setJoinOpen] = useState(false);
   const { data: groups, isLoading, error } = useMyGroups();
 
+  // 그룹 개수 텍스트
   const countText = isLoading
     ? "로딩 중..."
     : `${groups?.length ?? 0}개의 그룹이 있습니다`;
+
+  useEffect(() => {
+    if (!error) return;
+    // 🔹 인증 관련 에러면
+    if (error instanceof AuthError) {
+      toast.warning(error.message); // "세션이 만료되었습니다. 다시 로그인해 주세요."
+      nav("/login", { replace: true }); // 로그인 페이지로 이동
+      return;
+    }
+    // 다른 에러는 그냥 일반 에러 토스트
+    toast.error("그룹 목록을 불러오지 못했습니다.");
+  }, [error, nav]);
 
   return (
     <>
@@ -82,6 +96,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
           </div>
         )}
       </div>
+
       {/* ✅ 여기서 직접 모달 렌더 */}
       <GroupJoinModal open={joinOpen} onClose={() => setJoinOpen(false)} />
     </>

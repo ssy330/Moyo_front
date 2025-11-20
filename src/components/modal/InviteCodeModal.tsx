@@ -9,6 +9,7 @@ import { Copy } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { useCreateInvite } from "@/hook/mutation/invite/use-invite-mutation";
+import { toast } from "sonner";
 
 type InviteCodeModalProps = {
   open: boolean;
@@ -42,7 +43,7 @@ export default function InviteCodeModal({
         },
         onError: (err) => {
           console.error("초대코드 생성 실패:", err);
-          alert("초대코드 생성 중 오류가 발생했습니다.");
+          toast("초대코드 생성 중 오류가 발생했습니다.");
         },
       },
     );
@@ -54,12 +55,12 @@ export default function InviteCodeModal({
     try {
       await navigator.clipboard.writeText(inviteCode);
       setIsCopied(true);
-      alert("초대 링크가 복사되었습니다! 🌿");
+      toast("초대 링크가 복사되었습니다! 🌿");
 
       // 2~3초 뒤에 다시 "복사"로 돌리고 싶으면:
       // setTimeout(() => setIsCopied(false), 2500);
     } catch {
-      alert("복사에 실패했어요 😢 다시 시도해주세요.");
+      toast("복사에 실패했어요 😢 다시 시도해주세요.");
     }
   };
 

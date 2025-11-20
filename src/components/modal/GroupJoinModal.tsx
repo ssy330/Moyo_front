@@ -7,12 +7,8 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "../ui/button";
-
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { api } from "@/lib/api";
-import axios from "axios";
-import { useQueryClient } from "@tanstack/react-query";
+import { useGroupJoinByInvite } from "@/hook/mutation/invite/use-group-join-by-invite";
 
 type GroupJoinModalProps = {
   open: boolean;
@@ -21,77 +17,24 @@ type GroupJoinModalProps = {
 
 export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
   const [inviteCode, setInviteCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const nav = useNavigate();
-  const queryClient = useQueryClient(); // ✅ react-query 클라이언트
 
   const handleClose = () => {
     setInviteCode("");
     onClose();
   };
 
-  const handleJoin = async () => {
+  // 그룹 초대코드로 참여 리팩토링
+  const { mutate: joinMutation, isPending: isJoinPending } =
+    useGroupJoinByInvite(() => {
+      setInviteCode("");
+      onClose();
+    });
+
+  const handleJoin = () => {
     const code = inviteCode.trim();
-    if (!code) {
-      toast.warning("초대 코드를 입력해주세요.");
-      return;
-    }
+    if (!code) return toast.warning("초대 코드를 입력해주세요.");
 
-    try {
-      setLoading(true);
-
-      // 1) 초대 코드로 그룹 참여
-      const res = await api.post("/groups/join-by-invite", { code });
-
-      // 🔹 join-by-invite 응답 구조: { group, members, boardUrl, boardMid }
-      const { group } = res.data;
-
-      // 2) 내 그룹 목록 쿼리 무효화 → 다시 가져오게
-      await queryClient.invalidateQueries({ queryKey: ["myGroups"] });
-
-      // (선택) 정말 약간의 딜레이를 주고 싶다면:
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      toast.success(`"${group.name}" 그룹에 참가했어요!`);
-
-      handleClose();
-
-      // 3) 그룹 상세로 이동
-      nav(`/groups/${group.id}`);
-    } catch (error) {
-      let message = "초대 코드로 그룹 참가에 실패했어요.";
-
-      if (axios.isAxiosError(error)) {
-        const reason = error.response?.data?.detail;
-
-        switch (reason) {
-          case "NOT_FOUND":
-            message = "존재하지 않는 초대 코드입니다.";
-            break;
-          case "EXPIRED":
-            message = "만료된 초대 코드입니다.";
-            break;
-          case "EXHAUSTED":
-            message = "사용 횟수가 모두 소진된 초대 코드입니다.";
-            break;
-          case "REVOKED":
-            message = "관리자에 의해 취소된 초대 코드입니다.";
-            break;
-          case "INVALID_PURPOSE":
-            message = "이 초대 코드는 그룹 참여용이 아닙니다.";
-            break;
-          case "BAD_PAYLOAD":
-          case "GROUP_ID_MISSING":
-          case "GROUP_NOT_FOUND":
-            message = "이 초대 코드에 연결된 그룹 정보를 찾을 수 없습니다.";
-            break;
-        }
-      }
-
-      toast.error(message);
-    } finally {
-      setLoading(false);
-    }
+    joinMutation(code);
   };
 
   return (
@@ -115,7 +58,7 @@ export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
         <div className="mb-6 text-center text-sm text-gray-500">
           초대 코드는 이렇게 생겼습니다:
           <br />
-          <span className="text-blue-600">영문+숫자 6자리</span>
+          <span className="text-blue-600">영문+숫자 조합 6자리</span>
         </div>
 
         {/* 입력창 */}
@@ -136,13 +79,13 @@ export default function GroupJoinModal({ open, onClose }: GroupJoinModalProps) {
             variant="outline"
             onClick={handleClose}
             className="text-gray-600"
-            disabled={loading}
+            disabled={isJoinPending}
           >
             취소
           </Button>
 
-          <Button onClick={handleJoin} disabled={loading}>
-            {loading ? "참가 중..." : "참가"}
+          <Button onClick={handleJoin} disabled={isJoinPending}>
+            {isJoinPending ? "참가 중..." : "참가"}
           </Button>
         </div>
       </DialogContent>

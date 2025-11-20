@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ModalProvider from "./pages/provider/modal-provider";
 import SessionProvider from "./pages/provider/session-provider";
 import "./index.css";
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <SessionProvider>
         <ModalProvider>
+          <Toaster richColors position="top-center" />
           <RouterProvider router={router} />
         </ModalProvider>
       </SessionProvider>

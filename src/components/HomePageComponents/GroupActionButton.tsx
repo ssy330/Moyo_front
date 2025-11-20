@@ -1,6 +1,3 @@
-/**
- * GroupPanel의 만들기, 참여하기 버튼 컴포넌트
- */
 type GroupActionButtonProps = {
   label: "만들기" | "참여하기";
   onClick?: () => void;

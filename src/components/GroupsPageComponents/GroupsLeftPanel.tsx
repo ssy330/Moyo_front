@@ -1,11 +1,10 @@
-// GroupsLeftPanel.tsx
-
-import { Settings } from "lucide-react";
-import { openModal } from "@/features/modalSlice";
-import { useDispatch } from "react-redux";
-import GroupSettingModal from "../modal/GroupSettingsModal";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/features/modalSlice";
+import { Settings } from "lucide-react";
+import GroupSettingModal from "../modal/GroupSettingsModal";
 import InviteCodeModal from "../modal/InviteCodeModal";
+import { toast } from "sonner";
 
 type Group = {
   id: number;
@@ -22,8 +21,6 @@ type GroupsLeftPanelProps = {
 export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
   const dispatch = useDispatch();
   const [openInvite, setOpenInvite] = useState(false);
-
-  console.log(group);
 
   const groupId = group.id;
 
@@ -66,7 +63,7 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
           {/* 멤버수 + 초대코드 */}
           <div className="mt-10 flex flex-wrap items-center gap-2 text-xs text-neutral-600">
             <button
-              onClick={() => alert("멤버 관리닷~")} // TODO: 멤버 관리 모달
+              onClick={() => toast("멤버 관리닷~")} // TODO: 멤버 관리 모달
               className="rounded-full bg-neutral-100 px-3 py-1 transition hover:bg-neutral-200"
             >
               멤버 {group.member_count ?? 0}명
@@ -95,10 +92,12 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
         </div>
       </aside>
 
-      {/* 그룹 설정 모달 */}
+      {/* 모달 관리 */}
+
+      {/* 1. 그룹 설정 모달 */}
       {groupId && <GroupSettingModal groupId={groupId} />}
 
-      {/* 초대 코드 모달 */}
+      {/* 2. 초대 코드 모달 */}
       <InviteCodeModal
         open={openInvite}
         onClose={() => setOpenInvite(false)}

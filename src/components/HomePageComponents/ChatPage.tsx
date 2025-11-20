@@ -1,4 +1,3 @@
-// src/pages/ChatPage.tsx
 import { useState } from "react";
 import ChattingPanel from "./ChattingPanel";
 import ChatRoomPanel from "./ChatRoomPanel";

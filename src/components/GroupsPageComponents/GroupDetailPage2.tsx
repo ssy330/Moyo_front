@@ -1,10 +1,6 @@
-// GroupDetailPage.tsx
-
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-
-// env 타입 문제 방지용 캐스팅
-const RHYMIX_BASE_URL = import.meta.env.VITE_RHYMIX_BASE_URL as string;
+import { RHYMIX_BASE_URL } from "@/lib/api-link";
 
 type Group = {
   id: number;

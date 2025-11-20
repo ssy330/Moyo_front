@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signInWithEmailApi } from "@/lib/email-api";
 import { MSGS } from "@/utils/messages";
+import { toast } from "sonner";
 
 export function useSignInWithEmail() {
   const queryClient = useQueryClient();
@@ -8,7 +9,7 @@ export function useSignInWithEmail() {
   return useMutation({
     mutationFn: signInWithEmailApi,
     onSuccess: () => {
-      alert(MSGS.LOGIN_SUCCESS);
+      toast(MSGS.LOGIN_SUCCESS);
       queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });

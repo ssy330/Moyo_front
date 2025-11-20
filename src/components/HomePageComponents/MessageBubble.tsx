@@ -1,4 +1,3 @@
-// src/components/chat/MessageBubble.tsx
 import type { ChatMessage } from "@/hook/useChatSocket";
 
 interface MessageBubbleProps {

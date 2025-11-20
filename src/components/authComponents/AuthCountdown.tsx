@@ -1,4 +1,3 @@
-// CountdownTimer.tsx
 import { useEffect, useState, memo } from "react";
 
 interface AuthCountdownProps {

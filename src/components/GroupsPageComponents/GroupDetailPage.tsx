@@ -1,8 +1,6 @@
-// src/components/GroupsPageComponents/GroupDetailPage.tsx
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-
-const RHYMIX_BASE_URL = import.meta.env.VITE_RHYMIX_BASE_URL as string;
+import { RHYMIX_BASE_URL } from "@/lib/api-link";
 
 interface GroupDetail {
   id: number;
@@ -15,7 +13,7 @@ export default function GroupDetailPage({ groupId }: { groupId: string }) {
   const numericId = Number(groupId);
   const isValidId = !!groupId && !Number.isNaN(numericId);
 
-  // ❗ 훅은 항상 호출 + enabled로 제어
+  // 훅은 항상 호출 + enabled로 제어
   const {
     data: group,
     isLoading,
@@ -36,14 +34,10 @@ export default function GroupDetailPage({ groupId }: { groupId: string }) {
   if (isLoading) return <div>로딩중...</div>;
   if (isError || !group) return <div>그룹 정보를 불러오지 못했습니다.</div>;
 
-  // 👇 Rhymix 게시판 URL을 규칙으로 생성
-  // Rhymix가 짧은 주소면: http://rhymix/group_4_board
-  // mid 기반이면: `${RHYMIX_BASE_URL}/?mid=group_${numericId}_board`
-
+  // Rhymix 게시판 URL을 규칙으로 생성
   const boardPath = `group_${groupId}_board`;
 
   const boardUrl = `${RHYMIX_BASE_URL}/${boardPath}`;
-  // Rhymix 설정에 따라 위 한 줄만 네 환경에 맞게 조정하면 됨
 
   return (
     <div className="group-detail-page space-y-4">

@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { MessageCircle, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { toast } from "sonner";
 
 export default function CustomerSupportPage() {
   const [form, setForm] = useState({
@@ -22,7 +23,7 @@ export default function CustomerSupportPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.email || !form.title || !form.content) {
-      alert("모든 항목을 입력해주세요.");
+      toast("모든 항목을 입력해주세요.");
       return;
     }
     // 🔥 실제로는 문의 API (예: FastAPI / Supabase RPC) 호출

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { Eye, EyeOff, Lock } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ChangePasswordPage() {
   const [form, setForm] = useState({
@@ -20,12 +21,12 @@ export default function ChangePasswordPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (form.newPw !== form.confirmPw) {
-      alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+      toast("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
       return;
     }
     // 🔥 실제로는 FastAPI or Supabase updatePassword API 호출
     console.log("비밀번호 변경 요청:", form);
-    alert("비밀번호가 성공적으로 변경되었습니다!");
+    toast("비밀번호가 성공적으로 변경되었습니다!");
     setForm({ current: "", newPw: "", confirmPw: "" });
   };
 

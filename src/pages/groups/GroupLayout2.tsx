@@ -1,14 +1,14 @@
+//라이믹스 사용 버전
 import { useEffect, useState } from "react";
-import { MessageCircle, ExternalLink } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { MessageCircle, ExternalLink } from "lucide-react";
+import { useMyGroups } from "@/hook/use-my-groups";
+import { api } from "@/lib/api";
+import { RHYMIX_BASE_URL } from "@/lib/api-link";
 import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";
 import GroupDetailPage from "@/components/GroupsPageComponents/GroupDetailPage";
-import { api } from "@/lib/api";
-import { useMyGroups } from "@/hook/use-my-groups";
 import GlobalLoader from "@/components/layouts/global-loader";
-
-const RHYMIX_BASE_URL = import.meta.env.VITE_RHYMIX_BASE_URL as string;
 
 export default function GroupLayout() {
   const { id } = useParams();
@@ -20,8 +20,8 @@ export default function GroupLayout() {
 
   const boardUrl = `${RHYMIX_BASE_URL}/board`;
 
-  const [chatOpen, setChatOpen] = useState(false);
   const [roomId, setRoomId] = useState<number | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
   const [loadingRoom, setLoadingRoom] = useState(true);
 
   // ✅ 그룹 채팅방 생성/조회
@@ -47,16 +47,12 @@ export default function GroupLayout() {
     };
   }, [groupId]);
 
-  // ─────────────────────────────
-  // 1) 그룹 목록 로딩 중일 때: 전체 로딩 화면
-  // ─────────────────────────────
+  // 전체 로딩
   if (isGroupsLoading) {
     return <GlobalLoader textType="data" />;
   }
 
-  // ─────────────────────────────
-  // 2) 에러 또는 잘못된 그룹 ID
-  // ─────────────────────────────
+  // 잘못된 그룹 ID
   if (error || !group) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50">
@@ -67,9 +63,7 @@ export default function GroupLayout() {
     );
   }
 
-  // ─────────────────────────────
-  // 3) 정상 렌더링
-  // ─────────────────────────────
+  // 정상 렌더
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="w-full px-2 py-6">

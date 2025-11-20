@@ -9,7 +9,7 @@ export default function GroupCreatePage() {
   const [privacy, setPrivacy] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState<File | null>(null); // ✅ 이미지 상태 추가
+  const [image, setImage] = useState<File | null>(null);
 
   const { mutate: createGroup, isPending: createGroupIsPending } =
     useCreateGroup();

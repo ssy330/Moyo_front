@@ -1,7 +1,7 @@
 import logo from "@/assets/Moyo_logo.png";
 
 type GlobalLoaderProps = {
-  textType?: string; // 나중에 "page" 같은 것도 추가할 수 있음
+  textType?: string;
 };
 
 export default function GlobalLoader({ textType = "wait" }: GlobalLoaderProps) {

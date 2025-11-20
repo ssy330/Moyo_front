@@ -1,4 +1,3 @@
-// 로딩할 때 그룹 스켈레톤
 export default function GroupLoader() {
   return (
     <div className="grid grid-cols-3 gap-6">

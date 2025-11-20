@@ -46,7 +46,7 @@ export default function GroupChatPanel({
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Redux에서 내 id 꺼내오기
+  // Redux에서 내 id 꺼내오기
   const myUserId = useSelector((state: RootState) => state.auth.id);
 
   const handleIncomingMessage = useCallback((msg: ChatMessage) => {
@@ -65,7 +65,7 @@ export default function GroupChatPanel({
     onMessage: handleIncomingMessage,
   });
 
-  // ✅ 처음 들어왔을 때 기존 메시지 REST로 가져오기
+  // 처음 들어왔을 때 기존 메시지 REST로 가져오기
   useEffect(() => {
     if (!groupId) return;
 
@@ -104,11 +104,12 @@ export default function GroupChatPanel({
     };
   }, [groupId]);
 
-  // ✅ 메시지 바뀔 때마다 맨 아래로 스크롤
+  // 메시지 바뀔 때마다 맨 아래로 스크롤
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  //메시지 보내기
   const handleSend = () => {
     const text = input.trim();
     if (!text) return;
@@ -122,6 +123,7 @@ export default function GroupChatPanel({
     setInput("");
   };
 
+  //enterKey 눌렀을 때, 메세지 보내기
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();

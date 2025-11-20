@@ -1,3 +1,4 @@
+//라이믹스가 아닌 자체 게시물 UI 버전
 import { MessageCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
 import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";

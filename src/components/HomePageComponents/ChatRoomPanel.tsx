@@ -1,4 +1,3 @@
-// src/components/ChatRoomPanel.tsx
 import {
   useCallback,
   useEffect,

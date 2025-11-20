@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-interface GroupProps {
+interface GroupCardProps {
   id: number;
   name: string;
   image_url?: string | null;
@@ -12,7 +12,7 @@ export default function GroupCard({
   name,
   image_url,
   member_count,
-}: GroupProps) {
+}: GroupCardProps) {
   const nav = useNavigate();
   return (
     <div
