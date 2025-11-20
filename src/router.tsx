@@ -13,7 +13,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
-const GroupLayout = lazy(() => import("./pages/groups/GroupLayout2"));
+const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));

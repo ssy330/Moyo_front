@@ -1,20 +1,91 @@
+// src/pages/groups/GroupLayout.tsx (예시 경로)
+
+import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
+
+import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";
 import PostFeed from "@/components/GroupsPageComponents/post-feed";
-import { useState } from "react";
+import GlobalLoader from "@/components/layouts/global-loader";
+import { useMyGroups } from "@/hook/use-my-groups";
+import { api } from "@/lib/api";
 
 export default function GroupLayout() {
   const { id } = useParams();
   const groupId = Number(id);
 
-  const [chatOpen, setChatOpen] = useState(false);
+  // 🔹 내 그룹 목록 + 로딩 상태
+  const {
+    data: groups,
+    isLoading: isGroupsLoading,
+    error: groupsError,
+  } = useMyGroups();
 
+  const group = groups?.find((g) => g.id === groupId);
+
+  // 🔹 채팅 관련 상태
+  const [chatOpen, setChatOpen] = useState(false);
+  const [roomId, setRoomId] = useState<number | null>(null);
+  const [loadingRoom, setLoadingRoom] = useState(true);
+
+  // ✅ 그룹 채팅방 생성/조회
+  useEffect(() => {
+    // groupId가 이상하면 스킵
+    if (!id || Number.isNaN(groupId) || !groupId) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await api.post(`/rooms/by-group/${groupId}`);
+        if (cancelled) return;
+        setRoomId(res.data.id);
+      } catch (err) {
+        console.error("그룹 채팅방 생성/조회 실패:", err);
+      } finally {
+        if (!cancelled) {
+          setLoadingRoom(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, groupId]);
+
+  // ─────────────────────────────
+  // 1) 그룹 목록 로딩 중일 때: 전체 로딩 화면
+  // ─────────────────────────────
+  if (isGroupsLoading) {
+    return <GlobalLoader textType="data" />;
+  }
+
+  // ─────────────────────────────
+  // 2) 에러 또는 잘못된 그룹 ID / 내 그룹이 아닐 때
+  // ─────────────────────────────
+  if (groupsError || !id || Number.isNaN(groupId) || !group) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-neutral-50">
+        <div className="rounded-2xl bg-white px-6 py-4 text-sm text-neutral-700 shadow">
+          잘못된 그룹 ID 이거나, 접근 권한이 없는 그룹입니다.
+        </div>
+      </div>
+    );
+  }
+
+  // ─────────────────────────────
+  // 3) 정상 렌더링
+  // ─────────────────────────────
   return (
-    <div className="min-h-screen text-neutral-900">
+    <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-[1200px] px-4 py-8">
         <div className="grid gap-8 md:grid-cols-[260px_1fr]">
-          {/* 왼쪽 패널 */}
+          {/* 왼쪽 패널: 그룹 정보 / 메뉴 */}
+          <aside>
+            <GroupsLeftPanel group={group} />
+          </aside>
 
           {/* 오른쪽 메인 */}
           <main className="w-full max-w-[680px] space-y-6">
@@ -23,6 +94,7 @@ export default function GroupLayout() {
               <h2 className="mb-2 text-lg font-semibold text-neutral-800">
                 공지 사항
               </h2>
+              {/* TODO: 나중에 groupId 기반 공지 API 연결 */}
               <p className="text-sm text-neutral-600">
                 아직 등록된 공지사항이 없습니다.
               </p>
@@ -32,18 +104,18 @@ export default function GroupLayout() {
             <section className="min-h-[420px] rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-neutral-800">게시글</h2>
-                {/* 여기 사진첩/캘린더 아이콘은 그대로 두거나 나중에 상태 연결 */}
+                {/* TODO: 사진첩 / 캘린더 탭 등 추가 가능 */}
               </div>
-              <PostFeed />
-              {/* <GroupBoardEmbed groupId={groupId} /> */}
-              {/* <GroupDetailPage groupId={String(id)} /> */}
+
+              {/* ✅ 그룹별 게시글 피드 */}
+              <PostFeed groupId={groupId} />
             </section>
           </main>
         </div>
       </div>
 
-      {/* ✅ 채팅 오버레이 (인스타 DM 느낌) */}
-      {chatOpen && (
+      {/* ✅ 채팅 오버레이 */}
+      {chatOpen && roomId && (
         <>
           {/* 배경 딤 처리 */}
           <div
@@ -61,12 +133,13 @@ export default function GroupLayout() {
         </>
       )}
 
-      {/* 채팅 열기 */}
+      {/* 채팅 열기 버튼 (room 준비되기 전에는 비활성화) */}
       {!chatOpen && (
         <button
           aria-label="채팅 열기"
+          disabled={loadingRoom || !roomId}
           onClick={() => setChatOpen((v) => !v)}
-          className="fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105"
+          className="fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <MessageCircle className="h-6 w-6" />
         </button>
