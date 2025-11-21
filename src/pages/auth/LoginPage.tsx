@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { useSignInWithEmail } from "@/hook/mutation/auth/use-login-mutation";
 import { checkServerConnection } from "@/lib/server-test";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setId, setName, setNickname, setEmail } from "@/features/authSlice";
 
 export default function LoginPage() {
   // 입력 상태 관리
@@ -23,6 +25,8 @@ export default function LoginPage() {
   }, []);
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const { mutateAsync: signInWithEmail, isPending: isSignInWithEmailPending } =
     useSignInWithEmail();
@@ -44,6 +48,12 @@ export default function LoginPage() {
       });
 
       const me = data.me;
+
+      // ✅ 로그인 성공 시 Redux에 유저 정보 저장
+      dispatch(setId(me.id ?? null));
+      dispatch(setName(me.name ?? ""));
+      dispatch(setNickname(me.nickname ?? ""));
+      dispatch(setEmail(me.email ?? ""));
 
       toast.success(`${me.name}님 환영합니다!`);
       navigate("/", { replace: true });

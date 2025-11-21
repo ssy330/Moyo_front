@@ -3,23 +3,12 @@ import GroupPanel from "@/components/HomePageComponents/GroupPanel";
 import ViewModeButtonGroup from "@/components/HomePageComponents/ViewModeButtonGroup";
 
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { BASE as API_BASE } from "@/lib/api";
-
-import {
-  setId,
-  setName as setNameState,
-  setNickname as setNicknameState,
-  setEmail as setEmailState,
-} from "@/features/authSlice";
 
 type ViewMode = "both" | "panel" | "chat";
 
 export default function HomePage() {
   const [viewMode, setViewMode] = useState<ViewMode>("both");
   const [isMobile, setIsMobile] = useState(false);
-
-  const dispatch = useDispatch();
 
   const baseOptions: { key: ViewMode; label: string }[] = [
     { key: "panel", label: "패널만" },
@@ -30,7 +19,7 @@ export default function HomePage() {
     ? baseOptions
     : [...baseOptions, { key: "both", label: "둘 다" }];
 
-  // ✅ 화면 크기 감지하여 모드 제어
+  // 화면 크기 감지하여 모드 제어
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -47,26 +36,6 @@ export default function HomePage() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        const res = await fetch(`${API_BASE}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const me = await res.json();
-
-          dispatch(setId(me.id));
-          dispatch(setNameState(me.name));
-          dispatch(setNicknameState(me.nickname));
-          dispatch(setEmailState(me.email));
-        }
-      }
-    };
-    loadProfile();
-  }, [dispatch]);
 
   return (
     <div className="relative px-4 pt-16">

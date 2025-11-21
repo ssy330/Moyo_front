@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 // ✅ 초대코드 생성
 export const createInvite = async (body: {
   purpose: string;
-  payload?: Record<string, any>;
+  payload?: Record<string, any> | string | null;
   maxUses: number;
   ttlMinutes: number;
 }) => {

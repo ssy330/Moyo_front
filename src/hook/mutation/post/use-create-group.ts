@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createGroupMultipart } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function useCreateGroup() {
   const queryClient = useQueryClient();
@@ -13,7 +14,7 @@ export function useCreateGroup() {
     },
     onSuccess: async ({ data, location }) => {
       await queryClient.invalidateQueries({ queryKey: ["myGroups"] });
-      alert("모임이 생성되었어요!");
+      toast.success("모임이 생성되었어요!");
 
       let groupId: string | number | undefined = data?.id;
       if (location) {

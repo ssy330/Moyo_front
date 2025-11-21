@@ -43,7 +43,7 @@ export default function InviteCodeModal({
         },
         onError: (err) => {
           console.error("초대코드 생성 실패:", err);
-          toast("초대코드 생성 중 오류가 발생했습니다.");
+          toast.error("초대코드 생성 중 오류가 발생했습니다.");
         },
       },
     );

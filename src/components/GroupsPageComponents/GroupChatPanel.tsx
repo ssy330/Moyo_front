@@ -16,16 +16,7 @@ interface GroupChatPanelProps {
   onClose: () => void;
 }
 
-const formatTime = (iso: string | Date) => {
-  const date = typeof iso === "string" ? new Date(iso) : iso;
-  return new Intl.DateTimeFormat("ko-KR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  }).format(date);
-};
-
-// 🔹 백엔드 메시지 응답 타입 (any[] 제거용)
+// 🔹 백엔드 메시지 응답 타입
 interface ChatMessageDTO {
   id: number;
   room_id: number;
@@ -33,6 +24,84 @@ interface ChatMessageDTO {
   content: string;
   created_at: string;
   user_nickname?: string | null;
+}
+
+// ===== KST(Asia/Seoul) 기준 날짜/시간 유틸 =====
+
+// KST 기준 연/월/일/시/분 뽑기
+function getKoreaYMDHM(date: Date) {
+  const formatter = new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+    timeZone: "Asia/Seoul", // ✅ 항상 한국 시간 기준
+  });
+
+  const parts = formatter.formatToParts(date);
+  const getNumber = (type: string) =>
+    Number(parts.find((p) => p.type === type)?.value ?? 0);
+
+  return {
+    year: getNumber("year"),
+    month: getNumber("month"),
+    day: getNumber("day"),
+    hour: getNumber("hour"),
+    minute: getNumber("minute"),
+  };
+}
+
+function isSameDayKorea(a: Date, b: Date) {
+  const aa = getKoreaYMDHM(a);
+  const bb = getKoreaYMDHM(b);
+  return aa.year === bb.year && aa.month === bb.month && aa.day === bb.day;
+}
+
+function isSameMinuteKorea(a: Date, b: Date) {
+  const aa = getKoreaYMDHM(a);
+  const bb = getKoreaYMDHM(b);
+  return (
+    aa.year === bb.year &&
+    aa.month === bb.month &&
+    aa.day === bb.day &&
+    aa.hour === bb.hour &&
+    aa.minute === bb.minute
+  );
+}
+
+function formatDateLabelKorea(date: Date) {
+  // 예: "11월 21일 금요일"
+  return new Intl.DateTimeFormat("ko-KR", {
+    month: "numeric",
+    day: "numeric",
+    weekday: "long",
+    timeZone: "Asia/Seoul",
+  }).format(date);
+}
+
+function formatTimeLabelKorea(date: Date) {
+  const { hour, minute } = getKoreaYMDHM(date);
+  const period = hour < 12 ? "오전" : "오후";
+  const h12 = ((hour + 11) % 12) + 1;
+  const mm = minute.toString().padStart(2, "0");
+  return `${period} ${h12}시 ${mm}분`;
+}
+
+function parseServerDateAsUTC(value: string): Date {
+  if (!value) return new Date();
+
+  // "2025-11-21 09:36:13.702631" → "2025-11-21T09:36:13.702631"
+  let normalized = value.replace(" ", "T");
+
+  // 이미 Z나 +09:00 같은 타임존이 붙어있으면 그대로 사용
+  const hasTZ = /[zZ]|[+-]\d{2}:?\d{2}$/.test(normalized);
+  if (!hasTZ) {
+    normalized += "Z"; // ✅ 타임존 없으면 "UTC" 로 간주
+  }
+
+  return new Date(normalized);
 }
 
 export default function GroupChatPanel({
@@ -46,8 +115,9 @@ export default function GroupChatPanel({
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // Redux에서 내 id 꺼내오기
-  const myUserId = useSelector((state: RootState) => state.auth.id);
+  const currentUserId = useSelector((state: RootState) => state.auth.id);
 
+  // WebSocket으로 들어오는 메시지 핸들링
   const handleIncomingMessage = useCallback((msg: ChatMessage) => {
     setMessages((prev) => [
       ...prev,
@@ -58,7 +128,7 @@ export default function GroupChatPanel({
     ]);
   }, []);
 
-  // WebSocket 연결 (이제 groupId 기준)
+  // WebSocket 연결 (groupId 기준)
   const { connected, sendMessage } = useChatSocket({
     groupId,
     onMessage: handleIncomingMessage,
@@ -72,7 +142,6 @@ export default function GroupChatPanel({
 
     (async () => {
       try {
-        // 프론트에서 groupId를 그대로 "room id"처럼 사용
         const res = await api.get<ChatMessageDTO[]>(
           `/messages/rooms/${groupId}`,
         );
@@ -103,7 +172,7 @@ export default function GroupChatPanel({
     };
   }, [groupId]);
 
-  // 메시지 바뀔 때마다 맨 아래로 스크롤
+  // 메시지 변경 시 맨 아래로 스크롤
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -113,16 +182,15 @@ export default function GroupChatPanel({
     const text = input.trim();
     if (!text) return;
 
-    const now = new Date().toISOString();
-
+    // created_at은 서버에서 생성
     sendMessage({
       content: text,
-      created_at: now,
     });
+
     setInput("");
   };
 
-  // enterKey 눌렀을 때, 메세지 보내기
+  // Enter 키로 전송
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -162,41 +230,91 @@ export default function GroupChatPanel({
           </p>
         ) : (
           <div className="space-y-2">
-            {messages.map((msg) => {
-              const timeLabel = formatTime(msg.created_at || new Date());
-              const nickname = msg.nickname ?? "익명";
+            {messages.map((m, idx) => {
+              const currentDate = parseServerDateAsUTC(m.created_at);
+              const prev = idx > 0 ? messages[idx - 1] : null;
+              const next = idx < messages.length - 1 ? messages[idx + 1] : null;
+
+              const prevDate = prev
+                ? parseServerDateAsUTC(prev.created_at)
+                : null;
+              const nextDate = next
+                ? parseServerDateAsUTC(next.created_at)
+                : null;
+
+              // 🔸 날짜 구분선 필요 여부 (첫 메시지이거나, 이전 메시지와 날짜가 다름 - KST 기준)
+              const showDateSeparator =
+                !prevDate || !isSameDayKorea(currentDate, prevDate);
 
               const isMine =
-                myUserId !== null && msg.user_id === Number(myUserId);
+                currentUserId != null && m.user_id === currentUserId;
+
+              const nickname = m.nickname ?? "익명";
+
+              // 🔸 시간 표시 여부 (이 메시지가 "같은 분" 묶음의 마지막일 때만 - KST 기준)
+              const sameMinuteAndSameSenderWithNext =
+                next &&
+                nextDate &&
+                next.user_id === m.user_id &&
+                isSameMinuteKorea(currentDate, nextDate);
+
+              const showTime = !sameMinuteAndSameSenderWithNext;
+              const timeLabel = formatTimeLabelKorea(currentDate);
+              const dateLabel = formatDateLabelKorea(currentDate);
 
               return (
-                <div
-                  key={msg.id}
-                  className={`flex ${isMine ? "justify-end" : "justify-start"}`}
-                >
-                  {/* 🔹 이 래퍼는 말풍선 크기만큼만 차지하게 */}
+                <div key={m.id}>
+                  {/* 날짜 구분선 */}
+                  {showDateSeparator && (
+                    <div className="my-3 flex justify-center">
+                      <span className="rounded-full bg-neutral-200 px-3 py-1 text-[11px] text-neutral-600">
+                        {dateLabel}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* 메시지 한 줄 */}
                   <div
-                    className={`flex flex-col ${
-                      isMine ? "items-end" : "items-start"
+                    className={`flex ${
+                      isMine ? "justify-end" : "justify-start"
                     }`}
                   >
-                    {/* 닉네임 + 시간 */}
-                    <div className="mb-[1px] flex items-baseline gap-2 text-[11px] text-neutral-400">
-                      <span className="font-medium">
-                        {isMine ? "나" : nickname}
-                      </span>
-                      <span>{timeLabel}</span>
-                    </div>
-
-                    {/* 말풍선 */}
                     <div
-                      className={`inline-block max-w-[80%] rounded-2xl px-3 py-2 text-[13px] break-words whitespace-pre-wrap ${
-                        isMine
-                          ? "rounded-br-sm bg-emerald-500 text-white"
-                          : "rounded-bl-sm bg-neutral-100 text-neutral-800"
+                      className={`flex flex-col ${
+                        isMine ? "items-end" : "items-start"
                       }`}
                     >
-                      {msg.content}
+                      {/* 상대방일 때 닉네임 */}
+                      {!isMine && (
+                        <div className="mb-px flex items-baseline gap-2 text-[11px] text-neutral-400">
+                          <span className="font-medium">{nickname}</span>
+                        </div>
+                      )}
+
+                      {/* 말풍선 + 시간 (내 메시지면 시간 왼쪽, 상대 메시지면 시간 오른쪽) */}
+                      <div
+                        className={`flex items-end gap-1 ${
+                          isMine ? "flex-row-reverse" : "flex-row"
+                        }`}
+                      >
+                        {/* 말풍선 */}
+                        <div
+                          className={`wrap-break-words inline-block max-w-[8em] rounded-2xl px-3 py-2 text-[13px] whitespace-pre-wrap ${
+                            isMine
+                              ? "rounded-br-sm bg-emerald-500 text-white"
+                              : "rounded-bl-sm bg-neutral-100 text-neutral-800"
+                          }`}
+                        >
+                          {m.content}
+                        </div>
+
+                        {/* 시간 레이블 */}
+                        {showTime && (
+                          <span className="text-[10px] text-neutral-400">
+                            {timeLabel}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -36,9 +36,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
     toast.error("그룹 목록을 불러오지 못했습니다.");
   }, [error, nav]);
 
-  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm({
-    closeOnSuccess: true,
-  });
+  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm({});
 
   return (
     <>
@@ -53,7 +51,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
         <div className="mb-8 flex flex-wrap gap-4">
           <button
             onClick={() => nav("/groups/new")}
-            className="flex min-w-[160px] flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
+            className="flex min-w-40 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
           >
             <PlusCircle className="h-5 w-5" />
             그룹 만들기
@@ -61,7 +59,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
           <button
             onClick={() => setJoinOpen(true)}
-            className="flex min-w-[160px] flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
+            className="flex min-w-40 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
           >
             <Users className="h-5 w-5" />
             그룹 참여하기
@@ -99,7 +97,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
               <GroupCard
                 key={group.id}
                 {...group}
-                onLeaveGroup={handleLeaveGroup} // 🔥 여기!
+                onLeaveGroup={handleLeaveGroup}
                 isLeaving={isPending}
               />
             ))}

@@ -62,7 +62,7 @@ export async function deleteMyAccount() {
 }
 
 // 그룹 탈퇴
-export async function leaveGroup(groupId: number, p0: { onSuccess: () => Promise<void>; onError: (error: any) => void; }) {
+export async function leaveGroup(groupId: number) {
   const res = await api.delete(`/groups/${groupId}/leave`);
   return res.data;
 }

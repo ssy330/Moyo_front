@@ -1,50 +1,50 @@
+// src/hook/mutation/use-group-leave-mutation.ts
 import { useLeaveGroup } from "@/hook/mutation/group-delete-mutation";
-import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
-import { closeModal } from "@/features/modalSlice";
-import { openAlert } from "@/features/alertSlice";
+import { toast } from "sonner";
 
-export function useLeaveGroupWithConfirm(options?: {
-  closeOnSuccess?: boolean;
-}) {
+type Options = {
+  afterSuccess?: () => void; // 성공 후 추가로 하고 싶은 행동 (모달 닫기, 페이지 이동 등)
+  confirmMessage?: string; // 확인창 문구 커스터마이징
+};
+
+export function useLeaveGroupWithConfirm(options?: Options) {
   const { mutate, isPending } = useLeaveGroup();
-  const nav = useNavigate();
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
 
   const handleLeaveGroup = (groupId: number) => {
-    // ✅ 여기서 window.confirm 대신 Alert 열기
-    dispatch(
-      openAlert({
-        title: "그룹 탈퇴",
-        description: "정말 이 그룹을 탈퇴하시겠습니까?",
-        // 취소 눌렀을 때 (필요 없으면 비워둬도 됨)
-        onNegative: () => {
-          // 아무 것도 안 해도 됨
-        },
-        // 확인 눌렀을 때 실제 탈퇴 로직 수행
-        onPositive: () => {
-          mutate(groupId, {
-            onSuccess: async () => {
-              await queryClient.invalidateQueries({ queryKey: ["my-groups"] });
-              await new Promise((r) => setTimeout(r, 300));
+    const message =
+      options?.confirmMessage ?? "정말 이 그룹을 탈퇴하시겠습니까?";
 
-              if (options?.closeOnSuccess) {
-                dispatch(closeModal());
-              }
+    // 1) 확인창
+    if (!confirm(message)) return;
 
-              nav("/", { replace: true });
-            },
-            onError: (error) => {
-              console.error("그룹 탈퇴 실패:", error);
-              // 필요하면 여기서도 alert 한 번 더 띄울 수 있음
-            },
-          });
-        },
-      }),
-    );
+    // 2) 실제 탈퇴 요청
+    mutate(groupId, {
+      // ✅ 성공 시
+      onSuccess: async () => {
+        // 토스트
+        toast.success("그룹 탈퇴가 완료되었습니다.");
+
+        // 내 그룹 목록 새로고침
+        await queryClient.invalidateQueries({ queryKey: ["my-groups"] });
+
+        // 추가 후처리 (있으면)
+        if (options?.afterSuccess) {
+          options.afterSuccess();
+        }
+      },
+
+      // ❌ 실패 시
+      onError: (error) => {
+        console.error("그룹 탈퇴 실패:", error);
+        toast.error("그룹 탈퇴에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      },
+    });
   };
 
-  return { handleLeaveGroup, isPending };
+  return {
+    handleLeaveGroup,
+    isPending,
+  };
 }

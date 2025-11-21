@@ -79,10 +79,22 @@ export default function ProfilePage() {
 
   // ✅ 프로필 이미지 수정
   const handleProfileEdit = () => {
-    alert("프로필 이미지를 변경할 수 있습니다.");
+    toast.success("프로필 이미지를 변경할 수 있습니다.");
   };
 
-  const handleLogout = async () => {
+  const handleLogoutClick = async () => {
+    // 🔥 AlertDialog 띄우기
+    dispatch(
+      openAlert({
+        title: "로그아웃",
+        description: "정말 로그아웃 하시겠습니까?",
+        onPositive: () => logout(), // '확인' 눌렀을 때 실행
+        onNegative: () => {}, // '취소' 눌렀을 때
+      }),
+    );
+  };
+
+  const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refreash_token");
 
@@ -143,7 +155,7 @@ export default function ProfilePage() {
         {/* 로그아웃 버튼 */}
         <div className="mt-8 flex justify-end">
           <Button
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             className="flex items-center space-x-2 bg-red-500 text-white hover:bg-red-600"
           >
             <LogOut className="h-4 w-4" />

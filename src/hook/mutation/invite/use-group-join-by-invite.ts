@@ -18,7 +18,7 @@ export function useGroupJoinByInvite(onClose?: () => void) {
 
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      toast(`"${group.name}" 그룹에 참가했어요!`);
+      toast.success(`"${group.name}" 그룹에 참가했어요!`);
 
       if (onClose) onClose();
       nav(`/groups/${group.id}`);

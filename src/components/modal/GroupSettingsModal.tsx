@@ -17,8 +17,10 @@ import { closeModal } from "@/features/modalSlice";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useLeaveGroupWithConfirm } from "@/hook/mutation/use-group-leave-mutation";
+import { useNavigate } from "react-router-dom";
 
 export default function GroupSettingModal({ groupId }: { groupId: number }) {
+  const nav = useNavigate();
   const dispatch = useDispatch();
   const open = useSelector(
     (state: RootState) => state.modal?.currentModal?.type === "groupSetting",
@@ -29,7 +31,10 @@ export default function GroupSettingModal({ groupId }: { groupId: number }) {
   const [groupImage, setGroupImage] = useState<File | null>(null);
 
   const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm({
-    closeOnSuccess: true,
+    afterSuccess: () => {
+      dispatch(closeModal());
+      nav("/", { replace: true });
+    },
   });
 
   const handleSave = () => {

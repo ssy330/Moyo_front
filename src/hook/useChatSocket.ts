@@ -28,7 +28,7 @@ export function useChatSocket({ groupId, onMessage }: UseChatSocketProps) {
 
     const token = localStorage.getItem("access_token") ?? "";
 
-    const API_BASE = import.meta.env.VITE_API_BASE; // http://localhost:8000/api/v1
+    const API_BASE = import.meta.env.VITE_API_BASE;
     const WS_BASE = API_BASE.replace(/^http/, "ws").replace(/\/api\/v1$/, "");
     // 🔹 groupId를 그냥 room id처럼 사용
     const url = `${WS_BASE}/ws/rooms/${groupId}?token=${encodeURIComponent(

@@ -21,7 +21,7 @@ export async function signInWithEmailApi(form: {
     });
 
     // ✅ Redux 상태 갱신
-    store.dispatch(setSession(me.data));
+    store.dispatch(setSession({ user: me.data, source: "fastapi" }));
 
     return { auth: res.data, me: me.data };
   } catch (error) {

@@ -6,8 +6,8 @@ export type InvitePurpose = "group_join" | "etc"; // 필요하면 확장
 
 export interface CreateInviteIn {
   purpose: InvitePurpose;
-  payload?: Record<string, any> | string | null; // 객체로 받되 내부에서 문자열화
-  maxUses?: number;   // <= 0 또는 undefined면 무제한
+  payload?: string | null; // 객체로 받되 내부에서 문자열화
+  maxUses?: number; // <= 0 또는 undefined면 무제한
   ttlMinutes?: number; // 만료분
 }
 
@@ -25,7 +25,7 @@ export interface VerifyOut {
   valid: boolean;
   reason?: string | null;
   purpose?: string;
-  payload?: any;
+  payload?: string;
   usesLeft?: number | null;
 }
 
