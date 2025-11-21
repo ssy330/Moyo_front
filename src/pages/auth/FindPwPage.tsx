@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useResendTimer } from "@/hook/useResendTimer";
 import { useState } from "react";
 import { MSGS } from "@/utils/messages";
+import { toast } from "sonner";
 
 export default function FindPwPage() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ export default function FindPwPage() {
 
   const handleSendCode = () => {
     if (!email.trim() || isEmailValid === false) {
-      alert(MSGS.INVALID_EMAIL);
+      toast(MSGS.INVALID_EMAIL);
       return;
     }
     // if (isRunning) return; // 이미 타이머 작동 중이면 무시
@@ -29,19 +30,19 @@ export default function FindPwPage() {
 
     // TODO: 실제 이메일 인증번호 발송 API 호출
     setIsCodeSent(true);
-    alert(MSGS.CODE_SENT);
+    toast(MSGS.CODE_SENT);
   };
 
   // 이메일 일치여부 확인!
   const handleVerifyCode = () => {
     if (!authCode.trim()) {
       // 필요 시 messages.ts에 별도 메시지(KEY: REQUIRED_AUTH_CODE 등) 추가 권장
-      alert(MSGS.INVALID_OR_EXPIRED_CODE);
+      toast(MSGS.INVALID_OR_EXPIRED_CODE);
       return;
     }
     // TODO: 실제 인증번호 검증 API 호출
     setIsCodeValid(true);
-    alert(MSGS.CODE_VERIFIED);
+    toast(MSGS.CODE_VERIFIED);
   };
 
   return (

@@ -14,6 +14,7 @@ import {
   useSignup,
   useVerifyCode,
 } from "@/hook/mutation/auth/use-signup-mutation";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -99,15 +100,14 @@ export default function RegisterPage() {
       { email, nickname, name, password },
       {
         onSuccess: (data) => {
-          console.log("회원가입 성공:", data);
           localStorage.setItem("access_token", data.access_token);
           dispatch(setName(data.user.name));
           dispatch(setEmail(data.user.email));
           dispatch(setNickname(data.user.nickname));
-          alert("회원가입 완료 및 로그인 성공!");
-          navigate("/");
+          toast("가입 완료! 이제 모요를 이용할 수 있어요 🙌");
+          navigate("/", { replace: true });
         },
-        onError: (err) => alert(err.message),
+        onError: (err) => toast(err.message),
       },
     );
   };

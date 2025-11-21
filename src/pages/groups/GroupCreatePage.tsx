@@ -2,6 +2,7 @@ import GroupsCreateRadio from "@/components/GroupsPageComponents/GroupsCreateRad
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useCreateGroup } from "@/hook/mutation/post/use-create-group";
+import { toast } from "sonner";
 
 export default function GroupCreatePage() {
   const [approval, setApproval] = useState<"auto" | "manual">("auto");
@@ -141,7 +142,7 @@ export default function GroupCreatePage() {
             variant="outline"
             className="w-[48%]"
             disabled={approval === "auto"}
-            onClick={() => alert("설문 폼 이동.!")}
+            onClick={() => toast("업데이트 중 입니다.")}
           >
             가입폼 등록
           </Button>

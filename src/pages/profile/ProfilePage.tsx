@@ -1,65 +1,80 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { clearSession } from "@/features/sessionSlice";
+import { clearSession, setSession } from "@/features/sessionSlice";
 import { useAppDispatch } from "@/hook/queries/use-app-dispatch";
-import supabase from "@/lib/supabase";
 import { LogOut, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? "/api/v1";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import type { RootState } from "@/store/store";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
+import { openAlert } from "@/features/alertSlice";
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
+  const nav = useNavigate();
 
-  const [nickname, setNickname] = useState("");
-  const [name, setName] = useState<string>("이름 없음");
-  const [email, setEmail] = useState<string>("이메일 없음");
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const { session: user } = useSelector((state: RootState) => state.session);
 
-  // ✅ 1. Supabase 세션 먼저 확인
+  // Redux의 값으로부터 표시용 상태 초기화
+  const [changeNickname, setChangeNickname] = useState("");
+
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        const session = data.session;
+    if (user?.nickname) {
+      setChangeNickname(user.nickname);
+    }
+  }, [user?.nickname]);
 
-        if (session) {
-          // ✅ Supabase 로그인 상태
-          const user = session.user;
+  const name = user?.name ?? "이름 없음";
+  const email = user?.email ?? "이메일 없음";
+  const nickname = user?.nickname ?? "";
+  const avatar = null;
 
-          setNickname(user?.user_metadata?.nickname ?? "이름 없음");
-          setName(user?.user_metadata?.name ?? "이름 없음");
-          setEmail(user?.email ?? "이메일 없음");
-          setAvatar(user?.user_metadata?.avatar_url ?? null);
-        } else {
-          // ✅ FastAPI 로그인 상태 확인
-          const token = localStorage.getItem("access_token");
-          if (token) {
-            const res = await fetch(`${API_BASE}/auth/me`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            if (res.ok) {
-              const me = await res.json();
-              setNickname(me.nickname);
-              setName(me.name);
-              setEmail(me.email);
-              setAvatar(null); // 백엔드에 아바타 없으면 null
-            } else {
-              console.warn("FastAPI 사용자 불러오기 실패");
-            }
-          }
-        }
-      } catch (err) {
-        console.error("프로필 불러오기 실패:", err);
-      }
-    };
+  const handleNicknameEditClick = () => {
+    const newNickname = changeNickname.trim();
+    if (!newNickname) {
+      toast.warning("닉네임을 입력해주세요.");
+      return;
+    }
 
-    loadProfile();
-  }, []);
+    // 🔥 AlertDialog 띄우기
+    dispatch(
+      openAlert({
+        title: "닉네임 변경",
+        description: "정말 이 닉네임으로 변경하시겠습니까?",
+        onPositive: () => confirmNicknameEdit(newNickname), // '확인' 눌렀을 때 실행
+        onNegative: () => {}, // '취소' 눌렀을 때
+      }),
+    );
+  };
 
-  // ✅ 닉네임 수정
-  const handleNicknameEdit = () => {
-    alert(`닉네임이 '${nickname}'(으)로 수정되었습니다.`);
+  // 실제 수정 로직
+  const confirmNicknameEdit = async (newNickname: string) => {
+    try {
+      const res = await api.patch("/auth/me/nickname", {
+        nickname: newNickname,
+      });
+
+      const updated = res.data;
+
+      dispatch(
+        setSession({
+          user: {
+            user_id: updated.id,
+            email: updated.email,
+            name: updated.name,
+            nickname: updated.nickname,
+          },
+          source: "fastapi",
+        }),
+      );
+
+      toast.success("닉네임이 성공적으로 변경되었습니다!");
+    } catch (err) {
+      console.error(err);
+      toast.error("닉네임 변경에 실패했습니다.");
+    }
   };
 
   // ✅ 프로필 이미지 수정
@@ -67,20 +82,12 @@ export default function ProfilePage() {
     alert("프로필 이미지를 변경할 수 있습니다.");
   };
 
-  // ✅ Supabase 로그아웃
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    localStorage.removeItem("access_token"); // FastAPI 토큰도 같이 제거
+    localStorage.removeItem("access_token");
     localStorage.removeItem("refreash_token");
 
-    if (error) {
-      console.error("로그아웃 실패:", error.message);
-      alert("로그아웃 중 오류가 발생했습니다.");
-      return;
-    }
-
     dispatch(clearSession());
-    window.location.href = "/login";
+    nav("/login", { replace: true });
   };
 
   return (
@@ -123,11 +130,11 @@ export default function ProfilePage() {
           <label className="mb-2 block text-sm text-gray-700">별명</label>
           <div className="flex items-center space-x-2">
             <Input
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              value={changeNickname}
+              onChange={(e) => setChangeNickname(e.target.value)}
               className="flex-1"
             />
-            <Button variant="outline" onClick={handleNicknameEdit}>
+            <Button variant="outline" onClick={handleNicknameEditClick}>
               수정
             </Button>
           </div>

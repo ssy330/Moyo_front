@@ -13,14 +13,12 @@ export const MSGS = {
   EMAIL_NOT_VERIFIED: "이메일 인증을 먼저 완료해 주세요.",
 
   // ✅ 로그인 관련
-  LOGIN_SUCCESS: "로그인 되었습니다.",
   INVALID_CREDENTIALS: "이메일 또는 비밀번호가 올바르지 않습니다.",
 
   // ✅ 비밀번호 찾기 관련
   PASSWORD_RESET_LINK_SENT: "비밀번호 재설정 링크가 이메일로 발송되었습니다.",
   INVALID_RESET_LINK: "유효하지 않은 링크입니다. 다시 요청해주세요.",
   PASSWORD_RESET_SUCCESS: "비밀번호가 성공적으로 변경되었습니다.",
-
 
   // ✅ 공통
   SERVER_ERROR: "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",

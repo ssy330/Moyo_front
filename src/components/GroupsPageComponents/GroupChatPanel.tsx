@@ -1,4 +1,3 @@
-// src/components/GroupsPageComponents/GroupChatPanel.tsx
 import {
   useCallback,
   useEffect,
@@ -59,7 +58,7 @@ export default function GroupChatPanel({
     ]);
   }, []);
 
-  // ✅ WebSocket 연결 (이제 groupId 기준)
+  // WebSocket 연결 (이제 groupId 기준)
   const { connected, sendMessage } = useChatSocket({
     groupId,
     onMessage: handleIncomingMessage,
@@ -109,7 +108,7 @@ export default function GroupChatPanel({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  //메시지 보내기
+  // 메시지 보내기
   const handleSend = () => {
     const text = input.trim();
     if (!text) return;
@@ -123,7 +122,7 @@ export default function GroupChatPanel({
     setInput("");
   };
 
-  //enterKey 눌렀을 때, 메세지 보내기
+  // enterKey 눌렀을 때, 메세지 보내기
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();

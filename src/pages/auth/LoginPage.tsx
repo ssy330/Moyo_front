@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignInWithEmail } from "@/hook/mutation/auth/use-login-mutation";
 import { checkServerConnection } from "@/lib/server-test";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   // 입력 상태 관리
@@ -17,7 +18,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     checkServerConnection().then((ok) => {
-      if (!ok) alert("⚠️ 백엔드 서버에 연결할 수 없습니다!");
+      if (!ok) toast("⚠️ 백엔드 서버에 연결할 수 없습니다!");
     });
   }, []);
 
@@ -38,7 +39,13 @@ export default function LoginPage() {
     signInWithEmail(
       { email: form.email, password: form.password },
       {
-        onSuccess: () => navigate("/", { replace: true }),
+        onSuccess: (data) => {
+          const me = data.me;
+          console.log(me);
+
+          toast(`${me.name}님 환영합니다!`);
+          navigate("/", { replace: true });
+        },
       },
     );
   };

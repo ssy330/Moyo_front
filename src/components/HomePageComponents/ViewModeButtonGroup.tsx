@@ -4,7 +4,6 @@
  * - 상단 오른쪽에 떠 있는 뷰모드 전환 버튼 (패널 / 채팅 / 둘다)
  * - pill 스타일로 개선 (라운드, 그라데이션, 부드러운 hover)
  */
-
 type ViewMode = "both" | "panel" | "chat";
 
 interface ButtonOption {

@@ -9,7 +9,6 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
   const { isLoaded } = useSelector((state: RootState) => state.session);
 
-  // 🔥 FastAPI 세션 복원만 담당
   useEffect(() => {
     const token = localStorage.getItem("access_token");
 
@@ -32,7 +31,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         console.error("FastAPI 세션 복원 실패:", err);
         localStorage.removeItem("access_token");
 
-        // ❌ 토큰이 깨졌거나 만료된 경우 → 비로그인 상태로 확정
+        // 토큰이 깨졌거나 만료된 경우 → 비로그인 상태로 확정
         dispatch(clearSession());
       }
     };

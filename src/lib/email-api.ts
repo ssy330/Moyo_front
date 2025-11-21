@@ -23,7 +23,7 @@ export async function signInWithEmailApi(form: {
     // ✅ Redux 상태 갱신
     store.dispatch(setSession(me.data));
 
-    return res.data;
+    return { auth: res.data, me: me.data };
   } catch (error) {
     const axiosError = error as AxiosError<{ detail?: string }>;
     const msg = axiosError.response?.data?.detail ?? MSGS.INVALID_CREDENTIALS;

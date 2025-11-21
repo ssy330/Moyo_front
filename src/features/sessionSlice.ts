@@ -4,7 +4,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 interface FastAPIUser {
   user_id: number; // 백엔드 /auth/me 응답에 맞춰서
   email?: string;
-  username?: string;
+  name?: string; // ✅ 추가
+  nickname?: string;
 }
 
 export type SessionUser = FastAPIUser;
