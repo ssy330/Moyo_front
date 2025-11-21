@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCalendarEvents, createCalendarEvent } from "@/lib/calendar-api";
-import type { CalendarEvent, CreateEventPayload } from "@/lib/calendar-api";
+import { getCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from "@/lib/calendar-api";
+import type { CalendarEvent, CreateEventPayload, UpdateCalendarEventPayload } from "@/lib/calendar-api";
 
 export const useCalendarEvents = (from: string, to: string) => {
   return useQuery<CalendarEvent[]>({
@@ -23,3 +23,32 @@ export const useCreateCalendarEvent = (from: string, to: string) => {
     },
   });
 };
+
+// 일정 수정 훅
+export function useUpdateCalendarEvent(from: string, to: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { id: number; payload: UpdateCalendarEventPayload }) =>
+      updateCalendarEvent(params.id, params.payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["calendarEvents", { from, to }],
+      });
+    },
+  });
+}
+
+// 일정 삭제 훅
+export function useDeleteCalendarEvent(from: string, to: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteCalendarEvent(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["calendarEvents", { from, to }],
+      });
+    },
+  });
+}
