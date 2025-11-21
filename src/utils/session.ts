@@ -5,7 +5,6 @@ export function getUserId(
   session: SessionUser | null,
 ): string | number | undefined {
   if (!session) return undefined;
-  if ("user_id" in session) return session.user_id; // FastAPI user
-  if ("id" in session) return session.id; // Supabase user
+  if ("user_id" in session) return session.id; // FastAPI user
   return undefined;
 }

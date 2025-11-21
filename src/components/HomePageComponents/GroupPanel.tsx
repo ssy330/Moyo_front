@@ -36,7 +36,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
     toast.error("그룹 목록을 불러오지 못했습니다.");
   }, [error, nav]);
 
-  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm({});
+  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm();
 
   return (
     <>

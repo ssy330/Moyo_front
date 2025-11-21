@@ -42,7 +42,7 @@ export default function PostItem(post: Post) {
       {/* 2. 컨텐츠, 이미지 캐러셀 */}
       <div className="flex cursor-pointer flex-col gap-5">
         {/* 2-1. 컨텐츠 */}
-        <div className="line-clamp-2 break-words whitespace-pre-wrap">
+        <div className="line-clamp-2 wrap-break-word whitespace-pre-wrap">
           {post.content}
         </div>
 
@@ -66,13 +66,13 @@ export default function PostItem(post: Post) {
       {/* 3. 좋아요, 댓글 버튼 */}
       <div className="flex gap-2">
         {/* 3-1. 좋아요 버튼 */}
-        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border p-2 px-4 text-sm">
           <HeartIcon className="h-4 w-4" />
           <span>0</span>
         </div>
 
         {/* 3-2. 댓글 버튼 */}
-        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border p-2 px-4 text-sm">
           <MessageCircle className="h-4 w-4" />
           <span>댓글 달기</span>
         </div>

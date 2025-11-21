@@ -1,14 +1,7 @@
 // src/components/ChattingPanel.tsx
-import { useEffect, useState, useMemo } from "react";
-import { API_URL } from "@/lib/api-link";
+import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-
-interface Room {
-  id: number;
-  name: string;
-  created_at: string;
-  group_id?: number | null;
-}
+import { useMyChatRooms, type Room } from "@/hook/use-my-chat-room";
 
 interface ChattingPanelProps {
   onSelectChat: (id: string) => void;
@@ -22,47 +15,23 @@ const ChattingPanel = ({
   onSelectChat,
   selectedChatId,
 }: ChattingPanelProps) => {
-  const [rooms, setRooms] = useState<Room[]>([]);
   const [searchName, setSearchName] = useState("");
-  const [activeTab, setActiveTab] = useState<Tab>("전체"); // UI용 탭 상태
+  const [activeTab, setActiveTab] = useState<Tab>("전체");
 
-  // 여기서 "내 그룹 채팅방"만 가져오도록 변경
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
+  // 🔹 TanStack Query로 방 목록 가져오기
+  const { data: rooms = [], isLoading, isError, refetch } = useMyChatRooms();
 
-    fetch(`${API_URL}/rooms/my-group`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`방 목록 불러오기 실패: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data: Room[]) => {
-        setRooms(data);
-      })
-      .catch((e) => console.error("방 목록 불러오기 실패", e));
-  }, []);
-
-  // 검색어로 필터링 (대소문자 무시)
-  const filteredRooms = useMemo(() => {
+  // 검색어 필터
+  const filteredRooms = useMemo<Room[]>(() => {
     const trimmed = searchName.trim().toLowerCase();
     if (!trimmed) return rooms;
 
     return rooms.filter((room) => room.name.toLowerCase().includes(trimmed));
   }, [rooms, searchName]);
 
-  // (선택) 탭 필터링을 붙이고 싶으면 Room에 type 같은 필드 추가 후 여기에서 한 번 더 필터링
-
-  // ✅ 검색 버튼 눌렀을 때 포커스만 유지 (실제 필터는 실시간)
   const handleSearchClick = () => {
-    // 필요한 경우 여기서도 서버 요청 or 추가 로직 가능
-    // 지금은 단순히 입력 값으로 필터만 하므로 따로 할 건 없음
+    // 지금은 실시간 필터라 사실 할 일 없음
+    // 필요하면 여기서 refetch() 넣어서 서버 검색처럼 바꿀 수도 있음
   };
 
   return (
@@ -113,46 +82,72 @@ const ChattingPanel = ({
 
       {/* 방 리스트 */}
       <div className="flex-1 overflow-y-auto bg-neutral-50 p-2">
-        {filteredRooms.map((room) => {
-          const isActive = selectedChatId === String(room.id);
-
-          return (
-            <button
-              key={room.id}
-              type="button"
-              onClick={() => onSelectChat(String(room.id))}
-              className={`relative mb-1.5 flex w-full cursor-pointer flex-col rounded-xl p-3 text-left transition ${
-                isActive
-                  ? "bg-emerald-50 ring-1 ring-emerald-300"
-                  : "bg-white hover:bg-neutral-100"
-              }`}
-            >
-              <div className="truncate text-sm font-semibold text-neutral-800">
-                {room.name}
-              </div>
-              <div className="mt-1 text-[11px] text-neutral-500">
-                #{room.id} ·{" "}
-                {room.created_at
-                  ? new Date(room.created_at).toLocaleString()
-                  : ""}
-              </div>
-            </button>
-          );
-        })}
-
-        {/* 리스트가 아예 없을 때 */}
-        {rooms.length === 0 && (
+        {/* 로딩 상태 */}
+        {isLoading && (
           <div className="flex h-full items-center justify-center text-xs text-neutral-400">
-            아직 생성된 채팅방이 없습니다. 상단에서 새 방을 만들어 보세요.
+            채팅방을 불러오는 중입니다...
+          </div>
+        )}
+
+        {/* 에러 상태 */}
+        {isError && !isLoading && (
+          <div className="flex h-full items-center justify-center text-xs text-red-400">
+            채팅방 목록을 불러오지 못했습니다.
+            <button
+              onClick={() => refetch()}
+              className="ml-2 text-[11px] underline"
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+
+        {/* 정상 목록 */}
+        {!isLoading &&
+          !isError &&
+          filteredRooms.map((room) => {
+            const isActive = selectedChatId === String(room.id);
+
+            return (
+              <button
+                key={room.id}
+                type="button"
+                onClick={() => onSelectChat(String(room.id))}
+                className={`relative mb-1.5 flex w-full cursor-pointer flex-col rounded-xl p-3 text-left transition ${
+                  isActive
+                    ? "bg-emerald-50 ring-1 ring-emerald-300"
+                    : "bg-white hover:bg-neutral-100"
+                }`}
+              >
+                <div className="truncate text-sm font-semibold text-neutral-800">
+                  {room.name}
+                </div>
+                <div className="mt-1 text-[11px] text-neutral-500">
+                  #{room.id} ·{" "}
+                  {room.created_at
+                    ? new Date(room.created_at).toLocaleString()
+                    : ""}
+                </div>
+              </button>
+            );
+          })}
+
+        {/* 방이 아예 없을 때 */}
+        {!isLoading && !isError && rooms.length === 0 && (
+          <div className="flex h-full items-center justify-center text-xs text-neutral-400">
+            아직 생성된 채팅방이 없습니다.
           </div>
         )}
 
         {/* 방은 있는데 검색 결과만 없을 때 */}
-        {rooms.length > 0 && filteredRooms.length === 0 && (
-          <div className="mt-4 rounded-lg bg-white p-3 text-center text-xs text-neutral-400">
-            &quot;{searchName}&quot; 에 대한 채팅방 검색 결과가 없습니다.
-          </div>
-        )}
+        {!isLoading &&
+          !isError &&
+          rooms.length > 0 &&
+          filteredRooms.length === 0 && (
+            <div className="mt-4 rounded-lg bg-white p-3 text-center text-xs text-neutral-400">
+              &quot;{searchName}&quot; 에 대한 채팅방 검색 결과가 없습니다.
+            </div>
+          )}
       </div>
     </div>
   );
