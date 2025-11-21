@@ -18,13 +18,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     checkServerConnection().then((ok) => {
-      if (!ok) toast("⚠️ 백엔드 서버에 연결할 수 없습니다!");
+      if (!ok) toast.error("⚠️ 백엔드 서버에 연결할 수 없습니다!");
     });
   }, []);
 
   const navigate = useNavigate();
 
-  const { mutate: signInWithEmail, isPending: isSignInWithEmailPending } =
+  const { mutateAsync: signInWithEmail, isPending: isSignInWithEmailPending } =
     useSignInWithEmail();
 
   // 입력 값 업데이트
@@ -33,21 +33,24 @@ export default function LoginPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 로그인 요청
+  // 로그인 성공하면 환영합니다. 메시지
   const handleSignInWithEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    signInWithEmail(
-      { email: form.email, password: form.password },
-      {
-        onSuccess: (data) => {
-          const me = data.me;
-          console.log(me);
 
-          toast(`${me.name}님 환영합니다!`);
-          navigate("/", { replace: true });
-        },
-      },
-    );
+    try {
+      const data = await signInWithEmail({
+        email: form.email,
+        password: form.password,
+      });
+
+      const me = data.me;
+
+      toast.success(`${me.name}님 환영합니다!`);
+      navigate("/", { replace: true });
+    } catch (err) {
+      console.error("로그인 실패:", err);
+      //toast.error(err);
+    }
   };
 
   return (

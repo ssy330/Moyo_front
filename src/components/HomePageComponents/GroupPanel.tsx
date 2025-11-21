@@ -7,6 +7,7 @@ import GroupError from "./GroupError";
 import GroupJoinModal from "../modal/GroupJoinModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useLeaveGroupWithConfirm } from "@/hook/mutation/use-group-leave-mutation";
 
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
@@ -34,6 +35,10 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
     // 다른 에러는 그냥 일반 에러 토스트
     toast.error("그룹 목록을 불러오지 못했습니다.");
   }, [error, nav]);
+
+  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm({
+    closeOnSuccess: true,
+  });
 
   return (
     <>
@@ -91,7 +96,12 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
             }`}
           >
             {groups.map((group) => (
-              <GroupCard key={group.id} {...group} />
+              <GroupCard
+                key={group.id}
+                {...group}
+                onLeaveGroup={handleLeaveGroup} // 🔥 여기!
+                isLeaving={isPending}
+              />
             ))}
           </div>
         )}
