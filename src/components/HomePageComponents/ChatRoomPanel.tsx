@@ -11,6 +11,7 @@ import MessageBubble from "./MessageBubble";
 
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { API_URL } from "@/lib/api-link";
 
 interface Room {
   id: number;
@@ -18,12 +19,20 @@ interface Room {
   created_at: string;
 }
 
+// 🔹 백엔드 메시지 응답 DTO (GroupChatPanel이랑 동일하게)
+interface ChatMessageDTO {
+  id: number;
+  room_id: number;
+  user_id: number | null;
+  content: string;
+  created_at: string;
+  user_nickname?: string | null;
+}
+
 interface ChatRoomPanelProps {
   chatId: string | null;
   onBack: () => void;
 }
-
-const API_URL = import.meta.env.VITE_API_BASE;
 
 const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   const roomId = chatId ? Number(chatId) : null;
@@ -33,11 +42,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   const [input, setInput] = useState("");
 
   // 🔹 Redux에서 로그인 유저 id 가져오기
-  const currentUserId = useSelector(
-    (state: RootState) => state.auth.id, // 🔥 slice 이름에 맞춰서
-  );
-
-  console.log("user Id", currentUserId);
+  const currentUserId = useSelector((state: RootState) => state.auth.id);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -72,8 +77,17 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
 
     fetch(`${API_URL}/messages/rooms/${roomId}`)
       .then((res) => res.json())
-      .then((data: ChatMessage[]) => {
-        setMessages(data);
+      .then((data: ChatMessageDTO[]) => {
+        // 🔥 여기서 user_nickname → nickname 으로 매핑
+        const mapped: ChatMessage[] = data.map((m) => ({
+          id: m.id,
+          room_id: m.room_id,
+          user_id: m.user_id,
+          content: m.content,
+          created_at: m.created_at,
+          nickname: m.user_nickname ?? null,
+        }));
+        setMessages(mapped);
       })
       .catch((e) => console.error("메시지 불러오기 실패", e));
   }, [roomId]);
@@ -82,7 +96,14 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   // WebSocket 연결 + 메시지 수신 핸들러
   // ─────────────────────────────────
   const handleIncomingMessage = useCallback((msg: ChatMessage) => {
-    setMessages((prev) => [...prev, msg]);
+    // 🔥 created_at 없으면 지금 시각 기본값으로
+    setMessages((prev) => [
+      ...prev,
+      {
+        ...msg,
+        created_at: msg.created_at ?? new Date().toISOString(),
+      },
+    ]);
   }, []);
 
   const { connected, sendMessage } = useChatSocket({
@@ -102,7 +123,6 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
     const text = input.trim();
     if (!text || !roomId) return;
 
-    // 닉네임은 서버가 user에서 알아서 붙임
     sendMessage({ content: text });
     setInput("");
   };
@@ -152,13 +172,15 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
       {/* 메시지 영역 */}
       <div className="flex-1 space-y-2 overflow-y-auto bg-neutral-50 p-4">
         {messages.map((m) => {
-          const isMine = currentUserId != null && m.user_id === currentUserId; // 🔥 내 메시지 판별
+          const isMine = currentUserId != null && m.user_id === currentUserId;
+
           return (
             <MessageBubble
               key={m.id}
               message={m}
               isMine={isMine}
-              nickname={m.nickname ?? `User ${m.user_id ?? "?"}`} // 🔥 여기서 닉네임 넘김
+              // 🔥 여기서 닉네임 표시 (없으면 "User {id}")
+              nickname={m.nickname ?? `User ${m.user_id ?? "?"}`}
             />
           );
         })}

@@ -7,6 +7,7 @@ interface Room {
   id: number;
   name: string;
   created_at: string;
+  group_id?: number | null;
 }
 
 interface ChattingPanelProps {
@@ -25,10 +26,23 @@ const ChattingPanel = ({
   const [searchName, setSearchName] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("전체"); // UI용 탭 상태
 
-  // 방 목록 불러오기
+  // 여기서 "내 그룹 채팅방"만 가져오도록 변경
   useEffect(() => {
-    fetch(`${API_URL}/rooms/`)
-      .then((res) => res.json())
+    const token = localStorage.getItem("access_token");
+
+    fetch(`${API_URL}/rooms/my-group`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`방 목록 불러오기 실패: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data: Room[]) => {
         setRooms(data);
       })

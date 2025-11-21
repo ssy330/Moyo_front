@@ -17,7 +17,7 @@ const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
-const Notifications = lazy(() => import("./pages/NotificationsPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const CalendarPage = lazy(() => import("./pages/calendar/CalendarPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
           { path: "/groups/:id", element: <GroupLayout /> },
           { path: "/groups/new", element: <GroupCreatePage /> },
           { path: "/profile/:id", element: <ProfilePage /> },
-          { path: "/notifications/:id", element: <Notifications /> },
+          { path: "/notifications", element: <NotificationsPage /> },
           { path: "/calendar", element: <CalendarPage /> },
           { path: "/settings", element: <SettingsLayout /> },
         ],
