@@ -28,6 +28,43 @@ import {
   return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
 } **/
 
+// [추가] 요일 라벨
+const DAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
+
+// [추가] 날짜를 'YYYY-MM-DD' 문자열로 만드는 헬퍼
+function toDateKey(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+// [추가] 6주(42칸)짜리 달력 셀 생성
+function createMonthCells(baseDate: Date) {
+  const year = baseDate.getFullYear();
+  const month = baseDate.getMonth();
+
+  const firstOfMonth = new Date(year, month, 1);
+  const firstDay = firstOfMonth.getDay(); // 0(일) ~ 6(토)
+
+  // 그 달의 첫째날이 포함된 주의 '일요일'로 이동
+  const firstCellDate = new Date(year, month, 1 - firstDay);
+
+  const cells: { date: Date; currentMonth: boolean }[] = [];
+
+  for (let i = 0; i < 42; i++) {
+    const cellDate = new Date(firstCellDate);
+    cellDate.setDate(firstCellDate.getDate() + i);
+
+    cells.push({
+      date: cellDate,
+      currentMonth: cellDate.getMonth() === month,
+    });
+  }
+
+  return cells;
+}
+
 // [추가] ISO 문자열 → 'YYYY-MM-DD' 로 변환
 function toDateValue(iso: string) {
   const date = new Date(iso);
@@ -84,6 +121,26 @@ export default function CalendarPage() {
     isError,
   } = useCalendarEvents(from, to);
 
+  // [추가] 이번 달 기준 달력 셀 생성
+  const monthCells = useMemo(
+    () => createMonthCells(currentDate),
+    [currentDate]
+  );
+
+  // [추가] 날짜별로 이벤트 묶기 (start_at 기준)
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, CalendarEvent[]> = {};
+
+    (events ?? []).forEach((event) => {
+      const date = new Date(event.start_at);
+      const key = toDateKey(date);
+      if (!map[key]) map[key] = [];
+      map[key].push(event);
+    });
+
+    return map;
+  }, [events]);
+
   // 일정 생성/수정/삭제 mutation
   const createMutation = useCreateCalendarEvent(from, to);
   const updateMutation = useUpdateCalendarEvent(from, to);
@@ -103,7 +160,7 @@ export default function CalendarPage() {
       return;
     }
 
-    // [변경] 날짜 문자열에 시간 붙여서 Date 객체 생성
+    // 날짜 문자열에 시간 붙여서 Date 객체 생성
     const startDate = new Date(startAt + "T00:00:00");
     const endDate = new Date(endAt + "T23:59:59");
 
@@ -206,40 +263,59 @@ export default function CalendarPage() {
       {isLoading && <div>일정 불러오는 중...</div>}
       {isError && <div className="text-red-500">일정 조회 중 오류가 발생했습니다.</div>}
 
-      {/* 일정 리스트 (MVP에서는 간단 리스트만) */}
-      <div className="space-y-2">
-        {events && events.length === 0 && (
-          <div className="text-sm text-gray-500">이번 달 등록된 일정이 없습니다.</div>
-        )}
+      {/* [변경] 리스트 대신 달력 뷰 */}
+      <div className="mt-4 space-y-1">
+        {/* 요일 헤더 */}
+        <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500">
+          {DAY_LABELS.map((label) => (
+            <div key={label}>{label}</div>
+          ))}
+        </div>
 
-        {events?.map((event: CalendarEvent) => ( // ✅ event 에 타입 붙이기
-          <div
-            key={event.id}
-            className="rounded-md border border-gray-200 p-3 shadow-sm"
-            onClick={() => handleOpenEdit(event)}
-          >
-            <div className="flex items-center justify-between">
-              <span className="font-semibold">{event.title}</span>
-              {event.all_day && (
-                <span className="rounded bg-gray-100 px-2 py-0.5 text-xs">
-                  종일
-                </span>
-              )}
-            </div>
+        {/* 날짜 셀 */}
+        <div className="grid grid-cols-7 gap-1 text-xs">
+          {monthCells.map(({ date, currentMonth }) => {
+            const key = toDateKey(date);
+            const day = date.getDate();
+            const dayEvents = eventsByDate[key] ?? [];
 
-            <div className="mt-1 text-xs text-gray-500">
-              <div>
-                기간:{" "}
-                {new Date(event.start_at).toLocaleDateString("ko-KR")} ~{" "}
-                {new Date(event.end_at).toLocaleDateString("ko-KR")}
-              </div>
-            </div>
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`h-24 rounded-md border p-1 text-left align-top hover:border-blue-400 ${
+                  currentMonth ? "bg-white" : "bg-gray-50 text-gray-400"
+                }`}
+                // 수정 모달까지 이미 구현된 상태라면, 날짜 칸에서
+                // 첫 번째 이벤트를 클릭해서 수정 모달 열게 할 수도 있습니다.
+                // 아래 주석을 풀면 작동해요 (handleOpenEdit가 있을 때만!)
+                 onClick={() => {
+                   if (dayEvents[0]) handleOpenEdit(dayEvents[0]);
+                 }}
+              >
+                {/* 날짜 숫자 */}
+                <div className="text-[11px] font-semibold">{day}</div>
 
-            {event.description && (
-              <p className="mt-2 text-sm text-gray-800">{event.description}</p>
-            )}
-          </div>
-        ))}
+                {/* 해당 날짜의 일정들 (최대 2개만 표시) */}
+                <div className="mt-1 space-y-0.5">
+                  {dayEvents.slice(0, 2).map((ev) => (
+                    <div
+                      key={ev.id}
+                      className="truncate rounded bg-blue-50 px-1 py-0.5 text-[11px] text-blue-700"
+                    >
+                      {ev.title}
+                    </div>
+                  ))}
+                  {dayEvents.length > 2 && (
+                    <div className="text-[10px] text-gray-500">
+                      + {dayEvents.length - 2}개 더보기
+                    </div>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* 일정 생성 모달 */}
