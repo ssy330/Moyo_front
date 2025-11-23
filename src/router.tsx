@@ -14,7 +14,7 @@ const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
-const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
+const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage2"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
