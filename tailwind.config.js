@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        logo: ['"Baloo 2"', "system-ui", "sans-serif"],
+      },
       colors: {
         primary: {
           DEFAULT: "#16a34a", // ✅ Tailwind green-600

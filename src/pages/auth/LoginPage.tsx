@@ -1,5 +1,5 @@
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
-import MoyoLogo from "@/components/authComponents/MoyoLogo";
+import MoyoLogo from "@/components/authComponents/MoyoLogo2";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";

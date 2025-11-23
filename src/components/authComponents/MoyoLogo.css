@@ -1,0 +1,100 @@
+/* MoyoLogo.css */
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&display=swap");
+
+.moyo-text {
+  font-family:
+    "Baloo 2",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* 크기 */
+.moyo-svg-main {
+  width: 220px;
+  height: auto;
+}
+.moyo-svg-small {
+  width: 110px;
+  height: auto;
+}
+
+/* 기본 색 (대충 파스텔 느낌) */
+.moyo-text .letter-1 {
+  fill: #9fdcd0; /* m - 민트 */
+}
+.moyo-text .letter-2 {
+  fill: #b4e7b9; /* o - 코랄 */
+}
+.moyo-text .letter-3 {
+  fill: #fdaf95; /* y - 핑크 */
+}
+.moyo-text .letter-4 {
+  fill: #e6accf; /* o - 연보라 */
+}
+.eye {
+  fill: #bfe0b0;
+}
+
+/* 로고 전체 등장 */
+.moyo-svg {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  animation: logoEnter 0.5s ease-out forwards;
+}
+
+/* 글자 하나씩 등장 */
+.moyo-text .letter {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: letterIn 0.4s ease-out forwards;
+}
+
+.moyo-text .letter-1 {
+  animation-delay: 0.2s;
+}
+.moyo-text .letter-2 {
+  animation-delay: 0.3s;
+}
+.moyo-text .letter-3 {
+  animation-delay: 0.4s;
+}
+.moyo-text .letter-4 {
+  animation-delay: 0.5s;
+}
+
+.eye-right {
+  /* SVG라서 기준 박스를 눈 요소로 제한 */
+  transform-box: fill-box;
+  /* 기준점을 살짝 위쪽으로 (50% 40%) */
+  transform-origin: 50% 40%;
+  animation: wink 0.25s ease-in-out 1s 1 forwards;
+}
+
+@keyframes logoEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes letterIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wink {
+  0% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.1) translateY(-1px);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
