@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 
 // datetime-local 값으로 변환하는 헬퍼
-function toDateTimeLocalValue(iso: string) {
+/** function toDateTimeLocalValue(iso: string) {
   const date = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
   const yyyy = date.getFullYear();
@@ -26,6 +26,16 @@ function toDateTimeLocalValue(iso: string) {
   const hh = pad(date.getHours());
   const mi = pad(date.getMinutes());
   return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+} **/
+
+// [추가] ISO 문자열 → 'YYYY-MM-DD' 로 변환
+function toDateValue(iso: string) {
+  const date = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  const mm = pad(date.getMonth() + 1);
+  const dd = pad(date.getDate());
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 export default function CalendarPage() {
@@ -93,8 +103,9 @@ export default function CalendarPage() {
       return;
     }
 
-    const startDate = new Date(startAt);
-    const endDate = new Date(endAt);
+    // [변경] 날짜 문자열에 시간 붙여서 Date 객체 생성
+    const startDate = new Date(startAt + "T00:00:00");
+    const endDate = new Date(endAt + "T23:59:59");
 
     createMutation.mutate(
       {
@@ -102,7 +113,7 @@ export default function CalendarPage() {
         description: description.trim() || undefined,
         start_at: startDate.toISOString(),
         end_at: endDate.toISOString(),
-        all_day: allDay,
+        all_day: true,
       },
       {
         onSuccess: () => {
@@ -124,8 +135,8 @@ export default function CalendarPage() {
     setTitle(event.title);
     setDescription(event.description ?? "");
     setAllDay(event.all_day);
-    setStartAt(toDateTimeLocalValue(event.start_at));
-    setEndAt(toDateTimeLocalValue(event.end_at));
+    setStartAt(toDateValue(event.start_at));
+    setEndAt(toDateValue(event.end_at));
     setIsEditOpen(true);
   };
 
@@ -217,8 +228,11 @@ export default function CalendarPage() {
             </div>
 
             <div className="mt-1 text-xs text-gray-500">
-              <div>시작: {new Date(event.start_at).toLocaleString()}</div>
-              <div>종료: {new Date(event.end_at).toLocaleString()}</div>
+              <div>
+                기간:{" "}
+                {new Date(event.start_at).toLocaleDateString("ko-KR")} ~{" "}
+                {new Date(event.end_at).toLocaleDateString("ko-KR")}
+              </div>
             </div>
 
             {event.description && (
@@ -250,7 +264,7 @@ export default function CalendarPage() {
               <div className="space-y-1">
                 <label className="text-sm font-medium">시작</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   className="w-full rounded border px-2 py-1 text-sm"
                   value={startAt}
                   onChange={(e) => setStartAt(e.target.value)}
@@ -259,7 +273,7 @@ export default function CalendarPage() {
               <div className="space-y-1">
                 <label className="text-sm font-medium">종료</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   className="w-full rounded border px-2 py-1 text-sm"
                   value={endAt}
                   onChange={(e) => setEndAt(e.target.value)}
@@ -334,7 +348,7 @@ export default function CalendarPage() {
               <div className="space-y-1">
                 <label className="text-sm font-medium">시작</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   className="w-full rounded border px-2 py-1 text-sm"
                   value={startAt}
                   onChange={(e) => setStartAt(e.target.value)}
@@ -343,7 +357,7 @@ export default function CalendarPage() {
               <div className="space-y-1">
                 <label className="text-sm font-medium">종료</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   className="w-full rounded border px-2 py-1 text-sm"
                   value={endAt}
                   onChange={(e) => setEndAt(e.target.value)}
