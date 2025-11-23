@@ -29,10 +29,10 @@ export default function Step1({
 
       <input
         type="text"
-        placeholder="모임 이름 입력"
+        placeholder="예: 강남대 CS 스터디 모임"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
-        className="w-full rounded-xl border border-emerald-300 bg-white p-4 text-base text-neutral-900 shadow-sm transition outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200"
+        className="w-full rounded-2xl border-2 border-emerald-400 bg-white px-5 py-4 text-lg font-semibold text-neutral-900 shadow-sm transition outline-none placeholder:text-lg placeholder:font-semibold placeholder:text-neutral-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
       />
 
       {/* 개인정보 동의 */}

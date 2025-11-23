@@ -25,10 +25,26 @@ const MoyoLogo = ({ type = "main" }: MoyoLogoProps) => {
           <g className="moyo-face">
             <ellipse cx="120" cy="26" rx="46" ry="42" fill="#BFE0B0" />
 
-            {/* 말풍선 꼬리 - 왼쪽 아래로 뾰족 */}
+            {/* 말풍선 꼬리 - 바깥 초록 */}
             <path
-              d="M92 58 L104 65 Q 95 74 82 82 Q 84 73 92 58 Z"
+              d="
+                M 92 40
+                Q 82 54 84 68
+                Q 98 62 106 52
+                Z
+              "
               fill="#BFE0B0"
+            />
+
+            {/* 말풍선 꼬리 - 안쪽 크림색 */}
+            <path
+              d="
+                M 94 42
+                Q 88 54 88 61
+                Q 94 58 102 51
+                Z
+              "
+              fill="#FFFDED"
             />
 
             {/* 안쪽 얼굴 배경 */}

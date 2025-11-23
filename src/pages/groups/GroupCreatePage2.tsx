@@ -48,7 +48,7 @@ export default function GroupCreatePage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 text-neutral-900">
-      <div className="flex w-full max-w-5xl overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl">
+      <div className="flex w-full max-w-7xl overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl">
         {/* 왼쪽: 컨텐츠 영역 */}
         <div className="flex-1 px-8 py-8 md:px-12 md:py-10">
           {/* 상단 헤더 */}
@@ -57,8 +57,9 @@ export default function GroupCreatePage() {
               <p className="text-xs font-semibold tracking-[0.2em] text-emerald-500 uppercase">
                 MOYO GROUP
               </p>
-              <h1 className="mt-2 text-2xl font-semibold md:text-3xl">
-                모임을 만들어 나만의 공간을 시작해보세요
+              <h1 className="mt-2 text-2xl leading-tight font-semibold lg:text-2xl">
+                <span className="block md:inline">나만의 모임을</span>
+                <span className="block md:inline"> 시작해보세요</span>
               </h1>
             </div>
             <StepIndicator step={step} />
@@ -111,23 +112,8 @@ export default function GroupCreatePage() {
           </AnimatePresence>
         </div>
 
-        {/* 오른쪽: 밝은 데코 패널 (그대로 유지) */}
-        <div className="relative hidden w-72 flex-col items-center justify-center bg-gradient-to-b from-emerald-50 via-emerald-100 to-emerald-50 md:flex">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#22c55e22,transparent_60%)]" />
-          <div className="relative flex flex-col items-center gap-6 px-6">
-            <div className="rounded-3xl border border-emerald-200 bg-white/80 px-4 py-2 text-xs font-medium text-emerald-700 shadow-sm">
-              새 그룹 온보딩
-            </div>
-            <div className="relative flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-400 via-lime-300 to-emerald-500 text-3xl text-white shadow-[0_20px_40px_rgba(34,197,94,0.5)]">
-              🌱
-            </div>
-            <p className="text-center text-xs text-emerald-700/80">
-              모임의 목적과 분위기를 담은 그룹을 만들어
-              <br />
-              사람들을 초대해보세요.
-            </p>
-          </div>
-        </div>
+        {/* 오른쪽: 밝은 데코 패널 */}
+        <div className="relative hidden w-72 flex-col items-center justify-center bg-gradient-to-b from-emerald-50 via-emerald-100 to-emerald-50 md:flex"></div>
       </div>
     </div>
   );
