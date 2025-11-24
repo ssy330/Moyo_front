@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useSignInWithEmail } from "@/hook/mutation/auth/use-login-mutation";
 import { checkServerConnection } from "@/lib/server-test";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
-import { setId, setName, setNickname, setEmail } from "@/features/authSlice";
 
 export default function LoginPage() {
   // 입력 상태 관리
@@ -26,8 +24,6 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-
   const { mutateAsync: signInWithEmail, isPending: isSignInWithEmailPending } =
     useSignInWithEmail();
 
@@ -37,7 +33,6 @@ export default function LoginPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 로그인 성공하면 환영합니다. 메시지
   const handleSignInWithEmail = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -47,19 +42,13 @@ export default function LoginPage() {
         password: form.password,
       });
 
+      // useSignInWithEmail onSuccess에서 세션/토큰 세팅 끝났다고 가정
       const me = data.me;
-
-      // ✅ 로그인 성공 시 Redux에 유저 정보 저장
-      dispatch(setId(me.id ?? null));
-      dispatch(setName(me.name ?? ""));
-      dispatch(setNickname(me.nickname ?? ""));
-      dispatch(setEmail(me.email ?? ""));
-
-      toast.success(`${me.name}님 환영합니다!`);
+      toast.success(`${me?.name ?? "회원"}님 환영합니다!`);
       navigate("/", { replace: true });
     } catch (err) {
       console.error("로그인 실패:", err);
-      //toast.error(err);
+      toast.error("이메일 또는 비밀번호를 확인해 주세요.");
     }
   };
 

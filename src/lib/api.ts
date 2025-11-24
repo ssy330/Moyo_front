@@ -1,9 +1,8 @@
 // src/lib/api.ts
 import axios from "axios";
+import { API_URL } from "./api-link";
 
-export const BASE = import.meta.env.VITE_API_BASE ?? "/api/v1";
-
-export const api = axios.create({ baseURL: BASE });
+export const api = axios.create({ baseURL: API_URL });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
@@ -53,7 +52,7 @@ export async function createGroupMultipart(
   return { data: res.data, location };
 }
 
-// 계정 탈퇴.
+// 계정 탈퇴
 export async function deleteMyAccount() {
   // 백엔드 라우터 prefix에 맞게 경로 조정해줘
   // 예: @router = APIRouter(prefix="/auth") 이면 "/auth/me"

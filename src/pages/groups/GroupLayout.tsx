@@ -8,7 +8,10 @@ import PostFeed from "@/components/GroupsPageComponents/post-feed";
 import GlobalLoader from "@/components/layouts/global-loader";
 import { useMyGroups } from "@/hook/use-my-groups";
 import { api } from "@/lib/api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { ChatMessage } from "@/hook/useChatSocket";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 export default function GroupLayout() {
   const { id } = useParams();
@@ -27,6 +30,22 @@ export default function GroupLayout() {
   const [chatOpen, setChatOpen] = useState(false);
   const [roomId, setRoomId] = useState<number | null>(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
+  const [hasUnread, setHasUnread] = useState(false);
+
+  const currentUserId = useSelector((state: RootState) => state.auth.id);
+
+  console.log(hasUnread);
+
+  // ✅ WebSocket 새 메시지 알림 콜백
+  const handleNewMessage = useCallback(
+    (msg: ChatMessage) => {
+      // 채팅창이 닫혀 있고, 내가 보낸 메시지가 아닐 때만 뱃지 On
+      if (!chatOpen && msg.user_id !== currentUserId) {
+        setHasUnread(true);
+      }
+    },
+    [chatOpen, currentUserId],
+  );
 
   // ✅ 그룹 채팅방 생성/조회
   useEffect(() => {
@@ -114,19 +133,24 @@ export default function GroupLayout() {
       </div>
 
       {/* ✅ 채팅 오버레이 */}
-      {chatOpen && roomId && (
+      {roomId && (
         <>
-          {/* 배경 딤 처리 */}
-          <div
-            className="fixed inset-0 z-40 bg-black/30"
-            onClick={() => setChatOpen(false)}
-          />
+          {/* 딤 처리: 열려 있을 때만 */}
+          {chatOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black/30"
+              onClick={() => setChatOpen(false)}
+            />
+          )}
 
-          {/* 데스크탑: 오른쪽 아래 카드 / 모바일: 아래에서 올라오는 패널 느낌 */}
-          <div className="fixed right-0 bottom-0 left-0 z-50 mx-auto max-w-md rounded-t-2xl bg-white shadow-2xl md:right-6 md:bottom-6 md:left-auto md:w-[380px] md:rounded-2xl">
+          {/* 패널은 항상 마운트하되, className으로만 감춤/노출 */}
+          <div
+            className={`fixed right-0 bottom-0 left-0 z-50 mx-auto max-w-md rounded-t-2xl bg-white shadow-2xl transition-all duration-200 md:right-6 md:bottom-6 md:left-auto md:w-[380px] md:rounded-2xl ${chatOpen ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
+          >
             <GroupChatPanel
               groupId={groupId}
               onClose={() => setChatOpen(false)}
+              onNewMessage={handleNewMessage}
             />
           </div>
         </>
@@ -137,10 +161,18 @@ export default function GroupLayout() {
         <button
           aria-label="채팅 열기"
           disabled={loadingRoom || !roomId}
-          onClick={() => setChatOpen((v) => !v)}
-          className="fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
+          onClick={() => {
+            setChatOpen(true);
+            setHasUnread(false);
+          }}
+          className="fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <MessageCircle className="h-6 w-6" />
+
+          {/*  안 읽은 메시지 뱃지 */}
+          {hasUnread && (
+            <span className="absolute -top-0.5 -left-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 ring-2 ring-white" />
+          )}
         </button>
       )}
     </div>

@@ -12,6 +12,7 @@ import MessageBubble from "./MessageBubble";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { API_URL } from "@/lib/api-link";
+import { getChatBubbleTimeMeta } from "@/utils/ChatTimeFunc";
 
 interface Room {
   id: number;
@@ -171,17 +172,45 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
 
       {/* 메시지 영역 */}
       <div className="flex-1 space-y-2 overflow-y-auto bg-neutral-50 p-4">
-        {messages.map((m) => {
+        {messages.map((m, idx) => {
+          const {
+            showDateSeparator,
+            dateLabel,
+            timeLabel,
+            sameMinuteWithNext,
+          } = getChatBubbleTimeMeta(messages, idx);
+
+          const next = idx < messages.length - 1 ? messages[idx + 1] : null;
+
           const isMine = currentUserId != null && m.user_id === currentUserId;
 
+          const nickname = m.nickname ?? "익명";
+
+          // 같은 사람 + 같은 분이면 묶어서 마지막만 시간 표시
+          const sameMinuteAndSameSenderWithNext =
+            next && next.user_id === m.user_id && sameMinuteWithNext;
+
+          const showTime = !sameMinuteAndSameSenderWithNext;
+
           return (
-            <MessageBubble
-              key={m.id}
-              message={m}
-              isMine={isMine}
-              // 🔥 여기서 닉네임 표시 (없으면 "User {id}")
-              nickname={m.nickname ?? `User ${m.user_id ?? "?"}`}
-            />
+            <div key={m.id}>
+              {/* 날짜 구분선 */}
+              {showDateSeparator && (
+                <div className="my-3 flex justify-center">
+                  <span className="rounded-full bg-neutral-200 px-3 py-1 text-[11px] text-neutral-600">
+                    {dateLabel}
+                  </span>
+                </div>
+              )}
+
+              <MessageBubble
+                message={m}
+                isMine={isMine}
+                nickname={nickname}
+                showTime={showTime}
+                timeLabel={timeLabel}
+              />
+            </div>
           );
         })}
         <div ref={messagesEndRef} />

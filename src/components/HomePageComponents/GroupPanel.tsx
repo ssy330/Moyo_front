@@ -19,6 +19,8 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const [joinOpen, setJoinOpen] = useState(false);
   const { data: groups, isLoading, error } = useMyGroups();
 
+  console.log(groups);
+
   // 그룹 개수 텍스트
   const countText = isLoading
     ? "로딩 중..."

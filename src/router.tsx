@@ -11,7 +11,7 @@ import GuestOnlyLayout from "@/components/layouts/guest-only-layout";
 // --- 페이지 (lazy 로드) ---
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
-const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
+const RegisterPage = lazy(() => import("./pages/auth/RegisterPage2"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
 const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage2"));

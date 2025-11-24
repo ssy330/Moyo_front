@@ -42,18 +42,29 @@ export const useSignup = () =>
       name,
       nickname,
       password,
+      profileImage,
     }: {
       email: string;
       name: string;
       nickname: string;
       password: string;
+      profileImage?: File | null;
     }) => {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("name", name);
+      formData.append("nickname", nickname);
+      formData.append("password", password);
+
+      if (profileImage) {
+        formData.append("profile_image", profileImage); // 🔴 백엔드 필드 이름이랑 맞추기
+      }
+
       const res = await fetch(`${API_BASE}/auth/signup`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, nickname, password }),
+        body: formData, // ❗ headers에 Content-Type 설정 X (브라우저가 자동으로 boundary 붙임)
       });
-      console.log(res);
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Signup failed");

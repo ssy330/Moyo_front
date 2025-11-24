@@ -2,6 +2,10 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { useMyChatRooms, type Room } from "@/hook/use-my-chat-room";
+import {
+  parseServerDateAsUTC,
+  formatRoomPreviewTimeKorea,
+} from "@/utils/ChatTimeFunc"; // ✅ 추가
 
 interface ChattingPanelProps {
   onSelectChat: (id: string) => void;
@@ -108,6 +112,12 @@ const ChattingPanel = ({
           filteredRooms.map((room) => {
             const isActive = selectedChatId === String(room.id);
 
+            const createdAtLabel = room.created_at
+              ? formatRoomPreviewTimeKorea(
+                  parseServerDateAsUTC(room.created_at),
+                )
+              : "";
+
             return (
               <button
                 key={room.id}
@@ -123,10 +133,7 @@ const ChattingPanel = ({
                   {room.name}
                 </div>
                 <div className="mt-1 text-[11px] text-neutral-500">
-                  #{room.id} ·{" "}
-                  {room.created_at
-                    ? new Date(room.created_at).toLocaleString()
-                    : ""}
+                  #{room.id} ·{createdAtLabel}
                 </div>
               </button>
             );

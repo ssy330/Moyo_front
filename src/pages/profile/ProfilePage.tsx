@@ -10,6 +10,10 @@ import type { RootState } from "@/store/store";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { openAlert } from "@/features/alertSlice";
+import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
+import { API_URL } from "@/lib/api-link";
+
+const API_ORIGIN = new URL(API_URL).origin;
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -17,7 +21,6 @@ export default function ProfilePage() {
 
   const { session: user } = useSelector((state: RootState) => state.session);
 
-  // Redux의 값으로부터 표시용 상태 초기화
   const [changeNickname, setChangeNickname] = useState("");
 
   useEffect(() => {
@@ -29,7 +32,13 @@ export default function ProfilePage() {
   const name = user?.name ?? "이름 없음";
   const email = user?.email ?? "이메일 없음";
   const nickname = user?.nickname ?? "";
-  const avatar = null;
+
+  // 🔥 여기서도 한 번 더 보호: 상대경로면 origin 붙여주기
+  const avatar = user?.profile_image_url
+    ? user.profile_image_url.startsWith("http")
+      ? user.profile_image_url
+      : `${API_ORIGIN}${user.profile_image_url}`
+    : null;
 
   const handleNicknameEditClick = () => {
     const newNickname = changeNickname.trim();
@@ -38,18 +47,16 @@ export default function ProfilePage() {
       return;
     }
 
-    // 🔥 AlertDialog 띄우기
     dispatch(
       openAlert({
         title: "닉네임 변경",
         description: "정말 이 닉네임으로 변경하시겠습니까?",
-        onPositive: () => confirmNicknameEdit(newNickname), // '확인' 눌렀을 때 실행
-        onNegative: () => {}, // '취소' 눌렀을 때
+        onPositive: () => confirmNicknameEdit(newNickname),
+        onNegative: () => {},
       }),
     );
   };
 
-  // 실제 수정 로직
   const confirmNicknameEdit = async (newNickname: string) => {
     try {
       const res = await api.patch("/auth/me/nickname", {
@@ -60,12 +67,7 @@ export default function ProfilePage() {
 
       dispatch(
         setSession({
-          user: {
-            user_id: updated.id,
-            email: updated.email,
-            name: updated.name,
-            nickname: updated.nickname,
-          },
+          user: mapBackendUserToSessionUser(updated),
           source: "fastapi",
         }),
       );
@@ -77,19 +79,17 @@ export default function ProfilePage() {
     }
   };
 
-  // ✅ 프로필 이미지 수정
   const handleProfileEdit = () => {
     toast.success("프로필 이미지를 변경할 수 있습니다.");
   };
 
-  const handleLogoutClick = async () => {
-    // 🔥 AlertDialog 띄우기
+  const handleLogoutClick = () => {
     dispatch(
       openAlert({
         title: "로그아웃",
         description: "정말 로그아웃 하시겠습니까?",
-        onPositive: () => logout(), // '확인' 눌렀을 때 실행
-        onNegative: () => {}, // '취소' 눌렀을 때
+        onPositive: () => logout(),
+        onNegative: () => {},
       }),
     );
   };
@@ -131,7 +131,9 @@ export default function ProfilePage() {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center space-x-1 text-xl font-semibold">
               <span>{name}</span>
-              <span className="text-sm text-gray-500">@{nickname}</span>
+              {nickname && (
+                <span className="text-sm text-gray-500">@{nickname}</span>
+              )}
             </div>
             <div className="text-sm text-gray-500">{email}</div>
           </div>

@@ -10,10 +10,13 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { api } from "@/lib/api";
 import { useChatSocket, type ChatMessage } from "@/hook/useChatSocket";
+import { getChatBubbleTimeMeta } from "@/utils/ChatTimeFunc";
+import MessageBubble from "../HomePageComponents/MessageBubble";
 
 interface GroupChatPanelProps {
   groupId: number;
   onClose: () => void;
+  onNewMessage?: (msg: ChatMessage) => void;
 }
 
 // 🔹 백엔드 메시지 응답 타입
@@ -26,87 +29,10 @@ interface ChatMessageDTO {
   user_nickname?: string | null;
 }
 
-// ===== KST(Asia/Seoul) 기준 날짜/시간 유틸 =====
-
-// KST 기준 연/월/일/시/분 뽑기
-function getKoreaYMDHM(date: Date) {
-  const formatter = new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: false,
-    timeZone: "Asia/Seoul", // ✅ 항상 한국 시간 기준
-  });
-
-  const parts = formatter.formatToParts(date);
-  const getNumber = (type: string) =>
-    Number(parts.find((p) => p.type === type)?.value ?? 0);
-
-  return {
-    year: getNumber("year"),
-    month: getNumber("month"),
-    day: getNumber("day"),
-    hour: getNumber("hour"),
-    minute: getNumber("minute"),
-  };
-}
-
-function isSameDayKorea(a: Date, b: Date) {
-  const aa = getKoreaYMDHM(a);
-  const bb = getKoreaYMDHM(b);
-  return aa.year === bb.year && aa.month === bb.month && aa.day === bb.day;
-}
-
-function isSameMinuteKorea(a: Date, b: Date) {
-  const aa = getKoreaYMDHM(a);
-  const bb = getKoreaYMDHM(b);
-  return (
-    aa.year === bb.year &&
-    aa.month === bb.month &&
-    aa.day === bb.day &&
-    aa.hour === bb.hour &&
-    aa.minute === bb.minute
-  );
-}
-
-function formatDateLabelKorea(date: Date) {
-  // 예: "11월 21일 금요일"
-  return new Intl.DateTimeFormat("ko-KR", {
-    month: "numeric",
-    day: "numeric",
-    weekday: "long",
-    timeZone: "Asia/Seoul",
-  }).format(date);
-}
-
-function formatTimeLabelKorea(date: Date) {
-  const { hour, minute } = getKoreaYMDHM(date);
-  const period = hour < 12 ? "오전" : "오후";
-  const h12 = ((hour + 11) % 12) + 1;
-  const mm = minute.toString().padStart(2, "0");
-  return `${period} ${h12}시 ${mm}분`;
-}
-
-function parseServerDateAsUTC(value: string): Date {
-  if (!value) return new Date();
-
-  // "2025-11-21 09:36:13.702631" → "2025-11-21T09:36:13.702631"
-  let normalized = value.replace(" ", "T");
-
-  // 이미 Z나 +09:00 같은 타임존이 붙어있으면 그대로 사용
-  const hasTZ = /[zZ]|[+-]\d{2}:?\d{2}$/.test(normalized);
-  if (!hasTZ) {
-    normalized += "Z"; // ✅ 타임존 없으면 "UTC" 로 간주
-  }
-
-  return new Date(normalized);
-}
-
 export default function GroupChatPanel({
   groupId,
   onClose,
+  onNewMessage,
 }: GroupChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -118,15 +44,23 @@ export default function GroupChatPanel({
   const currentUserId = useSelector((state: RootState) => state.auth.id);
 
   // WebSocket으로 들어오는 메시지 핸들링
-  const handleIncomingMessage = useCallback((msg: ChatMessage) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        ...msg,
-        created_at: msg.created_at ?? new Date().toISOString(),
-      },
-    ]);
-  }, []);
+  const handleIncomingMessage = useCallback(
+    (msg: ChatMessage) => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          ...msg,
+          created_at: msg.created_at ?? new Date().toISOString(),
+        },
+      ]);
+
+      // ✅ 부모에게 새 메시지 전달
+      onNewMessage?.(msg);
+      // 혹시 "내가 보낸 건 안 읽음 처리 안 하고 싶다"면:
+      // if (msg.user_id !== currentUserId) onNewMessage?.(msg);
+    },
+    [onNewMessage], // (또는 [onNewMessage, currentUserId])
+  );
 
   // WebSocket 연결 (groupId 기준)
   const { connected, sendMessage } = useChatSocket({
@@ -231,40 +165,28 @@ export default function GroupChatPanel({
         ) : (
           <div className="space-y-2">
             {messages.map((m, idx) => {
-              const currentDate = parseServerDateAsUTC(m.created_at);
-              const prev = idx > 0 ? messages[idx - 1] : null;
+              const {
+                showDateSeparator,
+                dateLabel,
+                timeLabel,
+                sameMinuteWithNext,
+              } = getChatBubbleTimeMeta(messages, idx);
+
               const next = idx < messages.length - 1 ? messages[idx + 1] : null;
-
-              const prevDate = prev
-                ? parseServerDateAsUTC(prev.created_at)
-                : null;
-              const nextDate = next
-                ? parseServerDateAsUTC(next.created_at)
-                : null;
-
-              // 🔸 날짜 구분선 필요 여부 (첫 메시지이거나, 이전 메시지와 날짜가 다름 - KST 기준)
-              const showDateSeparator =
-                !prevDate || !isSameDayKorea(currentDate, prevDate);
 
               const isMine =
                 currentUserId != null && m.user_id === currentUserId;
 
               const nickname = m.nickname ?? "익명";
 
-              // 🔸 시간 표시 여부 (이 메시지가 "같은 분" 묶음의 마지막일 때만 - KST 기준)
+              // 같은 사람 + 같은 분이면 묶어서 마지막만 시간 표시
               const sameMinuteAndSameSenderWithNext =
-                next &&
-                nextDate &&
-                next.user_id === m.user_id &&
-                isSameMinuteKorea(currentDate, nextDate);
+                next && next.user_id === m.user_id && sameMinuteWithNext;
 
               const showTime = !sameMinuteAndSameSenderWithNext;
-              const timeLabel = formatTimeLabelKorea(currentDate);
-              const dateLabel = formatDateLabelKorea(currentDate);
 
               return (
                 <div key={m.id}>
-                  {/* 날짜 구분선 */}
                   {showDateSeparator && (
                     <div className="my-3 flex justify-center">
                       <span className="rounded-full bg-neutral-200 px-3 py-1 text-[11px] text-neutral-600">
@@ -273,50 +195,14 @@ export default function GroupChatPanel({
                     </div>
                   )}
 
-                  {/* 메시지 한 줄 */}
-                  <div
-                    className={`flex ${
-                      isMine ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div
-                      className={`flex flex-col ${
-                        isMine ? "items-end" : "items-start"
-                      }`}
-                    >
-                      {/* 상대방일 때 닉네임 */}
-                      {!isMine && (
-                        <div className="mb-px flex items-baseline gap-2 text-[11px] text-neutral-400">
-                          <span className="font-medium">{nickname}</span>
-                        </div>
-                      )}
-
-                      {/* 말풍선 + 시간 (내 메시지면 시간 왼쪽, 상대 메시지면 시간 오른쪽) */}
-                      <div
-                        className={`flex items-end gap-1 ${
-                          isMine ? "flex-row-reverse" : "flex-row"
-                        }`}
-                      >
-                        {/* 말풍선 */}
-                        <div
-                          className={`wrap-break-words inline-block max-w-[8em] rounded-2xl px-3 py-2 text-[13px] whitespace-pre-wrap ${
-                            isMine
-                              ? "rounded-br-sm bg-emerald-500 text-white"
-                              : "rounded-bl-sm bg-neutral-100 text-neutral-800"
-                          }`}
-                        >
-                          {m.content}
-                        </div>
-
-                        {/* 시간 레이블 */}
-                        {showTime && (
-                          <span className="text-[10px] text-neutral-400">
-                            {timeLabel}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  {/* 여기부터 말풍선 JSX 있었던 부분을 MessageBubble로 대체 */}
+                  <MessageBubble
+                    message={m}
+                    isMine={isMine}
+                    nickname={nickname}
+                    showTime={showTime}
+                    timeLabel={timeLabel}
+                  />
                 </div>
               );
             })}
