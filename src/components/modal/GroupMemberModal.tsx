@@ -3,6 +3,14 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { API_ORIGIN } from "@/lib/api-link";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 type GroupRole = "OWNER" | "MANAGER" | "MEMBER";
 
@@ -74,6 +82,7 @@ export default function GroupMemberModal({
         const res = await api.get<GroupDetailResponse>(`/groups/${groupId}`);
         if (cancelled) return;
         setData(res.data);
+        console.log(res.data);
       } catch (err: any) {
         console.error(err);
         if (!cancelled) {
@@ -94,37 +103,37 @@ export default function GroupMemberModal({
     };
   }, [open, groupId]);
 
-  if (!open) return null;
-
   const memberCount = data?.group.member_count ?? data?.members.length ?? 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl">
-        {/* 헤더 */}
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-semibold text-neutral-900">
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
+      <DialogContent className="w-full max-w-lg rounded-2xl p-4">
+        <DialogHeader className="mb-2 space-y-2">
+          {/* 첫 줄: 타이틀만 */}
+          <div className="flex items-center justify-between gap-3">
+            <DialogTitle className="text-base font-semibold text-neutral-900">
               멤버 관리
-            </h3>
-            <p className="text-xs text-neutral-500">
-              {data?.group.name ?? "그룹"}의 멤버 목록이에요.
-            </p>
+            </DialogTitle>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+
+          {/* 둘째 줄: 왼쪽에 설명, 오른쪽에 멤버 수 배지 */}
+          <div className="flex items-center justify-between gap-2">
+            <DialogDescription className="text-xs text-neutral-500">
+              {data?.group.name ?? "그룹"}의 멤버 목록이에요.
+            </DialogDescription>
+
+            <span className="shrink-0 rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
               멤버 {memberCount}명
             </span>
-            <button
-              className="rounded-full bg-neutral-100 px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-200"
-              onClick={onClose}
-            >
-              닫기
-            </button>
           </div>
-        </div>
+        </DialogHeader>
 
-        {/* 바디 */}
+        {/* 바디 영역 */}
         {loading && (
           <div className="flex h-40 items-center justify-center text-sm text-neutral-500">
             멤버 정보를 불러오는 중입니다…
@@ -134,12 +143,11 @@ export default function GroupMemberModal({
         {error && !loading && (
           <div className="flex h-40 flex-col items-center justify-center gap-2 text-sm text-red-500">
             <span>{error}</span>
-            <button
-              className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700 hover:bg-neutral-200"
-              onClick={onClose}
-            >
-              닫기
-            </button>
+            <DialogClose asChild>
+              <button className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700 hover:bg-neutral-200">
+                닫기
+              </button>
+            </DialogClose>
           </div>
         )}
 
@@ -148,6 +156,7 @@ export default function GroupMemberModal({
             {data?.members.length ? (
               data.members.map((m) => {
                 const u = m.user;
+                console.log(u);
                 const avatarUrl = resolveAvatarUrl(u?.profile_image_url);
                 const displayName =
                   u?.name ??
@@ -219,7 +228,7 @@ export default function GroupMemberModal({
             )}
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

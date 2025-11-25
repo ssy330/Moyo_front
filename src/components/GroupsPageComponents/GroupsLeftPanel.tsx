@@ -4,7 +4,6 @@ import { openModal } from "@/features/modalSlice";
 import { Settings } from "lucide-react";
 import GroupSettingModal from "../modal/GroupSettingsModal";
 import InviteCodeModal from "../modal/InviteCodeModal";
-import { toast } from "sonner";
 import GroupMemberModal from "../modal/GroupMemberModal";
 
 type Group = {
@@ -65,7 +64,7 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
           {/* 멤버수 + 초대코드 */}
           <div className="mt-10 flex flex-wrap items-center gap-2 text-xs text-neutral-600">
             <button
-              onClick={() => toast("멤버 관리닷~")} // TODO: 멤버 관리 모달
+              onClick={() => setOpenMember(true)} // TODO: 멤버 관리 모달
               className="rounded-full bg-neutral-100 px-3 py-1 transition hover:bg-neutral-200"
             >
               멤버 {group.member_count ?? 0}명

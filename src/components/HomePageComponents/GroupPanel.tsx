@@ -17,6 +17,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const nav = useNavigate();
 
   const [joinOpen, setJoinOpen] = useState(false);
+  const [authHandled, setAuthHandled] = useState(false);
   const { data: groups, isLoading, error } = useMyGroups();
 
   // 그룹 개수 텍스트
@@ -24,19 +25,24 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
     ? "로딩 중..."
     : `${groups?.length ?? 0}개의 그룹이 있습니다`;
 
+  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm();
+
   useEffect(() => {
     if (!error) return;
-    // 🔹 인증 관련 에러면
+
+    // 🔸 인증 관련 에러: 한 번만 처리
     if (error instanceof AuthError) {
+      if (authHandled) return; // 이미 처리했으면 다시 안 함
+
+      setAuthHandled(true);
       toast.warning(error.message); // "세션이 만료되었습니다. 다시 로그인해 주세요."
-      nav("/login", { replace: true }); // 로그인 페이지로 이동
+      nav("/login", { replace: true });
       return;
     }
-    // 다른 에러는 그냥 일반 에러 토스트
-    toast.error("그룹 목록을 불러오지 못했습니다.");
-  }, [error, nav]);
 
-  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm();
+    // 🔸 일반 에러
+    toast.error("그룹 목록을 불러오지 못했습니다.");
+  }, [error, nav, authHandled]);
 
   return (
     <>
