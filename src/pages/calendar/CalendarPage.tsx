@@ -70,16 +70,6 @@ function createMonthCells(baseDate: Date) {
   return cells;
 }
 
-// [추가] ISO 문자열 → 'YYYY-MM-DD' 로 변환
-function toDateValue(iso: string) {
-  const date = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const yyyy = date.getFullYear();
-  const mm = pad(date.getMonth() + 1);
-  const dd = pad(date.getDate());
-  return `${yyyy}-${mm}-${dd}`;
-}
-
 export default function CalendarPage() {
   // [변경] 월 이동을 위해 setCurrentDate 추가
 const [currentDate, setCurrentDate] = useState(() => new Date());
@@ -265,33 +255,54 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
   const handleOpenCreateForDate = (date: Date) => {
     resetForm();
     // date -> 'YYYY-MM-DD' 문자열 (이미 있는 헬퍼 toDateKey 재사용)
-    const dateStr = toDateKey(date);
+    const startStr = toDateKey(date);        // 클릭한 날짜
+    const next = new Date(date);
+    next.setDate(next.getDate() + 1);        // 다음날
+    const endStr = toDateKey(next)
 
-    setStartAt(dateStr);      // 시작 날짜를 해당 날짜로
-    setEndAt(dateStr);        // 기본 종료 날짜도 동일하게
-    setAllDay(true);          // 기본값: 종일 일정
+    setStartAt(startStr);      // 시작 날짜를 해당 날짜로
+    setEndAt(endStr);        // 기본 종료 날짜도 동일하게
+    setAllDay(false);          // 기본값: 종일 일정
     setIsCreateOpen(true);    // 모달 열기
   };
 
   // 실제 새 일정 생성 핸들러
   const handleCreateEvent = () => {
-    if (!title.trim() || !startAt || !endAt) {
-      // TODO: 토스트나 간단한 alert로 안내해도 좋음
-      alert("제목과 시작/종료 시간을 입력해주세요.");
+    // [1] 제목 검사
+    if (!title.trim()) {
+      alert("제목을 입력해주세요.");
       return;
     }
 
-    // 날짜 문자열에 시간 붙여서 Date 객체 생성
-    const startDate = new Date(startAt + "T00:00:00");
-    const endDate = new Date(endAt + "T23:59:59");
+    // [2] 날짜 입력 여부 검사
+    if (!startAt || !endAt) {
+      alert("시작과 종료 일자를 모두 입력해주세요.");
+      return;
+    }
+
+    // [3] 날짜 순서 검사 (시작 > 종료 인 경우)
+    // ✅ 종일이면 종료일은 항상 시작일과 같다고 간주
+    const effectiveEnd = allDay ? startAt : endAt!;
+
+    const startDateOnly = new Date(startAt);
+    const endDateOnly = new Date(effectiveEnd);
+
+    if (startDateOnly > endDateOnly) {
+      alert("시작/종료 일자를 바르게 입력해주세요.");
+      return;
+    }
+
+    // 4) 서버로 보낼 문자열 (⚠️ toISOString() 쓰지 않기!)
+    const start_at = `${startAt}T00:00:00`;
+    const end_at   = `${effectiveEnd}T23:59:59`;
 
     createMutation.mutate(
       {
         title: title.trim(),
         description: description.trim() || undefined,
-        start_at: startDate.toISOString(),
-        end_at: endDate.toISOString(),
-        all_day: true,
+        start_at,
+        end_at,
+        all_day: allDay, // 종일 여부 반영
       },
       {
         onSuccess: () => {
@@ -312,22 +323,51 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
     setSelectedEvent(event);
     setTitle(event.title);
     setDescription(event.description ?? "");
-    setAllDay(event.all_day);
-    setStartAt(toDateValue(event.start_at));
-    setEndAt(toDateValue(event.end_at));
+
+    // 서버에서 온 문자열의 앞 10글자만 사용
+    const startStr = event.start_at.slice(0, 10); // "YYYY-MM-DD"
+    const endStr   = event.end_at.slice(0, 10);   // "YYYY-MM-DD"
+
+    if (event.all_day) {
+      // ✅ 종일 일정은 하루짜리로 통일해서 보여줌
+      setAllDay(true);
+      setStartAt(startStr);
+      setEndAt(startStr);
+    } else {
+      setAllDay(false);
+      setStartAt(startStr);
+      setEndAt(endStr);
+    }
+
     setIsEditOpen(true);
   };
 
   // 일정 수정 핸들러
   const handleUpdateEvent = () => {
     if (!selectedEvent) return;
-    if (!title.trim() || !startAt || !endAt) {
-      alert("제목과 시작/종료 시간을 입력해주세요.");
-      return;
-    }
+    
+    if (!title.trim()) {
+    alert("제목을 입력해주세요.");
+    return;
+  }
 
-    const startDate = new Date(startAt);
-    const endDate = new Date(endAt);
+  if (!startAt || (!allDay && !endAt)) {
+    alert("시작과 종료 일자를 모두 입력해주세요.");
+    return;
+  }
+
+  const effectiveEnd = allDay ? startAt : endAt!;
+
+  const startDateOnly = new Date(startAt);
+  const endDateOnly = new Date(effectiveEnd);
+
+  if (startDateOnly > endDateOnly) {
+    alert("시작/종료 일자를 바르게 입력해주세요.");
+    return;
+  }
+
+  const start_at = `${startAt}T00:00:00`;
+  const end_at   = `${effectiveEnd}T23:59:59`;
 
     updateMutation.mutate(
       {
@@ -335,8 +375,8 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
         payload: {
           title: title.trim(),
           description: description.trim() || undefined,
-          start_at: startDate.toISOString(),
-          end_at: endDate.toISOString(),
+          start_at,
+          end_at,
           all_day: allDay,
         },
       },
@@ -549,25 +589,35 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div className={`grid grid-cols-1 gap-2 ${allDay ? "" : "md:grid-cols-2"}`}>
               <div className="space-y-1">
                 <label className="text-sm font-medium">시작</label>
                 <input
                   type="date"
                   className="w-full rounded border px-2 py-1 text-sm"
                   value={startAt}
-                  onChange={(e) => setStartAt(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setStartAt(value);
+                    if (allDay) {
+                      setEndAt(value);
+                    }
+                  }}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">종료</label>
-                <input
-                  type="date"
-                  className="w-full rounded border px-2 py-1 text-sm"
-                  value={endAt}
-                  onChange={(e) => setEndAt(e.target.value)}
-                />
-              </div>
+
+              {/* ✅ 종일 일정이 아닐 때만 종료일 입력 노출 */}
+              {!allDay && (
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">종료</label>
+                  <input
+                    type="date"
+                    className="w-full rounded border px-2 py-1 text-sm"
+                    value={endAt}
+                    onChange={(e) => setEndAt(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -575,7 +625,14 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                 id="allDay"
                 type="checkbox"
                 checked={allDay}
-                onChange={(e) => setAllDay(e.target.checked)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setAllDay(checked);
+                  // 종일 일정으로 바꿀 때는 종료일을 시작일과 맞춰줌
+                  if (checked && startAt) {
+                    setEndAt(startAt);
+                  }
+                }}
               />
               <label htmlFor="allDay" className="text-sm">
                 종일 일정
@@ -640,7 +697,14 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                   type="date"
                   className="w-full rounded border px-2 py-1 text-sm"
                   value={startAt}
-                  onChange={(e) => setStartAt(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setStartAt(value);
+                    // 종일 일정이면 종료일도 자동으로 같은 날로
+                    if (allDay) {
+                      setEndAt(value);
+                    }
+                  }}
                 />
               </div>
               <div className="space-y-1">
@@ -659,7 +723,13 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                 id="edit-allDay"
                 type="checkbox"
                 checked={allDay}
-                onChange={(e) => setAllDay(e.target.checked)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setAllDay(checked);
+                  if (checked && startAt) {
+                    setEndAt(startAt);
+                  }
+                }}
               />
               <label htmlFor="edit-allDay" className="text-sm">
                 종일 일정
