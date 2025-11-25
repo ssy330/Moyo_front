@@ -11,7 +11,6 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { openAlert } from "@/features/alertSlice";
 import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
-import { API_ORIGIN } from "@/lib/api-link";
 
 import Cropper, { type Area } from "react-easy-crop";
 import { getCroppedImage } from "@/lib/getCroppedImage";
@@ -43,13 +42,7 @@ export default function ProfilePage() {
   const name = user?.name ?? "이름 없음";
   const email = user?.email ?? "이메일 없음";
   const nickname = user?.nickname ?? "";
-
-  // 안전 코드 : 아바타 origin 붙여주기
-  const avatar = user?.profile_image_url
-    ? user.profile_image_url.startsWith("http")
-      ? user.profile_image_url
-      : `${API_ORIGIN}${user.profile_image_url}`
-    : null;
+  const avatar = user?.profile_image_url ?? null;
 
   // 닉네임 수정 클릭
   const handleNicknameEditClick = () => {

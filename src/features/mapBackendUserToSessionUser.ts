@@ -1,6 +1,6 @@
 // src/features/mapBackendUserToSessionUser.ts
 import type { SessionUser } from "./sessionSlice";
-import { API_URL } from "@/lib/api-link"; // 너가 쓰는 곳에 맞게 import (api.ts, api-link.ts 등)
+import { API_URL } from "@/lib/api-link";
 
 const API_ORIGIN = new URL(API_URL).origin;
 
@@ -12,17 +12,37 @@ export interface BackendUser {
   profile_image_url?: string | null;
 }
 
+function normalizeProfileImageUrl(raw?: string | null): string | null {
+  if (!raw) return null;
+
+  let url = raw.trim();
+  if (!url) return null;
+
+  // 1) 이미 절대 URL인 경우
+  if (/^https?:\/\//.test(url)) {
+    return url;
+  }
+
+  // 2) 이미 origin이 앞에 붙어 있는 경우 (중복 방지)
+  if (url.startsWith(API_ORIGIN)) {
+    return url;
+  }
+
+  // 3) "static/..." 형태라면 앞에 슬래시 보정
+  if (!url.startsWith("/")) {
+    url = `/${url}`;
+  }
+
+  // 최종: http://localhost:8000 + /static/...
+  return `${API_ORIGIN}${url}`;
+}
+
 export function mapBackendUserToSessionUser(u: BackendUser): SessionUser {
-  const raw = u?.profile_image_url ?? null;
-
-  const profileImageUrl =
-    raw == null ? null : raw.startsWith("http") ? raw : `${API_ORIGIN}${raw}`; // "/static/..." -> "http://localhost:8000/static/..."
-
   return {
     id: u.id,
     email: u.email ?? undefined,
     name: u.name ?? undefined,
     nickname: u.nickname ?? undefined,
-    profile_image_url: profileImageUrl,
+    profile_image_url: normalizeProfileImageUrl(u.profile_image_url),
   };
 }

@@ -5,6 +5,7 @@ import { Settings } from "lucide-react";
 import GroupSettingModal from "../modal/GroupSettingsModal";
 import InviteCodeModal from "../modal/InviteCodeModal";
 import { toast } from "sonner";
+import GroupMemberModal from "../modal/GroupMemberModal";
 
 type Group = {
   id: number;
@@ -21,6 +22,7 @@ type GroupsLeftPanelProps = {
 export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
   const dispatch = useDispatch();
   const [openInvite, setOpenInvite] = useState(false);
+  const [openMember, setOpenMember] = useState(false);
 
   const groupId = group.id;
 
@@ -33,10 +35,10 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
             <img
               src={group.image_url}
               alt={`${group.name} 커버`}
-              className="aspect-[4/3] w-full object-cover"
+              className="aspect-4/3 w-full object-cover"
             />
           ) : (
-            <div className="flex aspect-[4/3] items-center justify-center bg-neutral-200 text-neutral-500">
+            <div className="flex aspect-4/3 items-center justify-center bg-neutral-200 text-neutral-500">
               커버 이미지 없음
             </div>
           )}
@@ -81,7 +83,7 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
         {/* 글쓰기 버튼 */}
         <button
           onClick={() => dispatch(openModal({ type: "write" }))}
-          className="w-full rounded-2xl bg-gradient-to-br from-green-100 to-green-50 py-3 font-semibold shadow-md transition hover:opacity-70"
+          className="w-full rounded-2xl bg-linear-to-br from-green-100 to-green-50 py-3 font-semibold shadow-md transition hover:opacity-70"
         >
           ✏️ 게시글 작성하기
         </button>
@@ -101,6 +103,13 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
       <InviteCodeModal
         open={openInvite}
         onClose={() => setOpenInvite(false)}
+        groupId={groupId}
+      />
+
+      {/* 3. 그룹 설정 모달 */}
+      <GroupMemberModal
+        open={openMember}
+        onClose={() => setOpenMember(false)}
         groupId={groupId}
       />
     </>

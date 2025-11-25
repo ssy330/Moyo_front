@@ -21,6 +21,7 @@ import RegisterStep3Email from "@/components/HomePageComponents/RegisterPageStep
 import RegisterStep4Password from "@/components/HomePageComponents/RegisterPageStep/RegisterStep4Password";
 import { RegisterStepIndicator } from "@/components/HomePageComponents/RegisterPageStep/RegisterStepIndicator";
 import { setSession } from "@/features/sessionSlice";
+import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -169,13 +170,7 @@ export default function RegisterPage() {
           // Redux에 저장
           dispatch(
             setSession({
-              user: {
-                id: data.user.id,
-                email: data.user.email,
-                name: data.user.name,
-                nickname: data.user.nickname,
-                profile_image_url: data.user.profile_image_url ?? null,
-              },
+              user: mapBackendUserToSessionUser(data.user),
               source: "fastapi",
             }),
           );

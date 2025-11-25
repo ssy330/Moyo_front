@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signInWithEmailApi } from "@/lib/email-api";
 import { setSession } from "@/features/sessionSlice";
 import { useDispatch } from "react-redux";
+import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
 
 export function useSignInWithEmail() {
   const queryClient = useQueryClient();
@@ -17,14 +18,8 @@ export function useSignInWithEmail() {
         localStorage.setItem("access_token", auth.access_token);
       }
 
-      // 2) 세션 유저 구성 (필요하면 프로필 이미지 등도 같이)
-      const sessionUser = {
-        id: me.id,
-        email: me.email,
-        name: me.name,
-        nickname: me.nickname,
-        profile_image_url: me.profile_image_url ?? null,
-      };
+      // 2) 세션 유저 구성: 항상 map 함수 거쳐서 URL 정제
+      const sessionUser = mapBackendUserToSessionUser(me);
 
       dispatch(
         setSession({

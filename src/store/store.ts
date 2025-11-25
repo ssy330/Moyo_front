@@ -15,7 +15,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // 🚫 비직렬화 값 허용
+      serializableCheck: false,
     }),
 });
 

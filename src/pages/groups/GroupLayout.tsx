@@ -17,7 +17,7 @@ export default function GroupLayout() {
   const { id } = useParams();
   const groupId = Number(id);
 
-  // 🔹 내 그룹 목록 + 로딩 상태
+  // 내 그룹 목록 + 로딩 상태
   const {
     data: groups,
     isLoading: isGroupsLoading,
@@ -26,7 +26,7 @@ export default function GroupLayout() {
 
   const group = groups?.find((g) => g.id === groupId);
 
-  // 🔹 채팅 관련 상태
+  // 채팅 관련 상태
   const [chatOpen, setChatOpen] = useState(false);
   const [roomId, setRoomId] = useState<number | null>(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
@@ -36,7 +36,7 @@ export default function GroupLayout() {
 
   console.log(hasUnread);
 
-  // ✅ WebSocket 새 메시지 알림 콜백
+  // WebSocket 새 메시지 알림 콜백
   const handleNewMessage = useCallback(
     (msg: ChatMessage) => {
       // 채팅창이 닫혀 있고, 내가 보낸 메시지가 아닐 때만 뱃지 On
@@ -47,7 +47,7 @@ export default function GroupLayout() {
     [chatOpen, currentUserId],
   );
 
-  // ✅ 그룹 채팅방 생성/조회
+  // 그룹 채팅방 생성/조회
   useEffect(() => {
     // groupId가 이상하면 스킵
     if (!id || Number.isNaN(groupId) || !groupId) return;
@@ -73,16 +73,12 @@ export default function GroupLayout() {
     };
   }, [id, groupId]);
 
-  // ─────────────────────────────
-  // 1) 그룹 목록 로딩 중일 때: 전체 로딩 화면
-  // ─────────────────────────────
+  // 그룹 로딩 화면
   if (isGroupsLoading) {
     return <GlobalLoader textType="data" />;
   }
 
-  // ─────────────────────────────
-  // 2) 에러 또는 잘못된 그룹 ID / 내 그룹이 아닐 때
-  // ─────────────────────────────
+  // 그룹 ID나 접근 권한이 없는 그룹일 때,
   if (groupsError || !id || Number.isNaN(groupId) || !group) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50">
@@ -93,9 +89,7 @@ export default function GroupLayout() {
     );
   }
 
-  // ─────────────────────────────
-  // 3) 정상 렌더링
-  // ─────────────────────────────
+  // 정상 렌더링
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-[1200px] px-4 py-8">
@@ -132,7 +126,7 @@ export default function GroupLayout() {
         </div>
       </div>
 
-      {/* ✅ 채팅 오버레이 */}
+      {/* 채팅 오버레이 */}
       {roomId && (
         <>
           {/* 딤 처리: 열려 있을 때만 */}

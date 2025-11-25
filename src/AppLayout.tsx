@@ -5,7 +5,7 @@ import type { RootState } from "./store/store";
 
 const AppLayout = () => {
   const navigate = useNavigate();
-  // 🔹 세션에서 유저 가져오기
+
   const { session: user } = useSelector((state: RootState) => state.session);
 
   // mapBackendUserToSessionUser 덕분에 이미 풀 URL일 것
