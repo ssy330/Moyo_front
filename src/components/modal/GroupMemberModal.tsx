@@ -82,7 +82,6 @@ export default function GroupMemberModal({
         const res = await api.get<GroupDetailResponse>(`/groups/${groupId}`);
         if (cancelled) return;
         setData(res.data);
-        console.log(res.data);
       } catch (err: any) {
         console.error(err);
         if (!cancelled) {
@@ -156,7 +155,7 @@ export default function GroupMemberModal({
             {data?.members.length ? (
               data.members.map((m) => {
                 const u = m.user;
-                console.log(u);
+
                 const avatarUrl = resolveAvatarUrl(u?.profile_image_url);
                 const displayName =
                   u?.name ??

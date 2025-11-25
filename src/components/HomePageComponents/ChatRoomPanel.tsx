@@ -43,7 +43,9 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   const [input, setInput] = useState("");
 
   // 🔹 Redux에서 로그인 유저 id 가져오기
-  const currentUserId = useSelector((state: RootState) => state.auth.id);
+  const currentUserId = useSelector(
+    (state: RootState) => state.session.session?.id ?? null,
+  );
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 

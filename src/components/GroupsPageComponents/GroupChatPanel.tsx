@@ -41,7 +41,9 @@ export default function GroupChatPanel({
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // Redux에서 내 id 꺼내오기
-  const currentUserId = useSelector((state: RootState) => state.auth.id);
+  const currentUserId = useSelector(
+    (state: RootState) => state.session.session?.id ?? null,
+  );
 
   // WebSocket으로 들어오는 메시지 핸들링
   const handleIncomingMessage = useCallback(

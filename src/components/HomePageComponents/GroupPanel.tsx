@@ -8,6 +8,9 @@ import GroupJoinModal from "../modal/GroupJoinModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useLeaveGroupWithConfirm } from "@/hook/mutation/use-group-leave-mutation";
+import { clearSession } from "@/features/sessionSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 type GroupPanelProps = {
   viewMode: "both" | "panel" | "chat";
@@ -15,34 +18,44 @@ type GroupPanelProps = {
 
 export default function GroupPanel({ viewMode }: GroupPanelProps) {
   const nav = useNavigate();
+  const dispatch = useDispatch();
 
   const [joinOpen, setJoinOpen] = useState(false);
+
+  // 🔹 현재 세션 상태
+  const { session } = useSelector((state: RootState) => state.session);
+
+  // 🔹 세션이 있을 때만 그룹 요청
+  const { data: groups, isLoading, error } = useMyGroups(!!session);
+
   const [authHandled, setAuthHandled] = useState(false);
-  const { data: groups, isLoading, error } = useMyGroups();
 
   // 그룹 개수 텍스트
   const countText = isLoading
     ? "로딩 중..."
     : `${groups?.length ?? 0}개의 그룹이 있습니다`;
 
-  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm();
-
   useEffect(() => {
     if (!error) return;
+    if (authHandled) return; // 이미 처리했다면 무시
 
-    // 🔸 인증 관련 에러: 한 번만 처리
     if (error instanceof AuthError) {
-      if (authHandled) return; // 이미 처리했으면 다시 안 함
-
       setAuthHandled(true);
+
+      // 🔥 세션 전역에서 비우기
+      dispatch(clearSession());
+
       toast.warning(error.message); // "세션이 만료되었습니다. 다시 로그인해 주세요."
       nav("/login", { replace: true });
       return;
     }
 
-    // 🔸 일반 에러
     toast.error("그룹 목록을 불러오지 못했습니다.");
-  }, [error, nav, authHandled]);
+  }, [error, authHandled, dispatch, nav]);
+
+  const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm();
+
+  // 이하 JSX는 그대로…
 
   return (
     <>

@@ -48,11 +48,12 @@ async function fetchMyGroups(): Promise<Group[]> {
   return res.json();
 }
 
-export function useMyGroups() {
+export function useMyGroups(enabled = true) {
   return useQuery({
     queryKey: ["myGroups"],
     queryFn: fetchMyGroups,
     staleTime: 1000 * 60 * 2, // 2분 동안 캐시 유지
-    retry: 1, // 실패 시 1번만 재시도
+    retry: false, // 🔥 세션 만료 같은 에러에서 재시도 안 함
+    enabled,
   });
 }

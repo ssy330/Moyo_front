@@ -8,7 +8,6 @@ const AppLayout = () => {
 
   const { session: user } = useSelector((state: RootState) => state.session);
 
-  // mapBackendUserToSessionUser 덕분에 이미 풀 URL일 것
   const avatar = user?.profile_image_url ?? null;
 
   return (
