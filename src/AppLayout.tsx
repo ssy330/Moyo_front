@@ -1,8 +1,15 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { User, Bell, CalendarDays, Settings } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { RootState } from "./store/store";
 
 const AppLayout = () => {
   const navigate = useNavigate();
+  // 🔹 세션에서 유저 가져오기
+  const { session: user } = useSelector((state: RootState) => state.session);
+
+  // mapBackendUserToSessionUser 덕분에 이미 풀 URL일 것
+  const avatar = user?.profile_image_url ?? null;
 
   return (
     <div className="flex">
@@ -18,13 +25,21 @@ const AppLayout = () => {
 
         {/* 하단 아이콘 묶음 */}
         <div className="flex flex-col items-center gap-6">
-          {/* 아이콘 목록들 */}
+          {/* 프로필 버튼 */}
           <button
             onClick={() => navigate("/profile/1")}
-            className="rounded-xl bg-sky-200 p-2 transition hover:bg-sky-300"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-200 transition hover:bg-sky-300"
             title="내 프로필"
           >
-            <User size={20} className="text-sky-800" />
+            {avatar ? (
+              <img
+                src={avatar}
+                alt="내 프로필"
+                className="h-full w-full rounded-xl object-cover"
+              />
+            ) : (
+              <User size={20} className="text-sky-800" />
+            )}
           </button>
 
           <button

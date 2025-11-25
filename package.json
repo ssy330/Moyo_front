@@ -36,6 +36,7 @@
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-easy-crop": "^5.5.5",
     "react-hook-form": "^7.65.0",
     "react-intersection-observer": "^10.0.0",
     "react-redux": "^9.2.0",

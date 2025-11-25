@@ -53,9 +53,8 @@ export default function RegisterPage() {
     };
   }, [profilePreview]);
 
-  const handleProfileFiles = (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const file = files[0];
+  const handleProfileSelected = (file: File | null) => {
+    if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       toast("이미지 파일만 업로드할 수 있어요.");
@@ -64,8 +63,9 @@ export default function RegisterPage() {
 
     if (profilePreview) URL.revokeObjectURL(profilePreview);
     const url = URL.createObjectURL(file);
-    setProfileImage(file);
-    setProfilePreview(url);
+
+    setProfileImage(file); // 서버로 보낼 최종 파일
+    setProfilePreview(url); // 프리뷰
   };
 
   // ========= 이메일 인증 관련 =========
@@ -120,7 +120,7 @@ export default function RegisterPage() {
   // ========= 핸들러들 =========
   const handleSendCode = () => {
     if (!email.trim() || isEmailValid === false) {
-      alert(MSGS.INVALID_EMAIL);
+      toast(MSGS.INVALID_EMAIL);
       return;
     }
     if (isRunning || isCodeValid === true) return;
@@ -130,7 +130,7 @@ export default function RegisterPage() {
         setIsCodeSent(true);
         start();
         setResendKey((prev) => prev + 1);
-        alert(MSGS.CODE_SENT);
+        toast.success(MSGS.CODE_SENT);
       },
       onError: (err) => alert(err.message),
     });
@@ -138,7 +138,7 @@ export default function RegisterPage() {
 
   const handleVerifyCode = () => {
     if (!inputCode.trim()) {
-      alert(MSGS.INVALID_OR_EXPIRED_CODE);
+      toast(MSGS.INVALID_OR_EXPIRED_CODE);
       return;
     }
     if (isCodeValid === true) return;
@@ -148,11 +148,11 @@ export default function RegisterPage() {
       {
         onSuccess: () => {
           setIsCodeValid(true);
-          alert(MSGS.CODE_VERIFIED);
+          toast.success(MSGS.CODE_VERIFIED);
         },
         onError: (err) => {
           setIsCodeValid(false);
-          alert(err.message);
+          toast.error(err.message);
         },
       },
     );
@@ -180,7 +180,7 @@ export default function RegisterPage() {
             }),
           );
 
-          toast("가입 완료! 이제 모요를 이용할 수 있어요 🙌");
+          toast.success("가입 완료! 이제 모요를 이용할 수 있어요 🙌");
           navigate("/", { replace: true });
         },
         onError: (err) => toast(err.message),
@@ -248,9 +248,10 @@ export default function RegisterPage() {
                   {step === 2 && (
                     <RegisterStep2Profile
                       profilePreview={profilePreview}
+                      setProfilePreview={setProfilePreview}
                       isDragging={isDragging}
                       setIsDragging={setIsDragging}
-                      onFilesSelected={handleProfileFiles}
+                      onProfileFileSelected={handleProfileSelected}
                     />
                   )}
 
