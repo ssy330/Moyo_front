@@ -137,6 +137,21 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
     isError,
   } = useCalendarEvents(from, to);
 
+  // ✅ [추가] 이번 달 일정 개수 요약
+  const monthEventCount = events?.length ?? 0;
+  
+  // ✅ 여러 날짜에 걸친 일정만 카운트 (시작일 ≠ 종료일)
+  const multiDayEventCount =
+    events?.filter((ev) => {
+      const start = stripTime(new Date(ev.start_at));
+      const end = stripTime(new Date(ev.end_at));
+
+      const diffDays =
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+
+      return diffDays >= 1; // 하루 이상 차이 나는 일정만
+    }).length ?? 0;
+
   // 이번 달 기준 달력 셀 생성
   const monthCells = useMemo(
     () => createMonthCells(currentDate),
@@ -447,6 +462,16 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
         </button>
       </header>
 
+      {/* ✅ [추가] 이번 달 일정 요약 문구 */}
+      <p className="text-xs text-gray-500">
+        이번 달 등록된 일정 {monthEventCount}개
+        {multiDayEventCount > 0 && (
+          <span className="ml-1">
+            · 이틀 이상 일정 {multiDayEventCount}개
+          </span>
+        )}
+      </p>
+
       {/* 로딩/에러 상태 */}
       {isLoading && <div>일정 불러오는 중...</div>}
       {isError && <div className="text-red-500">일정 조회 중 오류가 발생했습니다.</div>}
@@ -485,7 +510,7 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                   const day = date.getDate();
                   const dayEvents = eventsByDate[key] ?? [];
 
-                  // [추가] 요일 계산
+                  // 요일 계산
                   const dayOfWeek = date.getDay(); // 0: 일 ~ 6: 토
                   const isSunday = dayOfWeek === 0;
                   const isSaturday = dayOfWeek === 6;
@@ -495,7 +520,7 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                   const weekendBg =
                     currentMonth && (isSunday || isSaturday) ? "bg-blue-50" : "";
 
-                  // [추가] 날짜 숫자 색 (이번 달 주말일 때만)
+                  // 날짜 숫자 색 (이번 달 주말일 때만)
                   const dayTextColor =
                     currentMonth && isSunday
                       ? "text-red-500"
@@ -503,15 +528,32 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                       ? "text-blue-500"
                         : "";
                   
-                  // 🔹 [추가] 오늘 날짜인지 판별
+                  // 오늘 날짜인지 판별
                   const isToday = key === todayKey;
                   const todayBorder = isToday ? "border-2 border-blue-500" : "";
+
+                  // ✅ [추가] 하루 이하 일정만 추려서, '더 보기' 개수 계산
+                  const shortEvents = dayEvents.filter((ev) => {
+                    const s = new Date(ev.start_at);
+                    const e = new Date(ev.end_at);
+                    const diff =
+                      stripTime(e).getTime() - stripTime(s).getTime();
+                    // 하루(24시간) 이하인 일정만 "칸 안쪽 점"으로 표시
+                    return diff <= 1000 * 60 * 60 * 24;
+                  });
+                  const MAX_INLINE = 2;
+                  const moreCount = shortEvents.length - MAX_INLINE;
 
                   return (
                     <button
                       key={key}
                       type="button"
-                      className={`h-20 rounded-md border p-1 text-left align-top hover:border-blue-400 ${baseBg} ${weekendBg} ${todayBorder}`}
+                      className={`
+                        h-20 rounded-md border p-1 text-left align-top
+                        ${currentMonth ? "bg-white" : "bg-gray-50 text-gray-400"} 
+                        hover:border-blue-400 hover:bg-blue-50/40 hover:shadow-sm 
+                        ${baseBg} ${weekendBg} ${todayBorder}
+                        `}
                       onClick={() => handleOpenCreateForDate(date)}   // ✅ 추가
                     >
                       <div className={`text-[11px] font-semibold ${dayTextColor}`}>
@@ -520,29 +562,31 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
 
                       {/* 🔹 하루짜리 일정은 날짜 칸 안에 표시 */}
                       <div className="mt-1 space-y-0.5">
-                        {dayEvents
-                          .filter((ev) => {
-                            const s = stripTime(new Date(ev.start_at));
-                            const e = stripTime(new Date(ev.end_at));
-                            const diff =
-                              e.getTime() - s.getTime();
-                            // 같은 날짜(하루짜리)만 여기 표시
-                            return diff === 0;
-                          })
-                          .slice(0, 2)
-                          .map((ev) => (
-                            <button
-                              key={ev.id}
-                              type="button"
-                              className="block w-full truncate rounded bg-blue-50 px-1 py-0.5 text-[11px] text-blue-700"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenEdit(ev);
-                              }}
-                            >
-                              {ev.title}
-                            </button>
-                          ))}
+                        {shortEvents.slice(0, MAX_INLINE).map((ev) => (
+                      <div
+                        key={ev.id}
+                        className="truncate rounded bg-blue-50 px-1 py-0.5 text-[11px] text-blue-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEdit(ev); // 기존 수정 모달 열기
+                        }}
+                      >
+                        {ev.title}
+                      </div>
+                    ))}
+
+                    {moreCount > 0 && (
+                      <button
+                        type="button"
+                        className="mt-0.5 block text-[10px] text-gray-400 underline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // TODO: 나중에 "해당 날짜 일정 전체 모달"로 확장 가능
+                        }}
+                      >
+                        일정 {moreCount}개 더 보기
+                      </button>
+                    )}
                       </div>
                     </button>
                   );
