@@ -1,7 +1,9 @@
 // src/components/modal/GroupMemberModal.tsx
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+
 import { api } from "@/lib/api";
-import { API_ORIGIN } from "@/lib/api-link";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -11,6 +13,8 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import { useSendFriendRequest } from "@/hook/use-send-friend-request";
+import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
 
 type GroupRole = "OWNER" | "MANAGER" | "MEMBER";
 
@@ -26,7 +30,7 @@ type GroupMember = {
   user_id: number;
   role: GroupRole;
   joined_at: string;
-  user?: GroupMemberUser; // GroupMemberOut에 user가 붙어있다고 가정
+  user?: GroupMemberUser;
 };
 
 type GroupDetailResponse = {
@@ -55,11 +59,27 @@ function roleLabel(role: GroupRole) {
   }
 }
 
-function resolveAvatarUrl(path?: string | null): string | null {
-  if (!path) return null;
-  if (path.startsWith("http")) return path;
-  if (path.startsWith("/")) return `${API_ORIGIN}${path}`;
-  return `${API_ORIGIN}/${path}`;
+function getErrorMessage(error: unknown): string {
+  if (typeof error === "string") return error;
+
+  if (typeof error === "object" && error !== null) {
+    const maybeAxios = error as {
+      response?: { data?: { detail?: string; message?: string } };
+      message?: string;
+    };
+
+    if (typeof maybeAxios.response?.data?.detail === "string") {
+      return maybeAxios.response.data.detail;
+    }
+    if (typeof maybeAxios.response?.data?.message === "string") {
+      return maybeAxios.response.data.message;
+    }
+    if (typeof maybeAxios.message === "string") {
+      return maybeAxios.message;
+    }
+  }
+
+  return "멤버 정보를 불러오는 중 오류가 발생했습니다.";
 }
 
 export default function GroupMemberModal({
@@ -70,6 +90,13 @@ export default function GroupMemberModal({
   const [data, setData] = useState<GroupDetailResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ✅ 현재 로그인 유저
+  const currentUser = useSelector((state: RootState) => state.session.session);
+
+  // ✅ 친구 요청 훅
+  const { mutate: sendFriendRequest, isPending: isSending } =
+    useSendFriendRequest();
 
   useEffect(() => {
     if (!open) return;
@@ -82,13 +109,10 @@ export default function GroupMemberModal({
         const res = await api.get<GroupDetailResponse>(`/groups/${groupId}`);
         if (cancelled) return;
         setData(res.data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
         if (!cancelled) {
-          setError(
-            err?.response?.data?.detail ??
-              "멤버 정보를 불러오는 중 오류가 발생했습니다.",
-          );
+          setError(getErrorMessage(err));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -104,6 +128,20 @@ export default function GroupMemberModal({
 
   const memberCount = data?.group.member_count ?? data?.members.length ?? 0;
 
+  // ✅ 타겟 유저를 받아서 친구 요청을 보내는 함수
+  const handleClickFriend = (targetUserId: number) => {
+    if (!currentUser) {
+      toast.error("로그인 후 이용해주세요.");
+      return;
+    }
+
+    if (currentUser.id === targetUserId) {
+      return;
+    }
+
+    sendFriendRequest({ receiver_id: targetUserId, group_id: groupId });
+  };
+
   return (
     <Dialog
       open={open}
@@ -113,14 +151,12 @@ export default function GroupMemberModal({
     >
       <DialogContent className="w-full max-w-lg rounded-2xl p-4">
         <DialogHeader className="mb-2 space-y-2">
-          {/* 첫 줄: 타이틀만 */}
           <div className="flex items-center justify-between gap-3">
             <DialogTitle className="text-base font-semibold text-neutral-900">
               멤버 관리
             </DialogTitle>
           </div>
 
-          {/* 둘째 줄: 왼쪽에 설명, 오른쪽에 멤버 수 배지 */}
           <div className="flex items-center justify-between gap-2">
             <DialogDescription className="text-xs text-neutral-500">
               {data?.group.name ?? "그룹"}의 멤버 목록이에요.
@@ -132,7 +168,6 @@ export default function GroupMemberModal({
           </div>
         </DialogHeader>
 
-        {/* 바디 영역 */}
         {loading && (
           <div className="flex h-40 items-center justify-center text-sm text-neutral-500">
             멤버 정보를 불러오는 중입니다…
@@ -166,6 +201,9 @@ export default function GroupMemberModal({
                   ? new Date(m.joined_at).toLocaleDateString("ko-KR")
                   : "";
 
+                const targetUserId = u?.id ?? m.user_id;
+                const isMe = !!currentUser && targetUserId === currentUser.id;
+
                 return (
                   <div
                     key={m.id}
@@ -195,6 +233,11 @@ export default function GroupMemberModal({
                             {nickSuffix}
                           </span>
                         )}
+                        {isMe && (
+                          <span className="ml-1 text-[11px] text-neutral-400">
+                            (나)
+                          </span>
+                        )}
                       </div>
                       <div className="mt-0.5 flex items-center gap-2 text-[11px] text-neutral-500">
                         <span>{roleLabel(m.role)}</span>
@@ -208,15 +251,16 @@ export default function GroupMemberModal({
                     </div>
 
                     {/* 친구 추가 버튼 */}
-                    <button
-                      type="button"
-                      className="rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-emerald-700 hover:bg-emerald-50"
-                      onClick={() =>
-                        toast("친구 추가 기능은 아직 준비 중이에요! 🤝")
-                      }
-                    >
-                      친구 추가
-                    </button>
+                    {!isMe && (
+                      <button
+                        type="button"
+                        className="rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-emerald-700 hover:bg-emerald-50 disabled:opacity-60"
+                        onClick={() => handleClickFriend(targetUserId)}
+                        disabled={isSending}
+                      >
+                        {isSending ? "요청 중..." : "친구 추가"}
+                      </button>
+                    )}
                   </div>
                 );
               })

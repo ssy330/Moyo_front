@@ -38,7 +38,7 @@ export default function ViewModeButtonGroup({
             onClick={() => onChange(key)}
             className={`relative px-5 py-2 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-gradient-to-r from-green-400 to-green-500 text-white shadow-sm"
+                ? "bg-linear-to-r from-green-400 to-green-500 text-white shadow-sm"
                 : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800"
             } rounded-full`}
           >
