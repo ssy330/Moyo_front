@@ -9,10 +9,12 @@ import PaymentInfoPage from "@/components/settingComponents/PaymentInfoPage";
 import TermsPage from "@/components/settingComponents/TermsPage";
 import UpdateInfoPage from "@/components/settingComponents/UpdateInfoPage";
 import CustomerSupportPage from "@/components/settingComponents/CustomerSupportPage";
+import ThemeSettingPage from "@/components/settingComponents/ThemeSettingPage";
 
 const menuList = [
   "도움말",
   "알림 설정",
+  "테마 설정",
   "계정 탈퇴",
   "차단한 유저",
   "비밀번호 변경",
@@ -31,6 +33,8 @@ export default function SettingsLayout() {
         return <HelpPage />;
       case "알림 설정":
         return <AlertSettingPage />;
+      case "테마 설정":
+        return <ThemeSettingPage />;
       case "계정 탈퇴":
         return <AccountDeletePage />;
       case "비밀번호 변경":

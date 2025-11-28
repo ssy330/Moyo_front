@@ -13,11 +13,17 @@ import { openAlert } from "@/features/alertSlice";
 import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
 
 import ProfileImageChangeModal from "@/components/modal/ProfileImageChangeModal";
+import { useMyFriends } from "@/hook/use-friend";
+import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
+import { formatTimeAgo } from "@/lib/time";
+import { parseServerDateAsUTC } from "@/utils/ChatTimeFunc";
 
 export default function ProfilePage() {
   const nav = useNavigate();
   const dispatch = useAppDispatch();
   const { session: user } = useSelector((state: RootState) => state.session);
+
+  const { data: friends = [], isLoading: friendsLoading } = useMyFriends();
 
   // 닉네임 입력값
   const [changeNickname, setChangeNickname] = useState("");
@@ -152,6 +158,74 @@ export default function ProfilePage() {
               수정
             </Button>
           </div>
+        </div>
+
+        {/* 친구 목록 리스트 */}
+        <div className="mt-8">
+          <h2 className="mb-2 text-sm font-semibold text-gray-700">
+            친구 목록
+          </h2>
+
+          {friendsLoading && (
+            <div className="text-sm text-gray-500">
+              친구 목록 불러오는 중...
+            </div>
+          )}
+
+          {!friendsLoading && friends.length === 0 && (
+            <div className="text-sm text-gray-400">
+              아직 추가된 친구가 없습니다.
+            </div>
+          )}
+
+          {!friendsLoading && friends.length > 0 && (
+            <div className="mt-3 space-y-2">
+              {friends.map((f) => {
+                const avatarUrl = resolveAvatarUrl(f.friend.profile_image_url);
+                const groupName = f.group?.name;
+                const joinedLabel = formatTimeAgo(
+                  parseServerDateAsUTC(f.created_at),
+                );
+
+                return (
+                  <div
+                    key={f.id}
+                    className="flex items-center justify-between rounded-xl border px-3 py-2"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 overflow-hidden rounded-full bg-gray-200">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt={f.friend.nickname}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-gray-400">
+                            <User className="h-5 w-5" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-900">
+                          {f.friend.nickname || f.friend.name}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {groupName
+                            ? `${groupName} 그룹에서 알게 된 친구`
+                            : "어느 그룹에서 만난 친구인지 정보가 없습니다."}
+                        </span>
+                        <span className="text-[11px] text-gray-400">
+                          친구가 된 지 {joinedLabel}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* 로그아웃 버튼 */}

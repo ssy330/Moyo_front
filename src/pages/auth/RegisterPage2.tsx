@@ -74,6 +74,8 @@ export default function RegisterPage() {
   const [inputCode, setInputCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState<boolean | null>(null);
 
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+
   // ========= 유효성 상태 =========
   const [isNameValid, setIsNameValid] = useState<boolean | null>(null);
   const [isNickValid, setIsNickValid] = useState<boolean | null>(null);
@@ -100,17 +102,24 @@ export default function RegisterPage() {
     () =>
       isNameValid === true &&
       isNickValid === true &&
-      isEmailValid === true &&
+      isEmailVerified === true &&
       isPwValid === true &&
       isPwMatch === true &&
       isCodeValid === true,
-    [isNameValid, isNickValid, isEmailValid, isPwValid, isPwMatch, isCodeValid],
+    [
+      isNameValid,
+      isNickValid,
+      isEmailVerified,
+      isPwValid,
+      isPwMatch,
+      isCodeValid,
+    ],
   );
 
   // 단계별 유효성 (프로필은 지금은 선택사항)
   const isStep1Valid = isNameValid === true && isNickValid === true;
   const isStep2Valid = true; // 프로필 필수로 하고 싶으면 !!profileImage
-  const isStep3Valid = isEmailValid === true && isCodeValid === true;
+  const isStep3Valid = isEmailVerified === true && isCodeValid === true;
   const isStep4Valid = isPwValid === true && isPwMatch === true;
 
   // ========= 서버 통신 훅 =========
@@ -149,6 +158,8 @@ export default function RegisterPage() {
       {
         onSuccess: () => {
           setIsCodeValid(true);
+          setIsEmailVerified(true);
+          setIsEmailValid(true);
           toast.success(MSGS.CODE_VERIFIED);
         },
         onError: (err) => {
@@ -181,6 +192,17 @@ export default function RegisterPage() {
         onError: (err) => toast(err.message),
       },
     );
+  };
+
+  const handleChangeEmail = (v: string) => {
+    setEmailLocal(v);
+    // 형식 검사는 다시 해야 하니까
+    setIsEmailValid(null);
+    // 인증 관련 상태 리셋
+    setIsCodeSent(false);
+    setInputCode("");
+    setIsCodeValid(null);
+    setIsEmailVerified(false);
   };
 
   return (
@@ -262,7 +284,7 @@ export default function RegisterPage() {
                       isRunning={isRunning}
                       resendKey={resendKey}
                       formatTime={formatTime}
-                      onChangeEmail={setEmailLocal}
+                      onChangeEmail={handleChangeEmail}
                       onChangeCode={setInputCode}
                       setIsEmailValid={setIsEmailValid}
                       onClickSendCode={handleSendCode}
@@ -291,7 +313,7 @@ export default function RegisterPage() {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="text-sm text-neutral-600"
+                    className="h-12 min-w-[100px] text-sm text-neutral-600"
                     onClick={() => goToStep(((step - 1) as Step) || 1)}
                   >
                     이전 단계
@@ -309,7 +331,7 @@ export default function RegisterPage() {
                       if (step === 3 && !isStep3Valid) return;
                       goToStep(((step + 1) as Step) || 4);
                     }}
-                    className="min-w-[120px]"
+                    className="h-12 min-w-[100px]"
                   >
                     다음
                   </Button>
@@ -320,9 +342,9 @@ export default function RegisterPage() {
                     type="button"
                     disabled={!isFormValid || !isStep4Valid || loadingSignup}
                     onClick={handleSubmit}
-                    className="min-w-[150px]"
+                    className="h-12 min-w-[100px]"
                   >
-                    {loadingSignup ? "등록 중…" : "회원가입 완료"}
+                    {loadingSignup ? "등록 중…" : "완료"}
                   </Button>
                 )}
               </div>

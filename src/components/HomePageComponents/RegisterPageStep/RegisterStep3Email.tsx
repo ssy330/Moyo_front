@@ -43,7 +43,7 @@ export default function RegisterStep3Email({
         이메일 인증
       </h3>
       <div className="max-w-xl space-y-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
           <div className="flex-1 origin-top transform sm:scale-[1.03]">
             <AuthInput
               name="email"
@@ -52,6 +52,7 @@ export default function RegisterStep3Email({
               onChange={(e) => onChangeEmail(e.target.value)}
               onValidChange={setIsEmailValid}
               disabled={(isCodeSent && isRunning) || isCodeValid === true}
+              inputClassName="h-15 text-base placeholder:text-base"
             />
           </div>
 
@@ -61,7 +62,7 @@ export default function RegisterStep3Email({
             disabled={
               !isEmailValid || isRunning || isCodeValid === true || loadingSend
             }
-            className="h-11 w-full text-xs sm:w-20"
+            className="h-16 w-full text-xs sm:w-20"
           >
             {isCodeValid === true
               ? "완료"
@@ -76,7 +77,7 @@ export default function RegisterStep3Email({
         </div>
 
         {isCodeSent && (
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
             <div className="flex-1 origin-top transform sm:scale-[1.03]">
               <AuthInput
                 name="authCode"
@@ -85,6 +86,7 @@ export default function RegisterStep3Email({
                 onChange={(e) => onChangeCode(e.target.value)}
                 disabled={isCodeValid === true || loadingVerify}
                 resendKey={resendKey}
+                inputClassName="h-15 text-base placeholder:text-base"
               />
             </div>
             <Button
@@ -95,7 +97,7 @@ export default function RegisterStep3Email({
                 isCodeValid === true ||
                 loadingVerify
               }
-              className="h-11 w-full text-xs sm:w-20"
+              className="h-16 w-full text-xs sm:w-20"
             >
               {isCodeValid === true
                 ? "완료"

@@ -1,14 +1,25 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { User, Bell, CalendarDays, Settings } from "lucide-react";
 import { useSelector } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
 import type { RootState } from "./store/store";
+import { useState } from "react";
+import { Bell, CalendarDays, Settings, User } from "lucide-react";
+import BellModal from "./components/modal/BellModal";
+import { useIncomingFriendRequests } from "./hook/use-send-friend-request";
 
 const AppLayout = () => {
   const navigate = useNavigate();
-
   const { session: user } = useSelector((state: RootState) => state.session);
 
   const avatar = user?.profile_image_url ?? null;
+
+  // 🔹 알림 모달 열림 상태
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  //🔹 받은 친구 요청 (알림 개수 / 목록에 사용)
+  const { data: incoming = [], isLoading: notifLoading } =
+    useIncomingFriendRequests();
+
+  const unreadCount = incoming.length; // 나중에 읽음 처리 생기면 여기서 필터링
 
   return (
     <div className="flex">
@@ -41,14 +52,21 @@ const AppLayout = () => {
             )}
           </button>
 
+          {/* 🔔 알림 버튼 */}
           <button
-            onClick={() => navigate("/notifications")}
-            className="rounded-xl bg-yellow-200 p-2 transition hover:bg-yellow-300"
+            onClick={() => setIsNotifOpen(true)}
+            className="relative rounded-xl bg-yellow-200 p-2 transition hover:bg-yellow-300"
             title="알림"
           >
             <Bell size={20} className="text-yellow-700" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </button>
 
+          {/* 캘린더 버튼 */}
           <button
             onClick={() => navigate("/calendar")}
             className="rounded-xl bg-green-200 p-2 transition hover:bg-green-300"
@@ -57,7 +75,7 @@ const AppLayout = () => {
             <CalendarDays size={20} className="text-green-700" />
           </button>
 
-          {/* 설정 아이콘 바로 아래 배치 */}
+          {/* 설정 아이콘 */}
           <button
             onClick={() => navigate("/settings")}
             className="mt-2 rounded-xl bg-neutral-100 p-2 transition hover:bg-neutral-200"
@@ -72,6 +90,14 @@ const AppLayout = () => {
       <main className="ml-16 min-h-screen flex-1 bg-gray-50">
         <Outlet />
       </main>
+
+      {/* 🔔 오른쪽 상단 작은 알림 모달 */}
+      <BellModal
+        open={isNotifOpen}
+        onOpenChange={setIsNotifOpen}
+        incoming={incoming}
+        notifLoading={notifLoading}
+      />
     </div>
   );
 };

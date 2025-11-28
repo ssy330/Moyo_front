@@ -30,6 +30,7 @@ export default function RegisterStep4Password({
             value={password}
             onChange={(e) => onChangePassword(e.target.value)}
             onValidChange={setIsPwValid}
+            inputClassName="h-15 text-base placeholder:text-base"
           />
         </div>
         <div className="origin-top transform sm:scale-[1.03]">
@@ -40,6 +41,7 @@ export default function RegisterStep4Password({
             passwordValue={password}
             onChange={(e) => onChangePasswordConfirm(e.target.value)}
             onValidChange={setIsPwMatch}
+            inputClassName="h-15 text-base placeholder:text-base"
           />
         </div>
       </div>

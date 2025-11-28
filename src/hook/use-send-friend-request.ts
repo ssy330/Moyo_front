@@ -6,6 +6,8 @@ import {
   acceptFriendRequestApi,
   rejectFriendRequestApi,
   type FriendRequest,
+  type OutgoingFriendRequest,
+  getOutgoingFriendRequestsApi,
 } from "@/lib/friend-api";
 import { toast } from "sonner";
 
@@ -59,5 +61,12 @@ export function useRejectFriendRequest() {
     onError: () => {
       toast.error("친구 요청 거절에 실패했습니다.");
     },
+  });
+}
+
+export function useOutgoingFriendRequests() {
+  return useQuery<OutgoingFriendRequest[]>({
+    queryKey: ["friend-requests", "outgoing"],
+    queryFn: getOutgoingFriendRequestsApi,
   });
 }

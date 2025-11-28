@@ -21,6 +21,7 @@ interface AuthInputProps {
   autoComplete?: string;
   validateOnChange?: boolean;
   resendKey?: number;
+  inputClassName?: string;
 }
 
 export default function AuthInput({
@@ -34,6 +35,7 @@ export default function AuthInput({
   autoComplete,
   resendKey,
   validateOnChange = true,
+  inputClassName,
 }: AuthInputProps) {
   const { isValid, validate, messages } = useValidation(name, passwordValue);
 
@@ -83,7 +85,7 @@ export default function AuthInput({
           autoComplete={getAutoCompleteValue()}
           className={`h-12 pr-12 ${
             isAuthCode ? "pr-20 md:pr-24" : ""
-          } ${isValid === false ? "border-red-400" : ""}`}
+          } ${isValid === false ? "border-red-400" : ""} ${inputClassName ?? ""}`}
         />
 
         {/* 비밀번호 보기/숨김 */}

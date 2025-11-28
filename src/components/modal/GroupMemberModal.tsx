@@ -13,8 +13,12 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useSendFriendRequest } from "@/hook/use-send-friend-request";
+import {
+  useOutgoingFriendRequests,
+  useSendFriendRequest,
+} from "@/hook/use-send-friend-request";
 import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
+import { useMyFriends } from "@/hook/use-friend";
 
 type GroupRole = "OWNER" | "MANAGER" | "MEMBER";
 
@@ -94,9 +98,32 @@ export default function GroupMemberModal({
   // ✅ 현재 로그인 유저
   const currentUser = useSelector((state: RootState) => state.session.session);
 
+  const memberCount = data?.group.member_count ?? data?.members.length ?? 0;
+
   // ✅ 친구 요청 훅
   const { mutate: sendFriendRequest, isPending: isSending } =
     useSendFriendRequest();
+
+  const { data: friends = [] } = useMyFriends();
+  const { data: outgoing = [] } = useOutgoingFriendRequests();
+
+  // targetUserId 기준 친구/요청 상태 계산
+  const getRelationState = (targetUserId: number) => {
+    if (!currentUser) return "none" as const;
+    if (currentUser.id === targetUserId) return "me" as const;
+
+    // 이미 친구인지
+    const isFriend = friends.some((f) => f.friend.id === targetUserId);
+    if (isFriend) return "friend" as const;
+
+    // 내가 보낸 PENDING 요청이 있는지
+    const hasPendingOutgoing = outgoing.some(
+      (req) => req.receiver.id === targetUserId && req.status === "PENDING",
+    );
+    if (hasPendingOutgoing) return "pending" as const;
+
+    return "none" as const;
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -126,16 +153,15 @@ export default function GroupMemberModal({
     };
   }, [open, groupId]);
 
-  const memberCount = data?.group.member_count ?? data?.members.length ?? 0;
-
-  // ✅ 타겟 유저를 받아서 친구 요청을 보내는 함수
   const handleClickFriend = (targetUserId: number) => {
     if (!currentUser) {
       toast.error("로그인 후 이용해주세요.");
       return;
     }
 
-    if (currentUser.id === targetUserId) {
+    const state = getRelationState(targetUserId);
+    if (state === "me" || state === "friend" || state === "pending") {
+      // 이미 친구거나, 나 자신이거나, 요청 대기 중이면 아무 것도 안 함
       return;
     }
 
@@ -202,7 +228,8 @@ export default function GroupMemberModal({
                   : "";
 
                 const targetUserId = u?.id ?? m.user_id;
-                const isMe = !!currentUser && targetUserId === currentUser.id;
+                const relationState = getRelationState(targetUserId);
+                const isMe = relationState === "me";
 
                 return (
                   <div
@@ -250,16 +277,36 @@ export default function GroupMemberModal({
                       </div>
                     </div>
 
-                    {/* 친구 추가 버튼 */}
+                    {/* 친구 / 요청 상태에 따른 버튼 */}
                     {!isMe && (
-                      <button
-                        type="button"
-                        className="rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-emerald-700 hover:bg-emerald-50 disabled:opacity-60"
-                        onClick={() => handleClickFriend(targetUserId)}
-                        disabled={isSending}
-                      >
-                        {isSending ? "요청 중..." : "친구 추가"}
-                      </button>
+                      <>
+                        {relationState === "friend" && (
+                          <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-medium text-emerald-700">
+                            이미 친구
+                          </span>
+                        )}
+
+                        {relationState === "pending" && (
+                          <button
+                            type="button"
+                            className="cursor-default rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-emerald-400"
+                            disabled
+                          >
+                            요청 중...
+                          </button>
+                        )}
+
+                        {relationState === "none" && (
+                          <button
+                            type="button"
+                            className="rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-emerald-700 hover:bg-emerald-50 disabled:opacity-60"
+                            onClick={() => handleClickFriend(targetUserId)}
+                            disabled={isSending}
+                          >
+                            {isSending ? "요청 중..." : "친구 추가"}
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 );
