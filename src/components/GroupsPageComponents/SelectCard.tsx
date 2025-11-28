@@ -1,6 +1,3 @@
-/**
- * 옵션 카드 (가입 승인 / 닉네임 등)
- */
 type SelectCardProps = {
   title: string;
   description?: string;
@@ -20,19 +17,21 @@ export default function SelectCard({
       onClick={onClick}
       className={`group flex flex-col rounded-2xl border p-3 text-left transition ${
         active
-          ? "border-emerald-400 bg-white shadow-sm"
-          : "border-neutral-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40"
+          ? "border-primary bg-card shadow-sm"
+          : "border-border bg-card hover:border-primary/60 hover:bg-muted"
       }`}
     >
       <div className="mb-1 flex items-center justify-between">
-        <span className="text-sm font-medium text-neutral-900">{title}</span>
+        <span className="text-foreground text-sm font-medium">{title}</span>
         {active && (
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-bold text-white">
+          <span className="bg-primary text-primary-foreground flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold">
             ✓
           </span>
         )}
       </div>
-      {description && <p className="text-xs text-neutral-500">{description}</p>}
+      {description && (
+        <p className="text-muted-foreground text-xs">{description}</p>
+      )}
     </button>
   );
 }

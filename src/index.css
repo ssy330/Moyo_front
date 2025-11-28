@@ -234,7 +234,7 @@
   --card: hsl(0 0% 100%);
   --card-foreground: hsl(343 35% 20%);
 
-  --primary: hsl(343 82% 60%);
+  --primary: hsl(343, 76%, 69%);
   --primary-foreground: hsl(0 0% 98%);
 
   --secondary: hsl(340 80% 94%);

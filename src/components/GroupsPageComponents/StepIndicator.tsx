@@ -18,10 +18,10 @@ export default function StepIndicator({ step }: { step: Step }) {
             <div
               className={`flex h-7 w-7 items-center justify-center rounded-full border text-[11px] font-semibold transition ${
                 active
-                  ? "border-emerald-500 bg-emerald-500 text-white shadow-sm"
+                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
                   : done
-                    ? "border-emerald-300 bg-emerald-50 text-emerald-600"
-                    : "border-neutral-300 bg-white text-neutral-500"
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground"
               }`}
             >
               {s.id}
@@ -29,16 +29,16 @@ export default function StepIndicator({ step }: { step: Step }) {
             <span
               className={`hidden text-[11px] whitespace-nowrap md:inline ${
                 active
-                  ? "text-emerald-600"
+                  ? "text-primary"
                   : done
-                    ? "text-emerald-500"
-                    : "text-neutral-400"
+                    ? "text-primary/80"
+                    : "text-muted-foreground"
               }`}
             >
               {s.label}
             </span>
             {idx < steps.length - 1 && (
-              <div className="h-px w-4 bg-neutral-300 md:w-6" />
+              <div className="bg-border h-px w-4 md:w-6" />
             )}
           </div>
         );

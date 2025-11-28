@@ -22,7 +22,7 @@ export default function Step1({
       <h2 className="mb-3 text-lg font-semibold">
         모임 이름을 지정하여 시작하기
       </h2>
-      <p className="mb-6 text-sm text-neutral-500">
+      <p className="text-muted-foreground mb-6 text-sm">
         나중에 언제든지 변경할 수 있어요. 사람들이 한 눈에 이해할 수 있는
         이름이면 더 좋아요.
       </p>
@@ -32,20 +32,20 @@ export default function Step1({
         placeholder="예: 강남대 프로젝트 모임"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
-        className="w-full rounded-2xl border-2 border-emerald-400 bg-white px-5 py-4 text-lg font-semibold text-neutral-900 shadow-sm transition outline-none placeholder:text-lg placeholder:font-semibold placeholder:text-neutral-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+        className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/30 w-full rounded-2xl border-2 px-5 py-4 text-lg font-semibold shadow-sm transition outline-none placeholder:text-lg placeholder:font-semibold focus:ring-2"
       />
 
       {/* 개인정보 동의 */}
-      <div className="mt-4 flex items-start gap-2 text-sm text-neutral-600">
+      <div className="text-muted-foreground mt-4 flex items-start gap-2 text-sm">
         <input
           id="privacy"
           type="checkbox"
           checked={privacy}
           onChange={(e) => setPrivacy(e.target.checked)}
-          className="mt-1 h-4 w-4 rounded border-neutral-400 text-emerald-600 focus:ring-emerald-400"
+          className="border-input text-primary focus:ring-primary mt-1 h-4 w-4 rounded"
         />
         <label htmlFor="privacy" className="cursor-pointer leading-snug">
-          <span className="font-semibold text-neutral-900">
+          <span className="text-foreground font-semibold">
             개인정보의 수집 및 이용(필수)
           </span>
           <br />
@@ -54,11 +54,7 @@ export default function Step1({
       </div>
 
       <div className="mt-8 flex justify-end">
-        <Button
-          className="w-32 bg-emerald-500 font-semibold text-white hover:bg-emerald-400"
-          disabled={!isStep1Valid}
-          onClick={onNext}
-        >
+        <Button className="w-32" disabled={!isStep1Valid} onClick={onNext}>
           다음
         </Button>
       </div>

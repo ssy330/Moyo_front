@@ -32,15 +32,15 @@ export default function Step3({
       <h2 className="mb-3 text-lg font-semibold">
         그룹 내 설정을 마무리할게요
       </h2>
-      <p className="mb-6 text-sm text-neutral-500">
+      <p className="text-muted-foreground mb-6 text-sm">
         가입 승인 방식과 표기 방식을 선택하고, 모임에 대한 간단한 설명을
         적어주세요.
       </p>
 
       <div className="space-y-5">
         {/* 가입 승인 */}
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="mb-3 text-sm font-semibold text-neutral-900">
+        <div className="border-border bg-muted rounded-2xl border p-4">
+          <p className="text-foreground mb-3 text-sm font-semibold">
             모임 가입 승인 설정
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -60,8 +60,8 @@ export default function Step3({
         </div>
 
         {/* 닉네임 / 실명 */}
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="mb-3 text-sm font-semibold text-neutral-900">
+        <div className="border-border bg-muted rounded-2xl border p-4">
+          <p className="text-foreground mb-3 text-sm font-semibold">
             실명 / 닉네임 여부
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -81,31 +81,27 @@ export default function Step3({
         </div>
 
         {/* 설명 */}
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="mb-2 text-sm font-semibold text-neutral-900">
+        <div className="border-border bg-muted rounded-2xl border p-4">
+          <p className="text-foreground mb-2 text-sm font-semibold">
             모임 설명
           </p>
           <textarea
             placeholder="모임에 대한 설명을 입력하세요."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="h-24 w-full resize-none rounded-xl border border-neutral-200 bg-white p-3 text-sm text-neutral-900 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200"
+            className="border-input bg-background text-foreground focus:border-primary focus:ring-primary/30 h-24 w-full resize-none rounded-xl border p-3 text-sm outline-none focus:ring-2"
           />
         </div>
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button
-          variant="outline"
-          className="w-[48%] border-emerald-300 text-emerald-600 hover:bg-emerald-50"
-          onClick={onPrev}
-        >
+        <Button variant="outline" className="w-[48%]" onClick={onPrev}>
           이전
         </Button>
 
         <Button
-          className="w-[48%] bg-emerald-500 font-semibold text-white hover:bg-emerald-400"
-          disabled={!isStep3Valid}
+          className="w-[48%]"
+          disabled={!isStep3Valid || createGroupIsPending}
           onClick={onSubmit}
         >
           {createGroupIsPending ? "만드는 중..." : "만들기"}

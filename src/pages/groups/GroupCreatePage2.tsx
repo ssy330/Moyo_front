@@ -1,4 +1,3 @@
-// src/pages/GroupCreatePage.tsx
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCreateGroup } from "@/hook/mutation/post/use-create-group";
@@ -47,14 +46,14 @@ export default function GroupCreatePage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 text-neutral-900">
-      <div className="flex w-full max-w-7xl overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl">
+    <div className="bg-background text-foreground flex min-h-screen items-center justify-center px-4">
+      <div className="border-border bg-card flex w-full max-w-7xl overflow-hidden rounded-3xl border shadow-xl">
         {/* 왼쪽: 컨텐츠 영역 */}
         <div className="flex-1 px-8 py-8 md:px-12 md:py-10">
           {/* 상단 헤더 */}
           <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-semibold tracking-[0.2em] text-emerald-500 uppercase">
+              <p className="text-primary text-xs font-semibold tracking-[0.2em] uppercase">
                 MOYO GROUP
               </p>
               <h1 className="mt-2 text-2xl leading-tight font-semibold lg:text-2xl">
@@ -113,7 +112,7 @@ export default function GroupCreatePage() {
         </div>
 
         {/* 오른쪽: 밝은 데코 패널 */}
-        <div className="relative hidden w-72 flex-col items-center justify-center bg-gradient-to-b from-emerald-50 via-emerald-100 to-emerald-50 md:flex"></div>
+        <div className="from-primary/5 via-primary/10 to-primary/5 relative hidden w-72 flex-col items-center justify-center bg-linear-to-b md:flex" />
       </div>
     </div>
   );
