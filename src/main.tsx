@@ -8,6 +8,7 @@ import ModalProvider from "./pages/provider/modal-provider";
 import SessionProvider from "./pages/provider/session-provider";
 import "./index.css";
 import { Toaster } from "sonner";
+import ThemeWatcher from "./pages/provider/theme-watcher";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <SessionProvider>
         <ModalProvider>
           <Toaster richColors position="top-center" />
+          <ThemeWatcher />
           <RouterProvider router={router} />
         </ModalProvider>
       </SessionProvider>

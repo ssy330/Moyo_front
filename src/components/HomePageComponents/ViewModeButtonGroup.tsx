@@ -1,9 +1,3 @@
-/**
- * ViewModeButtonGroup.tsx
- *
- * - 상단 오른쪽에 떠 있는 뷰모드 전환 버튼 (패널 / 채팅 / 둘다)
- * - pill 스타일로 개선 (라운드, 그라데이션, 부드러운 hover)
- */
 type ViewMode = "both" | "panel" | "chat";
 
 interface ButtonOption {
@@ -29,18 +23,18 @@ export default function ViewModeButtonGroup({
   options = defaultOptions,
 }: Props) {
   return (
-    <div className="mt-2 mr-7 flex items-center rounded-full border border-neutral-200 bg-white/80 shadow-sm backdrop-blur-md">
+    <div className="border-border bg-card/80 mt-2 mr-7 flex items-center rounded-full border shadow-sm backdrop-blur-md">
       {options.map(({ key, label }) => {
         const isActive = value === key;
         return (
           <button
             key={key}
             onClick={() => onChange(key)}
-            className={`relative px-5 py-2 text-sm font-medium transition-all duration-200 ${
+            className={`relative rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-linear-to-r from-green-400 to-green-500 text-white shadow-sm"
-                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800"
-            } rounded-full`}
+                ? "from-primary to-primary/80 text-primary-foreground bg-linear-to-r shadow-sm"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            }`}
           >
             {label}
           </button>

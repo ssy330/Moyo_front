@@ -22,30 +22,24 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
   const [joinOpen, setJoinOpen] = useState(false);
 
-  // 🔹 현재 세션 상태
   const { session } = useSelector((state: RootState) => state.session);
 
-  // 🔹 세션이 있을 때만 그룹 요청
   const { data: groups, isLoading, error } = useMyGroups(!!session);
 
   const [authHandled, setAuthHandled] = useState(false);
 
-  // 그룹 개수 텍스트
   const countText = isLoading
     ? "로딩 중..."
     : `${groups?.length ?? 0}개의 그룹이 있습니다`;
 
   useEffect(() => {
     if (!error) return;
-    if (authHandled) return; // 이미 처리했다면 무시
+    if (authHandled) return;
 
     if (error instanceof AuthError) {
       setAuthHandled(true);
-
-      // 🔥 세션 전역에서 비우기
       dispatch(clearSession());
-
-      toast.warning(error.message); // "세션이 만료되었습니다. 다시 로그인해 주세요."
+      toast.warning(error.message);
       nav("/login", { replace: true });
       return;
     }
@@ -55,22 +49,20 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
   const { handleLeaveGroup, isPending } = useLeaveGroupWithConfirm();
 
-  // 이하 JSX는 그대로…
-
   return (
     <>
-      <div className="flex max-h-[90vh] flex-col overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-8 shadow-md transition duration-200 hover:shadow-lg">
+      <div className="border-border bg-card flex max-h-[90vh] flex-col overflow-y-auto rounded-2xl border p-8 shadow-md transition duration-200 hover:shadow-lg">
         {/* 헤더 */}
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-neutral-800">내 그룹</h2>
-          <p className="text-sm text-neutral-500">{countText}</p>
+          <h2 className="text-foreground text-2xl font-bold">내 그룹</h2>
+          <p className="text-muted-foreground text-sm">{countText}</p>
         </div>
 
         {/* 만들기 / 참여하기 버튼 */}
         <div className="mb-8 flex flex-wrap gap-4">
           <button
             onClick={() => nav("/groups/new")}
-            className="flex min-w-40 flex-1 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-400 to-teal-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-w-40 flex-1 items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold shadow-md transition active:scale-[0.98]"
           >
             <PlusCircle className="h-5 w-5" />
             그룹 만들기
@@ -78,7 +70,7 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
           <button
             onClick={() => setJoinOpen(true)}
-            className="flex min-w-40 flex-1 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-sky-400 to-blue-500 px-6 py-3 font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 flex min-w-40 flex-1 items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold shadow-md transition active:scale-[0.98]"
           >
             <Users className="h-5 w-5" />
             그룹 참여하기
@@ -93,11 +85,11 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
 
         {/* 그룹이 하나도 없을 때 */}
         {!isLoading && !error && (groups?.length ?? 0) === 0 && (
-          <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-neutral-300 bg-neutral-50 py-10 text-center">
-            <p className="mb-2 text-base font-semibold text-neutral-800">
+          <div className="border-border bg-muted flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed py-10 text-center">
+            <p className="text-foreground mb-2 text-base font-semibold">
               아직 참여 중인 그룹이 없습니다.
             </p>
-            <p className="mb-4 text-sm text-neutral-500">
+            <p className="text-muted-foreground mb-4 text-sm">
               새로운 그룹을 만들거나 초대 코드를 입력해 모임에 참여해 보세요.
             </p>
           </div>
@@ -124,7 +116,6 @@ export default function GroupPanel({ viewMode }: GroupPanelProps) {
         )}
       </div>
 
-      {/* ✅ 여기서 직접 모달 렌더 */}
       <GroupJoinModal open={joinOpen} onClose={() => setJoinOpen(false)} />
     </>
   );

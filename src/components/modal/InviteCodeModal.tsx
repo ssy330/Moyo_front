@@ -83,8 +83,8 @@ export default function InviteCodeModal({
 
         {/* ✅ 초대코드 영역 */}
         {inviteCode ? (
-          <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
-            <span className="mr-3 flex-1 truncate text-sm text-emerald-800">
+          <div className="border-primary/30 bg-primary/5 flex items-center justify-between rounded-lg border p-4 shadow-sm">
+            <span className="text-foreground mr-3 flex-1 truncate text-sm">
               {inviteCode}
             </span>
 
@@ -117,14 +117,14 @@ export default function InviteCodeModal({
         <Button
           onClick={handleCreateClick}
           disabled={isPending}
-          className="mt-4 w-full bg-emerald-500 text-white hover:bg-emerald-600"
+          className="mt-4 w-full"
         >
           {isPending ? "생성 중..." : "초대코드 생성"}
         </Button>
 
         <p className="mt-3 text-center text-xs text-neutral-500">
           초대 링크는{" "}
-          <span className="font-medium text-emerald-600">7일 후 만료</span>돼요.
+          <span className="text-primary font-medium">7일 후 만료</span>돼요.
         </p>
       </DialogContent>
     </Dialog>

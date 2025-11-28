@@ -1,3 +1,4 @@
+// src/components/ChatRoomPanel.tsx
 import {
   useCallback,
   useEffect,
@@ -20,7 +21,6 @@ interface Room {
   created_at: string;
 }
 
-// 🔹 백엔드 메시지 응답 DTO (GroupChatPanel이랑 동일하게)
 interface ChatMessageDTO {
   id: number;
   room_id: number;
@@ -42,16 +42,13 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
 
-  // 🔹 Redux에서 로그인 유저 id 가져오기
   const currentUserId = useSelector(
     (state: RootState) => state.session.session?.id ?? null,
   );
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // ─────────────────────────────────
   // 방 이름 불러오기
-  // ─────────────────────────────────
   useEffect(() => {
     if (!roomId) {
       setRoomName("");
@@ -69,9 +66,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
       });
   }, [roomId]);
 
-  // ─────────────────────────────────
-  // 선택된 방의 기존 메시지 불러오기
-  // ─────────────────────────────────
+  // 기존 메시지 불러오기
   useEffect(() => {
     if (!roomId) {
       setMessages([]);
@@ -81,7 +76,6 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
     fetch(`${API_URL}/messages/rooms/${roomId}`)
       .then((res) => res.json())
       .then((data: ChatMessageDTO[]) => {
-        // 🔥 여기서 user_nickname → nickname 으로 매핑
         const mapped: ChatMessage[] = data.map((m) => ({
           id: m.id,
           room_id: m.room_id,
@@ -95,11 +89,8 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
       .catch((e) => console.error("메시지 불러오기 실패", e));
   }, [roomId]);
 
-  // ─────────────────────────────────
-  // WebSocket 연결 + 메시지 수신 핸들러
-  // ─────────────────────────────────
+  // WebSocket 연결
   const handleIncomingMessage = useCallback((msg: ChatMessage) => {
-    // 🔥 created_at 없으면 지금 시각 기본값으로
     setMessages((prev) => [
       ...prev,
       {
@@ -114,14 +105,10 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
     onMessage: handleIncomingMessage,
   });
 
-  // 새로운 메시지 오면 맨 아래로 스크롤
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ─────────────────────────────────
-  // 메시지 보내기
-  // ─────────────────────────────────
   const handleSend = () => {
     const text = input.trim();
     if (!text || !roomId) return;
@@ -140,40 +127,40 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
   // 아직 방이 선택되지 않은 경우
   if (!chatId) {
     return (
-      <div className="flex h-[calc(90vh)] items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-400 shadow-lg">
+      <div className="border-border bg-card text-muted-foreground flex h-[calc(90vh)] items-center justify-center rounded-2xl border shadow-lg">
         채팅을 선택해주세요 💬
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(90vh)] flex-col rounded-2xl border border-neutral-200 bg-white shadow-lg">
+    <div className="border-border bg-card flex h-[calc(90vh)] flex-col rounded-2xl border shadow-lg">
       {/* 헤더 */}
-      <div className="flex h-12 items-center justify-between border-b bg-white px-4">
-        <button onClick={onBack} className="text-sm text-neutral-500">
+      <div className="border-border bg-card flex h-12 items-center justify-between border-b px-4">
+        <button onClick={onBack} className="text-muted-foreground text-sm">
           <ArrowLeft className="h-4 w-4" />
         </button>
 
         <div className="flex flex-1 items-center justify-between md:justify-start md:gap-3">
-          <div className="font-semibold text-neutral-800">
+          <div className="text-foreground font-semibold">
             {roomName || `Room #${chatId}`}
           </div>
           <span
             className={`text-xs ${
-              connected ? "text-emerald-500" : "text-red-400"
+              connected ? "text-primary" : "text-destructive"
             }`}
           >
             {connected ? "실시간 연결됨" : "연결 안 됨"}
           </span>
         </div>
 
-        <button className="hidden text-sm text-neutral-500 hover:text-neutral-800 md:inline">
+        <button className="text-muted-foreground hover:text-foreground hidden text-sm md:inline">
           ⚙️
         </button>
       </div>
 
       {/* 메시지 영역 */}
-      <div className="flex-1 space-y-2 overflow-y-auto bg-neutral-50 p-4">
+      <div className="flex-1 space-y-2 overflow-y-auto bg-white p-4">
         {messages.map((m, idx) => {
           const {
             showDateSeparator,
@@ -188,7 +175,6 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
 
           const nickname = m.nickname ?? "익명";
 
-          // 같은 사람 + 같은 분이면 묶어서 마지막만 시간 표시
           const sameMinuteAndSameSenderWithNext =
             next && next.user_id === m.user_id && sameMinuteWithNext;
 
@@ -199,7 +185,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
               {/* 날짜 구분선 */}
               {showDateSeparator && (
                 <div className="my-3 flex justify-center">
-                  <span className="rounded-full bg-neutral-200 px-3 py-1 text-[11px] text-neutral-600">
+                  <span className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-[11px]">
                     {dateLabel}
                   </span>
                 </div>
@@ -219,7 +205,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
       </div>
 
       {/* 입력창 */}
-      <div className="border-t bg-white p-3">
+      <div className="border-border bg-card border-t p-3">
         <div className="flex gap-2">
           <input
             type="text"
@@ -227,15 +213,15 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full flex-1 rounded-xl border border-neutral-300 p-2 text-sm focus:ring-2 focus:ring-emerald-400 focus:outline-none"
+            className="border-input text-foreground focus:ring-primary w-full flex-1 rounded-xl border p-2 text-sm focus:ring-2 focus:outline-none"
           />
           <button
             onClick={handleSend}
             disabled={!connected || !input.trim()}
-            className={`rounded-xl px-4 text-sm font-medium text-white ${
+            className={`rounded-xl px-4 text-sm font-medium ${
               connected
-                ? "bg-emerald-500 hover:bg-emerald-600"
-                : "cursor-not-allowed bg-neutral-400"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
             전송

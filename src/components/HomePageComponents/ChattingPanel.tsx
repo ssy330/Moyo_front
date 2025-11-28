@@ -5,7 +5,7 @@ import { useMyChatRooms, type Room } from "@/hook/use-my-chat-room";
 import {
   parseServerDateAsUTC,
   formatRoomPreviewTimeKorea,
-} from "@/utils/ChatTimeFunc"; // ✅ 추가
+} from "@/utils/ChatTimeFunc";
 
 interface ChattingPanelProps {
   onSelectChat: (id: string) => void;
@@ -22,10 +22,8 @@ const ChattingPanel = ({
   const [searchName, setSearchName] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("전체");
 
-  // 🔹 TanStack Query로 방 목록 가져오기
   const { data: rooms = [], isLoading, isError, refetch } = useMyChatRooms();
 
-  // 검색어 필터
   const filteredRooms = useMemo<Room[]>(() => {
     const trimmed = searchName.trim().toLowerCase();
     if (!trimmed) return rooms;
@@ -34,14 +32,13 @@ const ChattingPanel = ({
   }, [rooms, searchName]);
 
   const handleSearchClick = () => {
-    // 지금은 실시간 필터라 사실 할 일 없음
-    // 필요하면 여기서 refetch() 넣어서 서버 검색처럼 바꿀 수도 있음
+    // 지금은 실시간 필터
   };
 
   return (
-    <div className="flex h-[calc(90vh)] flex-col rounded-2xl border border-neutral-200 bg-white shadow-lg">
+    <div className="border-border bg-card flex h-[calc(90vh)] flex-col rounded-2xl border shadow-lg">
       {/* 상단 탭 + 검색 영역 */}
-      <div className="border-b bg-white">
+      <div className="border-border bg-card border-b">
         {/* 탭 영역 */}
         <div className="flex">
           {TABS.map((tab) => {
@@ -53,8 +50,8 @@ const ChattingPanel = ({
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? "border-b-2 border-emerald-500 bg-emerald-50 text-emerald-700"
-                    : "text-neutral-500 hover:bg-neutral-100"
+                    ? "border-primary bg-primary/10 text-primary border-b-2"
+                    : "text-muted-foreground hover:bg-muted/60"
                 }`}
               >
                 {tab}
@@ -64,20 +61,20 @@ const ChattingPanel = ({
         </div>
 
         {/* 검색 영역 */}
-        <div className="flex items-center gap-2 border-t px-3 py-2">
+        <div className="border-border flex items-center gap-2 border-t px-3 py-2">
           <div className="relative flex-1">
-            <Search className="pointer-events-none absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2" />
             <input
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               placeholder="방 이름 검색"
-              className="w-full rounded-lg border border-neutral-300 bg-neutral-50 py-1.5 pr-3 pl-8 text-xs text-neutral-800 transition outline-none focus:bg-white focus:ring-2 focus:ring-emerald-400"
+              className="border-input bg-muted text-foreground focus:bg-background focus:ring-primary w-full rounded-lg border py-1.5 pr-3 pl-8 text-xs transition outline-none focus:ring-2"
             />
           </div>
           <button
             type="button"
             onClick={handleSearchClick}
-            className="flex items-center justify-center rounded-lg border border-emerald-500 px-2.5 py-1 text-xs font-medium text-emerald-600 hover:bg-emerald-50"
+            className="border-primary text-primary hover:bg-primary/10 flex items-center justify-center rounded-lg border px-2.5 py-1 text-xs font-medium"
           >
             검색
           </button>
@@ -85,17 +82,17 @@ const ChattingPanel = ({
       </div>
 
       {/* 방 리스트 */}
-      <div className="flex-1 overflow-y-auto bg-neutral-50 p-2">
+      <div className="bg-background flex-1 overflow-y-auto p-2">
         {/* 로딩 상태 */}
         {isLoading && (
-          <div className="flex h-full items-center justify-center text-xs text-neutral-400">
+          <div className="text-muted-foreground flex h-full items-center justify-center text-xs">
             채팅방을 불러오는 중입니다...
           </div>
         )}
 
         {/* 에러 상태 */}
         {isError && !isLoading && (
-          <div className="flex h-full items-center justify-center text-xs text-red-400">
+          <div className="text-destructive flex h-full items-center justify-center text-xs">
             채팅방 목록을 불러오지 못했습니다.
             <button
               onClick={() => refetch()}
@@ -125,14 +122,14 @@ const ChattingPanel = ({
                 onClick={() => onSelectChat(String(room.id))}
                 className={`relative mb-1.5 flex w-full cursor-pointer flex-col rounded-xl p-3 text-left transition ${
                   isActive
-                    ? "bg-emerald-50 ring-1 ring-emerald-300"
-                    : "bg-white hover:bg-neutral-100"
+                    ? "bg-primary/10 ring-primary/50 ring-1"
+                    : "bg-card hover:bg-muted/60"
                 }`}
               >
-                <div className="truncate text-sm font-semibold text-neutral-800">
+                <div className="text-foreground truncate text-sm font-semibold">
                   {room.name}
                 </div>
-                <div className="mt-1 text-[11px] text-neutral-500">
+                <div className="text-muted-foreground mt-1 text-[11px]">
                   #{room.id} ·{createdAtLabel}
                 </div>
               </button>
@@ -141,7 +138,7 @@ const ChattingPanel = ({
 
         {/* 방이 아예 없을 때 */}
         {!isLoading && !isError && rooms.length === 0 && (
-          <div className="flex h-full items-center justify-center text-xs text-neutral-400">
+          <div className="text-muted-foreground flex h-full items-center justify-center text-xs">
             아직 생성된 채팅방이 없습니다.
           </div>
         )}
@@ -151,7 +148,7 @@ const ChattingPanel = ({
           !isError &&
           rooms.length > 0 &&
           filteredRooms.length === 0 && (
-            <div className="mt-4 rounded-lg bg-white p-3 text-center text-xs text-neutral-400">
+            <div className="bg-card text-muted-foreground mt-4 rounded-lg p-3 text-center text-xs">
               &quot;{searchName}&quot; 에 대한 채팅방 검색 결과가 없습니다.
             </div>
           )}

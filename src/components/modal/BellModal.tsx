@@ -100,16 +100,14 @@ export default function BellModal({
         </div>
 
         {/* 항상 보이는 하단 버튼 영역 */}
-        {!notifLoading && incoming.length > 0 && (
-          <div className="border-t bg-slate-50 px-3 py-2">
-            <button
-              className="w-full rounded-xl bg-slate-100 py-2 text-xs text-slate-700 hover:bg-slate-200"
-              onClick={handleClose}
-            >
-              전체 알림 보기
-            </button>
-          </div>
-        )}
+        <div className="border-t bg-slate-50 px-3 py-2">
+          <button
+            className="w-full rounded-xl bg-slate-100 py-2 text-xs text-slate-700 hover:bg-slate-200"
+            onClick={handleClose}
+          >
+            전체 알림 보기
+          </button>
+        </div>
       </div>
     </div>
   );

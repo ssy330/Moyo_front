@@ -20,7 +20,7 @@ export default function MessageBubble({
       <div className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
         {/* 상대방일 때 닉네임 */}
         {!isMine && (
-          <div className="mb-px flex items-baseline gap-2 text-[11px] text-neutral-400">
+          <div className="text-muted-foreground mb-px flex items-baseline gap-2 text-[11px]">
             <span className="font-medium">{nickname}</span>
           </div>
         )}
@@ -35,8 +35,8 @@ export default function MessageBubble({
           <div
             className={`inline-block max-w-[8em] rounded-2xl px-3 py-2 text-[13px] break-words whitespace-pre-wrap ${
               isMine
-                ? "rounded-br-sm bg-emerald-500 text-white"
-                : "rounded-bl-sm bg-neutral-100 text-neutral-800"
+                ? "bg-primary text-primary-foreground rounded-br-sm"
+                : "bg-muted text-foreground rounded-bl-sm"
             }`}
           >
             {message.content}
@@ -44,7 +44,9 @@ export default function MessageBubble({
 
           {/* 시간 레이블 */}
           {showTime && (
-            <span className="text-[10px] text-neutral-400">{timeLabel}</span>
+            <span className="text-muted-foreground text-[10px]">
+              {timeLabel}
+            </span>
           )}
         </div>
       </div>

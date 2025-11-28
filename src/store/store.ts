@@ -4,6 +4,7 @@ import authSliceReducer from "@/features/authSlice";
 import sessionSliceReducer from "@/features/sessionSlice";
 import modalSliceReducer from "@/features/modalSlice";
 import alertReducer from "@/features/alertSlice";
+import themeReducer from "@/features/themeSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     session: sessionSliceReducer,
     modal: modalSliceReducer,
     alert: alertReducer,
+    theme: themeReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

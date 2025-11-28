@@ -1,3 +1,4 @@
+// src/components/Sidebar.tsx
 interface SidebarProps {
   menuList: string[];
   selected: string;
@@ -10,7 +11,7 @@ export default function Sidebar({
   onSelect,
 }: SidebarProps) {
   return (
-    <div className="flex min-h-screen w-56 flex-col items-center justify-center border-r border-gray-200 bg-white shadow-md">
+    <div className="border-border bg-background flex min-h-screen w-56 flex-col items-center justify-center border-r shadow-md">
       <div className="flex w-full max-w-[180px] flex-col">
         {menuList.map((menu) => (
           <button
@@ -18,8 +19,8 @@ export default function Sidebar({
             onClick={() => onSelect(menu)}
             className={`block w-full rounded-md px-4 py-3 text-left text-sm font-medium transition-all ${
               selected === menu
-                ? "bg-green-500 text-white"
-                : "text-gray-700 hover:bg-gray-100"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             }`}
           >
             {menu}

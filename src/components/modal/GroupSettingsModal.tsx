@@ -121,7 +121,7 @@ export default function GroupSettingModal({ groupId }: { groupId: number }) {
         <DialogFooter className="pt-4">
           <Button
             onClick={handleSave}
-            className="w-full bg-emerald-500 text-white hover:bg-emerald-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 w-full"
           >
             변경사항 저장하기
           </Button>

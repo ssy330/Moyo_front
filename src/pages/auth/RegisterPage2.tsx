@@ -15,11 +15,11 @@ import {
   useVerifyCode,
 } from "@/hook/mutation/auth/use-signup-mutation";
 import { toast } from "sonner";
-import RegisterStep1Basic from "@/components/HomePageComponents/RegisterPageStep/RegisterStep1Basic";
-import RegisterStep2Profile from "@/components/HomePageComponents/RegisterPageStep/RegisterStep2Profile";
-import RegisterStep3Email from "@/components/HomePageComponents/RegisterPageStep/RegisterStep3Email";
-import RegisterStep4Password from "@/components/HomePageComponents/RegisterPageStep/RegisterStep4Password";
-import { RegisterStepIndicator } from "@/components/HomePageComponents/RegisterPageStep/RegisterStepIndicator";
+import RegisterStep1Basic from "@/components/authComponents/RegisterPageStep/RegisterStep1Basic";
+import RegisterStep2Profile from "@/components/authComponents/RegisterPageStep/RegisterStep2Profile";
+import RegisterStep3Email from "@/components/authComponents/RegisterPageStep/RegisterStep3Email";
+import RegisterStep4Password from "@/components/authComponents/RegisterPageStep/RegisterStep4Password";
+import { RegisterStepIndicator } from "@/components/authComponents/RegisterPageStep/RegisterStepIndicator";
 import { setSession } from "@/features/sessionSlice";
 import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
 

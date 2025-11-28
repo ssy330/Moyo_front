@@ -75,7 +75,7 @@ export default function GroupLayout() {
 
           {/* 오른쪽: Rhymix 게시판 */}
           <main className="space-y-6">
-            <section className="rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur">
+            <div className="rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur">
               <header className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-neutral-800">
                   그룹 게시판
@@ -93,7 +93,7 @@ export default function GroupLayout() {
               </header>
 
               <GroupDetailPage groupId={String(group.id)} />
-            </section>
+            </div>
           </main>
         </div>
       </div>

@@ -159,7 +159,7 @@ export default function GroupLayout() {
             setChatOpen(true);
             setHasUnread(false);
           }}
-          className="fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-emerald-400 text-white shadow-lg transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
+          className="from-primary to-primary/90 text-primary-foreground fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-br shadow-lg transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <MessageCircle className="h-6 w-6" />
 

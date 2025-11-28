@@ -106,7 +106,7 @@ export default function RegisterStep2Profile({
 
           {profilePreview ? (
             <div className="flex flex-col items-center space-y-3">
-              {/* ✅ 최종 프리뷰: 1:1 + 원형  */}
+              {/*  최종 프리뷰: 1:1 + 원형  */}
               <div className="h-28 w-28 overflow-hidden rounded-full border border-emerald-200">
                 <img
                   src={profilePreview}
@@ -114,15 +114,15 @@ export default function RegisterStep2Profile({
                   className="h-full w-full object-cover"
                 />
               </div>
-              <button
-                type="button"
-                className="rounded-full bg-white px-3 py-1 text-xs font-medium text-emerald-700 shadow-sm ring-1 ring-emerald-100 hover:bg-emerald-50"
-              >
-                클릭해서 다른 이미지 선택
-              </button>
-              <p className="text-[11px] text-emerald-900/70">
-                이미지는 자동으로 1:1 비율로 잘라져요.
-              </p>
+              <div className="flex flex-col items-center space-y-1">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-100">
+                  <span className="text-base">✏️</span>
+                  <span>클릭해서 다른 이미지 선택</span>
+                </span>
+                <span className="text-[11px] text-emerald-900/70">
+                  마음에 안 들면 언제든지 다시 바꿀 수 있어요.
+                </span>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center text-emerald-800">
