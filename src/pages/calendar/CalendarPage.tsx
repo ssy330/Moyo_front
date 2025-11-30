@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useMyGroups } from "@/hook/use-my-groups";
 
 // datetime-local 값으로 변환하는 헬퍼
 /** function toDateTimeLocalValue(iso: string) {
@@ -27,6 +28,28 @@ import {
   const mi = pad(date.getMinutes());
   return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
 } **/
+
+type ViewFilter = "all" | "personal" | "group";
+
+const palette = [
+  "bg-blue-100 text-blue-700",
+  "bg-emerald-100 text-emerald-700",
+  "bg-amber-100 text-amber-800",
+  "bg-purple-100 text-purple-700",
+  "bg-pink-100 text-pink-700",
+];
+
+function getEventColor(ev: CalendarEvent, myGroups: any[] | undefined) {
+  // 개인 일정은 항상 인디고 색
+  if (!ev.group_id) {
+    return "bg-indigo-100 text-indigo-700";
+  }
+
+  const idx =
+    myGroups?.findIndex((g: any) => g.id === ev.group_id) ?? 0;
+  const safeIdx = idx >= 0 ? idx : 0;
+  return PALETTE[safeIdx % PALETTE.length];
+}
 
 // 요일 라벨
 const DAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -71,11 +94,40 @@ function createMonthCells(baseDate: Date) {
 }
 
 export default function CalendarPage() {
+  const [viewFilter, setViewFilter] = useState<ViewFilter>("all");
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+
+  const { data: myGroups } = useMyGroups();
   // [변경] 월 이동을 위해 setCurrentDate 추가
-const [currentDate, setCurrentDate] = useState(() => new Date());
+  const [currentDate, setCurrentDate] = useState(() => new Date());
   // 일정 생성 모달 open 상태
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  // useCalendarEvents 로 가져온 원본 events
+  const rawEvents = events ?? [];
+
+  const filteredEvents = useMemo(() => {
+    if (!events) return [];
+
+    switch (viewFilter) {
+      case "personal":
+        // group_id 가 없는 것만 = 개인 일정
+        return events.filter((ev) => !ev.group_id);
+
+      case "group":
+        if (!selectedGroupId) {
+          // 그룹 필터만 선택, 특정 그룹 X => 그룹 일정 전체
+          return events.filter((ev) => !!ev.group_id);
+        }
+        // 특정 그룹만
+        return events.filter((ev) => ev.group_id === selectedGroupId);
+
+      case "all":
+      default:
+        return events;
+    }
+  }, [events, viewFilter, selectedGroupId]);
+    
   // 새 일정 입력 값들
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -425,6 +477,59 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
         {/* [변경] 좌측에 제목 + 월 표시 + 이동 버튼 */}
         <div className="flex flex-col gap-1">
           <h1 className="text-xl font-bold">캘린더</h1>
+
+          <div className="flex items-center gap-3">
+            {/* 뷰 필터 토글 */}
+            <div className="inline-flex rounded-full bg-gray-100 p-1 text-sm">
+              {[
+                { key: "all", label: "전체" },
+                { key: "personal", label: "내 일정" },
+                { key: "group", label: "그룹별" },
+              ].map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setViewFilter(key as ViewFilter)}
+                  className={`px-3 py-1 rounded-full ${
+                    viewFilter === key
+                      ? "bg-white shadow-sm text-blue-600"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* 그룹별일 때만 그룹 선택 드롭다운 */}
+            {viewFilter === "group" && (
+              <select
+                className="rounded-md border px-2 py-1 text-sm"
+                value={selectedGroupId ?? ""}
+                onChange={(e) =>
+                  setSelectedGroupId(
+                    e.target.value ? Number(e.target.value) : null
+                  )
+                }
+              >
+                <option value="">그룹 선택</option>
+                {myGroups?.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {/* 기존 +일정 추가 버튼은 그대로 */}
+            <button
+              type="button"
+              onClick={handleOpenCreate}
+              className="rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
+            >
+              + 일정 추가
+            </button>
+          </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <button
               type="button"
@@ -533,7 +638,7 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                   const todayBorder = isToday ? "border-2 border-blue-500" : "";
 
                   // ✅ [추가] 하루 이하 일정만 추려서, '더 보기' 개수 계산
-                  const shortEvents = dayEvents.filter((ev) => {
+                  const shortEvents = dayEvents.filter((ev: CalendarEvent;) => {
                     const s = new Date(ev.start_at);
                     const e = new Date(ev.end_at);
                     const diff =
@@ -565,7 +670,7 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                         {shortEvents.slice(0, MAX_INLINE).map((ev) => (
                       <div
                         key={ev.id}
-                        className="truncate rounded bg-blue-50 px-1 py-0.5 text-[11px] text-blue-700"
+                        className="truncate rounded bg-blue-50 px-1 py-0.5 text-[11px] ${getEventColor(ev)"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenEdit(ev); // 기존 수정 모달 열기
@@ -599,7 +704,10 @@ const [currentDate, setCurrentDate] = useState(() => new Date());
                   <button
                     key={`${seg.event.id}-${seg.startCol}-${seg.endCol}`}
                     type="button"
-                    className="h-5 truncate rounded-full bg-blue-100 px-2 text-left text-blue-800"
+                    className={`row-start-2 h-5 truncate rounded-full px-2 text-left text-[11px] ${getEventColor(
+                      seg.event,
+                      myGroups
+                    )}`}
                     style={{
                       gridColumnStart: seg.startCol,
                       gridColumnEnd: seg.endCol + 1, // grid는 end가 exclusive
