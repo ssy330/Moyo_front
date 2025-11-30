@@ -42,7 +42,7 @@ export default function Step1({
           type="checkbox"
           checked={privacy}
           onChange={(e) => setPrivacy(e.target.checked)}
-          className="border-input text-primary focus:ring-primary mt-1 h-4 w-4 rounded"
+          className="border-input bg-background text-primary accent-primary focus-visible:ring-primary/40 mt-1 h-4 w-4 rounded focus-visible:ring-2 focus-visible:outline-none"
         />
         <label htmlFor="privacy" className="cursor-pointer leading-snug">
           <span className="text-foreground font-semibold">

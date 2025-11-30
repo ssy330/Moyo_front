@@ -1,6 +1,7 @@
 import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 export interface FriendRequestNotification {
   id: number;
@@ -27,9 +28,15 @@ export default function BellModal({
   incoming,
   notifLoading,
 }: BellModalProps) {
+  const nav = useNavigate();
   if (!open) return null;
 
   const handleClose = () => onOpenChange(false);
+
+  const handleGoNotifications = () => {
+    handleClose();
+    nav("/notifications");
+  };
 
   return (
     // 전체 화면 투명 오버레이 (배경 클릭 시 닫힘)
@@ -103,7 +110,7 @@ export default function BellModal({
         <div className="border-t bg-slate-50 px-3 py-2">
           <button
             className="w-full rounded-xl bg-slate-100 py-2 text-xs text-slate-700 hover:bg-slate-200"
-            onClick={handleClose}
+            onClick={handleGoNotifications}
           >
             전체 알림 보기
           </button>
