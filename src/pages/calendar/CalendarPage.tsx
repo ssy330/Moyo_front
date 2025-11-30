@@ -16,6 +16,7 @@ import { CalendarHeader } from "@/components/CalendarComponents/CalendarHeader";
 import CalendarMonthView from "@/components/CalendarComponents/CalendarMonthView";
 import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+import CalendarDayDrawer from "@/components/CalendarComponents/CalendarDayDrawer";
 
 type ViewFilter = "all" | "personal" | "group";
 
@@ -390,6 +391,26 @@ export default function CalendarPage() {
     setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
   };
 
+  //drawer
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const selectedDateEvents = useMemo<CalendarEvent[]>(() => {
+    if (!selectedDate) return [];
+    const key = toDateKey(selectedDate);
+    return eventsByDate[key] ?? [];
+  }, [selectedDate, eventsByDate]);
+
+  const handleDayClick = (date: Date) => {
+    setSelectedDate(date);
+    setIsDrawerOpen(true);
+  };
+
+  // 일정 클릭 시 : 기존 수정 모달
+  const handleEventClick = (event: CalendarEvent) => {
+    handleOpenEdit(event);
+  };
+
   return (
     <div className="space-y-4 p-4">
       <CalendarHeader
@@ -421,8 +442,17 @@ export default function CalendarPage() {
         weekSegments={weekSegments}
         todayKey={todayKey}
         myGroups={myGroups}
-        onDayClick={handleOpenCreateForDate}
-        onEventClick={handleOpenEdit}
+        onDayClick={handleDayClick}
+        onEventClick={handleEventClick}
+      />
+
+      <CalendarDayDrawer
+        open={isDrawerOpen}
+        date={selectedDate}
+        events={selectedDateEvents}
+        onClose={() => setIsDrawerOpen(false)}
+        onClickAdd={(date) => handleOpenCreateForDate(date)}
+        onClickEvent={(ev) => handleOpenEdit(ev)}
       />
 
       <ScheduleCreateModal
