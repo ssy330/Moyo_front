@@ -53,7 +53,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="flex min-h-screen flex-col bg-white md:flex-row">
       {/* 왼쪽 영역 - 로고 */}
       <div className="-mt-4 flex flex-1 cursor-pointer items-center justify-center p-8 md:-mt-15">
         <MoyoLogo type="main" />
