@@ -18,6 +18,7 @@ import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import CalendarDayDrawer from "@/components/CalendarComponents/CalendarDayDrawer";
 
+
 type ViewFilter = "all" | "personal" | "group";
 
 export default function CalendarPage() {
