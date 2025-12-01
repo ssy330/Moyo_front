@@ -10,6 +10,7 @@ export interface CalendarEvent {
   start_at: string; // ISO string
   end_at: string;
   all_day: boolean;
+  group_id?: number | null;
 }
 
 export interface CreateEventPayload {
@@ -29,6 +30,7 @@ export interface UpdateCalendarEventPayload {
   all_day?: boolean;
 }
 
+export type UpdateEventPayload = Partial<CreateEventPayload>;
 
 
 // --- API 함수들 ---
