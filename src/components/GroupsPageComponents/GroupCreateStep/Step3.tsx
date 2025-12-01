@@ -50,12 +50,12 @@ export default function Step3({
               title="바로 승인"
               description="신청 즉시 모임에 참여할 수 있어요."
             />
-            <SelectCard
+            {/* <SelectCard
               active={approval === "manual"}
               onClick={() => setApproval("manual")}
               title="가입 승인 필요"
               description="운영자가 승인해야 모임에 들어올 수 있어요."
-            />
+            /> */}
           </div>
         </div>
 
@@ -71,12 +71,12 @@ export default function Step3({
               title="실명만 가능"
               description="회원들이 서로의 실명을 보고 활동해요."
             />
-            <SelectCard
+            {/* <SelectCard
               active={nicknameAllowed}
               onClick={() => setNicknameAllowed(true)}
               title="닉네임만 가능"
               description="닉네임으로만 표시되어 조금 더 자유로워요."
-            />
+            /> */}
           </div>
         </div>
 

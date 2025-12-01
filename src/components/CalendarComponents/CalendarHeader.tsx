@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarMonthPickerModal } from "../modal/CalendarMonthPickerDialog";
+import { CalendarMonthPickerModal } from "../modal/CalendarMonthPickerModal";
 
 type ViewFilter = "all" | "personal" | "group";
 
