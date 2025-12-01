@@ -36,7 +36,7 @@ export default function PaymentInfoPage() {
       <div className="space-y-3">
         <Button
           variant="outline"
-          className="w-full border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 w-full"
         >
           <Calendar className="mr-2 h-4 w-4" />
           결제 내역 보기
@@ -44,7 +44,7 @@ export default function PaymentInfoPage() {
 
         <Button
           variant="outline"
-          className="w-full border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 w-full"
         >
           <Receipt className="mr-2 h-4 w-4" />
           영수증 다운로드

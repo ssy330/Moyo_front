@@ -101,7 +101,7 @@ export default function AlertSettingPage() {
       {/* 저장 버튼 */}
       <div className="mt-8 flex justify-end">
         <button
-          className="rounded-lg bg-emerald-500 px-6 py-2 font-medium text-white hover:bg-emerald-600"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-6 py-2 font-medium"
           onClick={() => alert("알림 설정이 저장되었습니다.")}
         >
           저장하기

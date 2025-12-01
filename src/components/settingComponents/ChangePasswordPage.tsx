@@ -31,9 +31,11 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="mx-auto max-w-xl rounded-lg bg-white p-8 shadow-md">
-      <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-600">
-        <Lock className="h-6 w-6" />
+    <div className="border-border bg-card mx-auto max-w-xl rounded-2xl border p-8 shadow-sm">
+      <h2 className="text-foreground mb-6 flex items-center gap-2 text-2xl font-bold">
+        <span className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full">
+          <Lock className="h-4 w-4" />
+        </span>
         비밀번호 변경
       </h2>
 
@@ -41,8 +43,7 @@ export default function ChangePasswordPage() {
         {/* 현재 비밀번호 */}
         <div className="space-y-2">
           <Label htmlFor="current">현재 비밀번호</Label>
-
-          {/* AuthInput으로 바꿔야하긴함. */}
+          {/* 나중에 AuthInput으로 교체 예정 */}
           <Input
             id="current"
             name="current"
@@ -83,8 +84,9 @@ export default function ChangePasswordPage() {
         </div>
 
         {/* 비밀번호 보기 토글 */}
-        <div
-          className="flex cursor-pointer items-center justify-end gap-2 text-sm text-neutral-500 select-none hover:text-neutral-700"
+        <button
+          type="button"
+          className="text-muted-foreground hover:text-foreground ml-auto flex items-center gap-2 text-sm select-none"
           onClick={() => setShowPw((prev) => !prev)}
         >
           {showPw ? (
@@ -93,14 +95,14 @@ export default function ChangePasswordPage() {
             <Eye className="h-4 w-4" />
           )}
           <span>{showPw ? "비밀번호 숨기기" : "비밀번호 보기"}</span>
-        </div>
+        </button>
 
         <Separator />
 
         {/* 제출 버튼 */}
         <Button
           type="submit"
-          className="w-full bg-emerald-500 text-white hover:bg-emerald-600"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 w-full"
         >
           비밀번호 변경하기
         </Button>

@@ -78,7 +78,7 @@ export default function BlockedUsersPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => handleUnblock(user.id)}
-                className="border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 차단 해제
               </Button>
