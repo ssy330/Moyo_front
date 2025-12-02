@@ -1,5 +1,3 @@
-// src/hook/mutations/use-update-post.ts
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Post } from "@/types";
 import { toast } from "sonner";
@@ -9,7 +7,7 @@ export function useEditPost({
   onError,
 }: {
   onSuccess?: (data: Post) => void;
-  onError?: (err: any) => void;
+  onError?: (err: Error) => void;
 } = {}) {
   const queryClient = useQueryClient();
 
@@ -23,7 +21,7 @@ export function useEditPost({
       toast.success("게시물이 수정되었습니다!", { position: "top-center" });
 
       // ✅ posts 관련 쿼리 invalidate (피드 갱신)
-      await queryClient.invalidateQueries({ queryKey: [ "posts" ] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
 
       onSuccess?.(data);
     },

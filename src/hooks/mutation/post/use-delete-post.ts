@@ -11,7 +11,8 @@ export function useDeletePost(callbacks?: UseMutationCallback) {
     // 어떤 인자를 받을지는 호출하는 쪽에서 결정 (보통 postId 또는 { groupId, postId })
     mutationFn: deletePost,
 
-    // 🔥 deletePost가 무엇을 리턴하든 일단 any로 받고, 방어적으로 사용
+    // deletePost가 무엇을 리턴하든 일단 any로 받고, 방어적으로 사용
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSuccess: async (deletedPost: any) => {
       callbacks?.onSuccess?.();
 

@@ -7,7 +7,9 @@ import { useSelector } from "react-redux";
 
 export function useProfileData(userId?: string) {
   const session = useSelector((state: RootState) => state.session.session);
-  const isMine = !!session?.user?.id && userId === session.user.id;
+
+  const sessionUserId = session?.id ? String(session.id) : undefined;
+  const isMine = !!sessionUserId && userId === sessionUserId;
 
   return useQuery({
     queryKey: userId ? QUERY_KEYS.profile.byId(userId) : [],

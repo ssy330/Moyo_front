@@ -1,6 +1,6 @@
 // src/components/authComponents/AuthInput.tsx
 import { useState, useEffect } from "react";
-import { useValidation } from "@/hook/useValidation";
+import { useValidation } from "@/hooks/useValidation";
 import { Input } from "@/components/ui/input";
 import AuthCountdown from "@/components/authComponents/AuthCountdown";
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCreateGroup } from "@/hook/mutation/post/use-create-group";
+import { useCreateGroup } from "@/hooks/mutation/group/use-create-group";
 import StepIndicator, {
   type Step,
 } from "@/components/GroupsPageComponents/StepIndicator";

@@ -1,5 +1,4 @@
-// src/hook/mutation/use-group-leave-mutation.ts
-import { useLeaveGroup } from "@/hook/mutation/group-delete-mutation";
+import { useLeaveGroup } from "@/hooks/mutation/group/group-delete-mutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";

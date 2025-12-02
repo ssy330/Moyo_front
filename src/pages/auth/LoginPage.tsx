@@ -5,7 +5,7 @@ import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSignInWithEmail } from "@/hook/mutation/auth/use-login-mutation";
+import { useSignInWithEmail } from "@/hooks/mutation/auth/use-login-mutation";
 import { checkServerConnection } from "@/lib/server-test";
 import { toast } from "sonner";
 

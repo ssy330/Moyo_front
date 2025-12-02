@@ -1,7 +1,7 @@
 // src/components/account/DeleteAccountButton.tsx
 import { closeAlert, openAlert } from "@/features/alertSlice";
 import { closeModal } from "@/features/modalSlice";
-import { useDeleteAccount } from "@/hook/mutation/auth/use-delete-account";
+import { useDeleteAccount } from "@/hooks/mutation/auth/use-delete-account";
 import { useDispatch } from "react-redux";
 
 interface Props {

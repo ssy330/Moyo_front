@@ -16,7 +16,7 @@ import type { RootState } from "@/store/store";
 import { closeModal } from "@/features/modalSlice";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { useLeaveGroupWithConfirm } from "@/hook/mutation/use-group-leave-mutation";
+import { useLeaveGroupWithConfirm } from "@/hooks/mutation/group/use-group-leave-mutation";
 import { useNavigate } from "react-router-dom";
 
 export default function GroupSettingModal({ groupId }: { groupId: number }) {

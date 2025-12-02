@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { PlusCircle, Users } from "lucide-react";
-import { AuthError, useMyGroups } from "@/hook/use-my-groups";
+import { AuthError, useMyGroups } from "@/hooks/use-my-groups";
 import GroupCard from "./GroupCard";
 import GroupLoader from "./GroupLoader";
 import GroupError from "./GroupError";
 import GroupJoinModal from "../modal/GroupJoinModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useLeaveGroupWithConfirm } from "@/hook/mutation/use-group-leave-mutation";
+import { useLeaveGroupWithConfirm } from "@/hooks/mutation/group/use-group-leave-mutation";
 import { clearSession } from "@/features/sessionSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";

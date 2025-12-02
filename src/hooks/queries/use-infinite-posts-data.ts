@@ -1,5 +1,3 @@
-// src/hook/queries/use-infinite-posts-data.ts
-
 import { fetchPosts } from "@/api/post";
 import { QUERY_KEYS } from "@/lib/constants";
 import { useInfiniteQuery } from "@tanstack/react-query";

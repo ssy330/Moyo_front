@@ -4,14 +4,14 @@ import {
   useCreateCalendarEvent,
   useUpdateCalendarEvent,
   useDeleteCalendarEvent,
-} from "@/hook/useCalendarEvents";
+} from "@/hooks/useCalendarEvents";
 
 import type { CalendarEvent } from "@/lib/calendar-api";
 
-import { useMyGroups } from "@/hook/use-my-groups";
+import { useMyGroups } from "@/hooks/use-my-groups";
 import ScheduleCreateModal from "@/components/modal/ScheduleCreateModal";
 import ScheduleEditModal from "@/components/modal/ScheduleEditModal";
-import { createMonthCells, stripTime, toDateKey } from "@/lib/calendar-util";
+import { createMonthCells, stripTime, toDateKey } from "@/utils/calendar-util";
 import { CalendarHeader } from "@/components/CalendarComponents/CalendarHeader";
 import CalendarMonthView from "@/components/CalendarComponents/CalendarMonthView";
 import type { RootState } from "@/store/store";

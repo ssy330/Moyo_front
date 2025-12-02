@@ -16,9 +16,9 @@ import {
 import {
   useOutgoingFriendRequests,
   useSendFriendRequest,
-} from "@/hook/use-send-friend-request";
+} from "@/hooks/use-send-friend-request";
 import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
-import { useMyFriends } from "@/hook/use-friend";
+import { useMyFriends } from "@/hooks/use-friend";
 
 type GroupRole = "OWNER" | "MANAGER" | "MEMBER";
 

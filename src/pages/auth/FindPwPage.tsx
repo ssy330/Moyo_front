@@ -1,7 +1,7 @@
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
-import { useResendTimer } from "@/hook/useResendTimer";
+import { useResendTimer } from "@/hooks/useResendTimer";
 import { useState } from "react";
 import { MSGS } from "@/utils/messages";
 import { toast } from "sonner";

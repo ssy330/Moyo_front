@@ -7,7 +7,7 @@ import {
   type KeyboardEventHandler,
 } from "react";
 import { ArrowLeft } from "lucide-react";
-import { useChatSocket, type ChatMessage } from "@/hook/useChatSocket";
+import { useChatSocket, type ChatMessage } from "@/hooks/useChatSocket";
 import MessageBubble from "./MessageBubble";
 
 import { useSelector } from "react-redux";

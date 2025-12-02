@@ -1,15 +1,14 @@
-// src/router.tsx
 import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "./AppLayout";
 import GlobalLoader from "@/components/layouts/global-loader";
 
-// ✅ 보호 레이아웃 import
+// 보호 레이아웃 import
 import MemberOnlyLayout from "@/components/layouts/member-only-layout";
 import GuestOnlyLayout from "@/components/layouts/guest-only-layout";
 
 // --- 페이지 (lazy 로드) ---
-const HomePage = lazy(() => import("./pages/HomePage"));
+const HomePage = lazy(() => import("./pages/home/HomePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const FindPwPage = lazy(() => import("./pages/auth/FindPwPage"));
@@ -17,9 +16,11 @@ const GroupLayout = lazy(() => import("./pages/groups/GroupLayout"));
 const GroupCreatePage = lazy(() => import("./pages/groups/GroupCreatePage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
-const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const CalendarPage = lazy(() => import("./pages/calendar/CalendarPage"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const NotFoundPage = lazy(() => import("./pages/error/NotFoundPage"));
+const NotificationsPage = lazy(
+  () => import("./pages/notification/NotificationsPage"),
+);
 
 // --- 라우터 정의 ---
 export const router = createBrowserRouter([

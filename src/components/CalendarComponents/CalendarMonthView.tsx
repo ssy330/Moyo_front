@@ -1,6 +1,6 @@
 import type { Group } from "@/hook/use-my-groups";
 import type { CalendarEvent } from "@/lib/calendar-api";
-import { DAY_LABELS, getEventColor, toDateKey } from "@/lib/calendar-util";
+import { DAY_LABELS, getEventColor, toDateKey } from "@/utils/calendar-util";
 
 type WeekCell = {
   date: Date;

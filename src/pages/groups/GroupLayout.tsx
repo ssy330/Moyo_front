@@ -6,7 +6,7 @@ import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";
 import PostFeed from "@/components/GroupsPageComponents/post-feed";
 import GlobalLoader from "@/components/layouts/global-loader";
-import { useMyGroups } from "@/hook/use-my-groups";
+import { useMyGroups } from "@/hooks/use-my-groups";
 import { api } from "@/lib/api";
 import { useCallback, useEffect, useState } from "react";
 import type { ChatMessage } from "@/hook/useChatSocket";

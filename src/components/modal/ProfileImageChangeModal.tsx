@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
-import { useAppDispatch } from "@/hook/queries/use-app-dispatch";
+import { useAppDispatch } from "@/hooks/queries/use-app-dispatch";
 import { setSession } from "@/features/sessionSlice";
 import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
 import { api } from "@/lib/api";

@@ -15,8 +15,8 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { closeModal } from "@/features/modalSlice";
 import { closeAlert, openAlert } from "@/features/alertSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEditPost } from "@/hook/mutation/post/use-update-post";
-import { useCreatePost } from "@/hook/mutation/post/use-create-post-mutation";
+import { useEditPost } from "@/hooks/mutation/post/use-update-post";
+import { useCreatePost } from "@/hooks/mutation/post/use-create-post-mutation";
 import { useParams } from "react-router-dom";
 
 type Image = {

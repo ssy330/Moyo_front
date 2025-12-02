@@ -1,11 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { API_URL } from "@/lib/api-link";
 
+export interface RoomGroup {
+  id: number;
+  name: string;
+  image_url?: string | null;
+}
+
 export interface Room {
   id: number;
   name: string;
   created_at: string;
-  group_id?: number | null;
+  group_id?: number;
+  group?: RoomGroup | null;
 }
 
 async function fetchMyGroupRooms(): Promise<Room[]> {

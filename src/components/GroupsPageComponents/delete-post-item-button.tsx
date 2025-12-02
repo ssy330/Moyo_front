@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { openAlert } from "@/features/alertSlice";
 import { useDispatch } from "react-redux";
-import { useDeletePost } from "@/hook/mutation/post/use-delete-post";
+import { useDeletePost } from "@/hooks/mutation/post/use-delete-post";
 
 export default function DeletePostButton({ id }: { id: number }) {
   const navigate = useNavigate();

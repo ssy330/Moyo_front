@@ -5,7 +5,7 @@ import type { RootState } from "./store/store";
 import { useState } from "react";
 import { Bell, CalendarDays, Settings, User } from "lucide-react";
 import BellModal from "./components/modal/BellModal";
-import { useIncomingFriendRequests } from "./hook/use-send-friend-request";
+import { useIncomingFriendRequests } from "@/hooks/use-send-friend-request";
 import { APP_LAYOUT_THEMES } from "./lib/app-layout-theme";
 
 const AppLayout = () => {

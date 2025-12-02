@@ -8,7 +8,6 @@ export interface ChatBubbleTimeMeta {
   sameMinuteWithNext: boolean; // 다음 메시지와 "같은 분"인지 여부 (sender는 컴포넌트에서 체크)
 }
 
-// 🔹 서버 문자열을 UTC 기준 Date로 파싱
 // 예: "2025-11-21 09:36:13.702631" -> Date(UTC)
 export function parseServerDateAsUTC(
   value: string | Date | null | undefined,

@@ -9,7 +9,7 @@ import { MessageCircle, Send, X } from "lucide-react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { api } from "@/lib/api";
-import { useChatSocket, type ChatMessage } from "@/hook/useChatSocket";
+import { useChatSocket, type ChatMessage } from "@/hooks/useChatSocket";
 import { getChatBubbleTimeMeta } from "@/utils/ChatTimeFunc";
 import MessageBubble from "../HomePageComponents/MessageBubble";
 

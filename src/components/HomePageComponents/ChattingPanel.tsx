@@ -1,11 +1,7 @@
-// src/components/ChattingPanel.tsx
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { useMyChatRooms, type Room } from "@/hook/use-my-chat-room";
-import {
-  parseServerDateAsUTC,
-  formatRoomPreviewTimeKorea,
-} from "@/utils/ChatTimeFunc";
+import { useMyChatRooms, type Room } from "@/hooks/use-my-chat-room";
+import ChatRoomItem from "./ChatRoomItem";
 
 interface ChattingPanelProps {
   onSelectChat: (id: string) => void;
@@ -109,30 +105,13 @@ const ChattingPanel = ({
           filteredRooms.map((room) => {
             const isActive = selectedChatId === String(room.id);
 
-            const createdAtLabel = room.created_at
-              ? formatRoomPreviewTimeKorea(
-                  parseServerDateAsUTC(room.created_at),
-                )
-              : "";
-
             return (
-              <button
+              <ChatRoomItem
                 key={room.id}
-                type="button"
+                room={room}
+                isActive={isActive}
                 onClick={() => onSelectChat(String(room.id))}
-                className={`relative mb-1.5 flex w-full cursor-pointer flex-col rounded-xl p-3 text-left transition ${
-                  isActive
-                    ? "bg-primary/10 ring-primary/50 ring-1"
-                    : "bg-card hover:bg-muted/60"
-                }`}
-              >
-                <div className="text-foreground truncate text-sm font-semibold">
-                  {room.name}
-                </div>
-                <div className="text-muted-foreground mt-1 text-[11px]">
-                  #{room.id} ·{createdAtLabel}
-                </div>
-              </button>
+              />
             );
           })}
 

@@ -1,10 +1,9 @@
-// src/pages/NotificationPage.tsx
 import { Button } from "@/components/ui/button";
 import {
   useAcceptFriendRequest,
   useIncomingFriendRequests,
   useRejectFriendRequest,
-} from "@/hook/use-send-friend-request";
+} from "@/hooks/use-send-friend-request";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";

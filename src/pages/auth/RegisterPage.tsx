@@ -7,13 +7,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import MoyoLogo from "@/components/authComponents/MoyoLogo";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import { Button } from "@/components/ui/button";
-import { useResendTimer } from "@/hook/useResendTimer";
+import { useResendTimer } from "@/hooks/useResendTimer";
 import { MSGS } from "@/utils/messages";
 import {
   useSendCode,
   useSignup,
   useVerifyCode,
-} from "@/hook/mutation/auth/use-signup-mutation";
+} from "@/hooks/mutation/auth/use-signup-mutation";
 import { toast } from "sonner";
 import RegisterStep1Basic from "@/components/authComponents/RegisterPageStep/RegisterStep1Basic";
 import RegisterStep2Profile from "@/components/authComponents/RegisterPageStep/RegisterStep2Profile";

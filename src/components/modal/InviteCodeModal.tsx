@@ -8,7 +8,7 @@ import {
 import { Copy } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { useCreateInvite } from "@/hook/mutation/invite/use-invite-mutation";
+import { useCreateInvite } from "@/hooks/mutation/invite/use-invite-mutation";
 import { toast } from "sonner";
 
 type InviteCodeModalProps = {

@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { useGroupJoinByInvite } from "@/hook/mutation/invite/use-group-join-by-invite";
+import { useGroupJoinByInvite } from "@/hooks/mutation/invite/use-group-join-by-invite";
 
 type GroupJoinModalProps = {
   open: boolean;

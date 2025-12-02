@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearSession, setSession } from "@/features/sessionSlice";
-import { useAppDispatch } from "@/hook/queries/use-app-dispatch";
+import { useAppDispatch } from "@/hooks/queries/use-app-dispatch";
 import { LogOut, Pencil, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -13,7 +13,7 @@ import { openAlert } from "@/features/alertSlice";
 import { mapBackendUserToSessionUser } from "@/features/mapBackendUserToSessionUser";
 
 import ProfileImageChangeModal from "@/components/modal/ProfileImageChangeModal";
-import { useMyFriends } from "@/hook/use-friend";
+import { useMyFriends } from "@/hooks/use-friend";
 import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
 import { formatTimeAgo } from "@/lib/time";
 import { parseServerDateAsUTC } from "@/utils/ChatTimeFunc";

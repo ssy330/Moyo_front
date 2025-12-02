@@ -5,7 +5,7 @@ import Loader from "../loader";
 import PostItem from "./post-item";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import { useInfinitePostsData } from "@/hook/queries/use-infinite-posts-data";
+import { useInfinitePostsData } from "@/hooks/queries/use-infinite-posts-data";
 
 interface PostFeedProps {
   groupId: number;
