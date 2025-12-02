@@ -1,105 +1,113 @@
-import supabase from "@/lib/supabase";
+// src/api/post.ts
+
+import { api } from "@/lib/api";
 import { uploadImage } from "./image";
-import type { PostEntity } from "@/types";
+import type { Post } from "@/types";
+
+// ─────────────────────────────
+// 1) 게시글 목록 조회 (무한 스크롤용)
+// ─────────────────────────────
 
 interface FetchPostsParams {
+  groupId: number;
   from: number;
   to: number;
-  groupId?: number; // ← 나중을 위해 타입은 놔둬도 되고, 빼도 됨
 }
 
-export async function fetchPosts({ from, to }: FetchPostsParams) {
-  let query = supabase
-    .from("post")
-    .select("*, author: profile!author_id (*)")
-    .order("created_at", { ascending: false })
-    .range(from, to);
+/**
+ * GET /groups/{group_id}/posts?from_=&to=
+ */
+export async function fetchPosts({ groupId, from, to }: FetchPostsParams) {
+  const res = await api.get<Post[]>(`/groups/${groupId}/posts`, {
+    params: {
+      from_: from, // 🔥 백엔드 파라미터 이름: from_
+      to,
+    },
+  });
 
-  // 🔴 일단 groupId 필터는 잠깐 막아두기
-  // if (groupId !== undefined) {
-  //   query = query.eq("group_id", groupId);
-  // }
-
-  const { data, error } = await query;
-
-  if (error) throw error;
-  return data;
+  return res.data; // Post[] (PostSummaryOut과 동일 구조)
 }
 
+// ─────────────────────────────
+// 2) 게시글 생성 (thumbnail_url 포함)
+// ─────────────────────────────
 
-export async function createPost(content: string) {
-  const { data, error } = await supabase
-    .from("post")
-    .insert({
-      content,
-    })
-    .select()
-    .single();
+interface CreatePostParams {
+  groupId: number;
+  title: string;
+  content: string;
+  thumbnailUrl?: string | null;
+}
 
-  if (error) throw error;
-  return data;
+/**
+ * POST /groups/{group_id}/posts
+ * body: { title, content, thumbnail_url? }
+ */
+export async function createPost({
+  groupId,
+  title,
+  content,
+  thumbnailUrl = null,
+}: CreatePostParams) {
+  const res = await api.post<Post>(`/groups/${groupId}/posts`, {
+    title,
+    content,
+    thumbnail_url: thumbnailUrl, // 🔥 백엔드 PostCreate.thumbnail_url 필드랑 맞춤
+  });
+
+  return res.data; // PostDetailOut과 거의 동일 (comments 제외)
+}
+
+// ─────────────────────────────
+// 3) 이미지까지 포함한 게시글 생성
+//    (자체 백엔드 이미지 업로드 + 게시글 생성)
+// ─────────────────────────────
+
+interface CreatePostWithImagesParams {
+  groupId: number;
+  title: string;
+  content: string;
+  images: File[]; // 이제 userId나 filePath 필요 없음
 }
 
 export async function createPostWithImages({
+  groupId,
+  title,
   content,
   images,
-  userId,
-}: {
-  content: string;
-  images: File[];
-  userId: string;
-}) {
-  // 1. 새로운 포스트 생성
-  const post = await createPost(content);
-  if (images.length === 0) return post;
-  try {
-    // 2. storage 업로드
-    const imageUrls = await Promise.all(
-      images.map((image) => {
-        const fileExtension = image.name.split(".").pop() || "webp";
-        const fileName = `${Date.now()}-${crypto.randomUUID()}.${fileExtension}`;
-        const filePath = `${userId}/${post.id}/${fileName}`;
+}: CreatePostWithImagesParams) {
+  let thumbnailUrl: string | null = null;
 
-        return uploadImage({
-          file: image,
-          filePath,
-        });
-      }),
-    );
-
-    // 3. 포스트 데이터 업데이트
-    const updatedPost = await updatePost({
-      id: post.id,
-      image_urls: imageUrls,
+  // 첫 번째 이미지를 썸네일로 사용
+  if (images.length > 0) {
+    thumbnailUrl = await uploadImage({
+      file: images[0],
     });
-
-    return updatedPost;
-  } catch (error) {
-    await deletePost(post.id);
-    throw error;
   }
+
+  const post = await createPost({
+    groupId,
+    title,
+    content,
+    thumbnailUrl,
+  });
+
+  return post;
 }
 
-export async function updatePost(post: Partial<PostEntity> & { id: number }) {
-  const { data, error } = await supabase
-    .from("post")
-    .update(post)
-    .eq("id", post.id)
-    .select()
-    .single();
+// ─────────────────────────────
+// 4) 게시글 삭제
+// ─────────────────────────────
 
-  if (error) throw error;
-  return data;
+interface DeletePostParams {
+  groupId: number;
+  postId: number;
 }
 
-export async function deletePost(id: number) {
-  const { data, error } = await supabase
-    .from("post")
-    .delete()
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+/**
+ * DELETE /groups/{group_id}/posts/{post_id}
+ * 204 No Content
+ */
+export async function deletePost({ groupId, postId }: DeletePostParams) {
+  await api.delete(`/groups/${groupId}/posts/${postId}`);
 }

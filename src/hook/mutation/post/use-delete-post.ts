@@ -2,52 +2,45 @@ import { deleteImagesInPath } from "@/api/image";
 import { deletePost } from "@/api/post";
 import { QUERY_KEYS } from "@/lib/constants";
 import type { UseMutationCallback } from "@/types";
-import {
-  useMutation,
-  useQueryClient,
-  type InfiniteData,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useDeletePost(callbacks?: UseMutationCallback) {
   const queryClient = useQueryClient();
 
   return useMutation({
+    // 어떤 인자를 받을지는 호출하는 쪽에서 결정 (보통 postId 또는 { groupId, postId })
     mutationFn: deletePost,
-    onSuccess: async (deletedPost) => {
-      if (callbacks?.onSuccess) callbacks.onSuccess();
 
-      if (deletedPost.image_urls && deletedPost.image_urls.length > 0) {
+    // 🔥 deletePost가 무엇을 리턴하든 일단 any로 받고, 방어적으로 사용
+    onSuccess: async (deletedPost: any) => {
+      callbacks?.onSuccess?.();
+
+      // 1) 이미지가 있었다면 스토리지에서 정리
+      //    (예전 구조: `${author_id}/${id}` 경로 사용)
+      if (
+        deletedPost?.image_urls &&
+        Array.isArray(deletedPost.image_urls) &&
+        deletedPost.image_urls.length > 0 &&
+        deletedPost?.author_id
+      ) {
         await deleteImagesInPath(`${deletedPost.author_id}/${deletedPost.id}`);
       }
 
-      // 1. 포스트 리스트 캐시 <- 현재 삭제된 포스트의 아이디를 제거
-      queryClient.setQueryData<InfiniteData<number[]>>(
-        QUERY_KEYS.post.list,
-        (prev) => {
-          if (!prev)
-            throw new Error(
-              "포스트 리스트를 캐시 데이터에서 찾을 수 없습니다.",
-            );
-
-          return {
-            ...prev,
-            pages: prev.pages.map((page) => {
-              if (page.includes(deletedPost.id)) {
-                return page.filter((id) => id !== deletedPost.id);
-              }
-              return page;
-            }),
-          };
-        },
-      );
-
-      // 2. 정규화된 포스트 데이터도 제거
-      queryClient.removeQueries({
-        queryKey: QUERY_KEYS.post.byId(deletedPost.id),
+      // 2) 게시글 리스트 쿼리 무효화 → 각 그룹별 useInfinitePostsData가 다시 fetch
+      await queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.post.list],
       });
+
+      // 3) 단건 조회 캐시 제거 (있다면)
+      if (deletedPost?.id != null) {
+        queryClient.removeQueries({
+          queryKey: QUERY_KEYS.post.byId(deletedPost.id),
+        });
+      }
     },
+
     onError: (error) => {
-      if (callbacks?.onError) callbacks.onError(error);
+      callbacks?.onError?.(error as Error);
     },
   });
 }

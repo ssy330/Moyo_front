@@ -1,40 +1,28 @@
-import { BUCKET_NAME } from "@/lib/constants";
-import supabase from "@/lib/supabase";
+// src/api/image.ts
+import { api } from "@/lib/api";
 
 export async function uploadImage({
   file,
-  filePath,
 }: {
   file: File;
-  filePath: string;
+  // filePath는 이제 안 써도 되면 빼도 됨
+  filePath?: string;
 }) {
-  const { data, error } = await supabase.storage
-    .from(BUCKET_NAME)
-    .upload(filePath, file);
+  const formData = new FormData();
+  formData.append("file", file); // 🔥 백엔드에서 File(..., alias="file") 로 받게 할 거
 
-  if (error) throw error;
+  const res = await api.post<{ url: string }>("/images/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(BUCKET_NAME).getPublicUrl(data.path);
-
-  return publicUrl;
+  // 백엔드가 {"url": "/uploads/xxx.png"} 이런 식으로 돌려준다고 가정
+  return res.data.url;
 }
 
-export async function deleteImagesInPath(path: string) {
-  const { data: files, error: fetchFilesError } = await supabase.storage
-    .from(BUCKET_NAME)
-    .list(path);
-
-  if (!files || files.length === 0) {
-    return;
-  }
-
-  if (fetchFilesError) throw fetchFilesError;
-
-  const { error: removeError } = await supabase.storage
-    .from(BUCKET_NAME)
-    .remove(files.map((file) => `${path}/${file.name}`));
-
-  if (removeError) throw removeError;
+// 필요 없으면 그냥 제거해도 됨
+export async function deleteImagesInPath(_path: string) {
+  // 나중에 백엔드에 삭제 API 만들면 여기서 호출
+  return;
 }

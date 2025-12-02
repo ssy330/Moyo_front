@@ -81,7 +81,7 @@ export default function GroupsLeftPanel({ group }: GroupsLeftPanelProps) {
 
         {/* 글쓰기 버튼 */}
         <button
-          onClick={() => dispatch(openModal({ type: "write" }))}
+          onClick={() => dispatch(openModal({ type: "write", data: { groupId } }))}
           className="from-primary/10 to-background text-primary hover:from-primary/15 w-full rounded-2xl bg-linear-to-br py-3 font-semibold shadow-md transition hover:opacity-90"
         >
           ✏️ 게시글 작성하기

@@ -1,3 +1,5 @@
+// src/components/modal/WriteModal.tsx
+
 import {
   Dialog,
   DialogContent,
@@ -15,15 +17,17 @@ import { closeAlert, openAlert } from "@/features/alertSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEditPost } from "@/hook/mutation/post/use-update-post";
 import { useCreatePost } from "@/hook/mutation/post/use-create-post-mutation";
-import { getUserId } from "@/utils/session";
+import { useParams } from "react-router-dom";
 
 type Image = {
-  file: File;
+  file: File | null;
   previewUrl: string;
 };
 
 export default function WriteModal() {
   const dispatch = useDispatch();
+
+  // 모달 열려 있는지 여부
   const open = useSelector((state: RootState) => {
     const type = state.modal.currentModal?.type;
     return type === "write" || type === "edit";
@@ -32,19 +36,27 @@ export default function WriteModal() {
   const currentModal = useSelector(
     (state: RootState) => state.modal.currentModal,
   );
-
   const isEditMode = currentModal?.type === "edit";
+
+  // URL 에서 groupId(or id) 가져오기
+  const { groupId: routeGroupId, id: routeId } = useParams<{
+    groupId?: string;
+    id?: string;
+  }>();
+
+  // 모달 데이터에 groupId 가 있다면 그걸 우선 사용
+  const modalGroupId = (currentModal?.data as any)?.groupId;
+
+  const numericGroupId = Number(
+    modalGroupId ?? routeGroupId ?? routeId ?? NaN,
+  );
 
   const [images, setImages] = useState<Image[]>([]);
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const session = useSelector((state: RootState) => state.session.session);
-
-  const userId = getUserId(session);
-
-  // ✅ API Mutation
+  // ✅ 생성 Mutation (createPostWithImages 사용)
   const { mutate: createPost, isPending: isCreatePostPending } = useCreatePost({
     onSuccess: () => {
       dispatch(closeModal());
@@ -57,14 +69,14 @@ export default function WriteModal() {
     },
   });
 
-  // 수정 Mutation
+  // ✏️ 수정 Mutation
   const { mutate: editPost, isPending: isEditPostPending } = useEditPost({
     onSuccess: () => {
       dispatch(closeModal());
     },
   });
 
-  // 게시글 작성 - textarea 자동 높이 조정
+  // textarea 자동 높이 조정
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -73,31 +85,35 @@ export default function WriteModal() {
     }
   }, [text]);
 
-  // 게시글 작성 - 모달 열릴 때 자동 포커스
+  // 모달 열릴 때 초기화 + 포커스
   useEffect(() => {
-    // 메모리 누수를 막기위한 코드
-    images.forEach((image) => {
-      URL.revokeObjectURL(image.previewUrl);
-    });
     if (!open) return;
-    textareaRef.current?.focus();
+
+    // 이전 blob URL 정리
+    images.forEach((image) => {
+      if (image.previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(image.previewUrl);
+      }
+    });
+
     setText("");
     setImages([]);
+    textareaRef.current?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // 이미지 가져오기
+  // 수정 모드일 때 기존 내용/이미지 채워 넣기
   useEffect(() => {
     if (!currentModal) return;
 
     if (isEditMode && currentModal.data) {
-      const { content, image_urls } = currentModal.data;
+      const { content, image_urls } = currentModal.data as any;
       setText(content ?? "");
 
-      // ✅ 기존 서버 이미지 URL → previewUrl로 변환
       if (image_urls && image_urls.length > 0) {
-        const loadedImages = image_urls.map((url) => ({
-          file: null as unknown as File,
-          previewUrl: url, // 서버 URL 그대로
+        const loadedImages: Image[] = image_urls.map((url: string) => ({
+          file: null,
+          previewUrl: url,
         }));
         setImages(loadedImages);
       } else {
@@ -107,9 +123,9 @@ export default function WriteModal() {
       setText("");
       setImages([]);
     }
-  }, [currentModal]);
+  }, [currentModal, isEditMode]);
 
-  // 모달 닫기 버튼
+  // 모달 닫기
   const handleCloseModal = () => {
     if (text !== "" || images.length !== 0) {
       dispatch(
@@ -128,38 +144,64 @@ export default function WriteModal() {
     dispatch(closeModal());
   };
 
-  // 게시 버튼 클릭
+  // 게시 버튼
   const handleSubmit = () => {
     if (text.trim() === "") return;
 
     if (isEditMode) {
-      // ✏️ 수정 API 호출
-      if (!currentModal?.data?.id) {
+      // ✏️ 수정
+      const data = currentModal?.data as any;
+      if (!data?.id) {
         console.error("❌ postId가 없습니다.");
         return;
       }
 
       editPost({
-        id: currentModal.data.id,
+        id: data.id,
         content: text,
         image_urls: images.map((img) => img.previewUrl),
       });
     } else {
       // 📝 새 글 작성
+
+      // ✅ groupId 체크
+      if (!numericGroupId || Number.isNaN(numericGroupId)) {
+        console.error("❌ groupId 를 찾을 수 없습니다.", {
+          modalGroupId,
+          routeGroupId,
+          routeId,
+        });
+        toast.error("그룹 정보를 찾을 수 없어서 글을 쓸 수 없어요.");
+        return;
+      }
+
+      // File 이 아닌 null 제거 (수정 모드에서 넘어온 이미지 방지)
+      const files = images
+        .map((img) => img.file)
+        .filter((f): f is File => f instanceof File);
+
+      // 간단 자동 제목 생성 (앞부분 + ... 형태)
+      const autoTitleBase = text.trim() || "게시글";
+      const title =
+        autoTitleBase.length > 20
+          ? `${autoTitleBase.slice(0, 20)}...`
+          : autoTitleBase;
+
       createPost({
+        groupId: numericGroupId,
+        title,
         content: text,
-        images: images.map((img) => img.file),
-        userId: String(userId),
+        images: files,
       });
     }
   };
 
-  // 카메라 아이콘 클릭 → 파일 선택
+  // 카메라 아이콘 → 파일 선택
   const handleCameraClick = () => {
     fileInputRef.current?.click();
   };
 
-  // 사진 선택 핸들러.
+  // 사진 선택
   const handleSelectImages = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
@@ -179,8 +221,9 @@ export default function WriteModal() {
     setImages((prevImages) =>
       prevImages.filter((item) => item.previewUrl !== image.previewUrl),
     );
-    // x 버튼 누른 이미지 삭제
-    URL.revokeObjectURL(image.previewUrl);
+    if (image.previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(image.previewUrl);
+    }
   };
 
   return (
@@ -195,11 +238,11 @@ export default function WriteModal() {
           </DialogTitle>
         </DialogHeader>
 
-        {/* ✅ 텍스트 입력 폼 */}
+        {/* 텍스트 입력 */}
         <div className="mt-3">
           <textarea
             ref={textareaRef}
-            disabled={isCreatePostPending}
+            disabled={isCreatePostPending || isEditPostPending}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="그룹 내 인원들과 나의 일상을 공유해보세요!"
@@ -218,11 +261,10 @@ export default function WriteModal() {
                       alt="preview"
                       className="h-full w-full rounded-sm object-cover"
                     />
-                    {/* 삭제 버튼 */}
                     {!isEditMode && (
                       <button
                         onClick={() => handleDeleteImage(image)}
-                        className="absolute top-0 right-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
+                        className="absolute right-0 top-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
                       >
                         <XIcon className="h-4 w-4 text-white" />
                       </button>
@@ -234,7 +276,7 @@ export default function WriteModal() {
           </Carousel>
         )}
 
-        {/* ✅ 아이콘 + 버튼 영역 */}
+        {/* 아이콘 + 버튼 */}
         <div className="mt-5 flex items-center justify-between">
           <div className="flex items-center gap-4 text-neutral-500">
             {/* 숨겨진 파일 input */}
@@ -251,7 +293,7 @@ export default function WriteModal() {
             {/* 카메라 아이콘 */}
             <button
               onClick={handleCameraClick}
-              disabled={isCreatePostPending}
+              disabled={isCreatePostPending || isEditPostPending || isEditMode}
               className={
                 !isEditMode
                   ? "transition-transform hover:scale-110 hover:text-neutral-800"
@@ -262,11 +304,10 @@ export default function WriteModal() {
               <Camera size={22} strokeWidth={1.8} />
             </button>
 
-            {/* 다른 아이콘들 */}
             {[Video, Smile, ListChecks].map((Icon, idx) => (
               <button
                 key={idx}
-                disabled={isCreatePostPending}
+                disabled={isCreatePostPending || isEditPostPending}
                 className="transition-transform hover:scale-110 hover:text-neutral-800"
               >
                 <Icon size={22} strokeWidth={1.8} />
@@ -274,7 +315,6 @@ export default function WriteModal() {
             ))}
           </div>
 
-          {/* 게시 버튼 */}
           <Button
             onClick={handleSubmit}
             disabled={

@@ -1,9 +1,21 @@
+// src/components/GroupsPageComponents/edit-post-item-button.tsx
+
 import { useDispatch } from "react-redux";
 import { Button } from "../ui/button";
 import { openModal } from "@/features/modalSlice";
-import type { PostEntity } from "@/types";
 
-export default function EditPostItemButton(props: PostEntity) {
+// ✅ 이 버튼이 실제로 필요로 하는 필드만 props로 정의
+interface EditPostItemButtonProps {
+  id: number;
+  content: string;
+  image_urls?: string[] | null;
+}
+
+export default function EditPostItemButton({
+  id,
+  content,
+  image_urls,
+}: EditPostItemButtonProps) {
   const dispatch = useDispatch();
 
   const handleButtonClick = () => {
@@ -11,9 +23,9 @@ export default function EditPostItemButton(props: PostEntity) {
       openModal({
         type: "edit",
         data: {
-          id: props.id,
-          content: props.content,
-          image_urls: props.image_urls,
+          id,
+          content,
+          image_urls,
         },
       }),
     );
@@ -22,7 +34,7 @@ export default function EditPostItemButton(props: PostEntity) {
   return (
     <Button
       className="cursor-pointer"
-      variant={"ghost"}
+      variant="ghost"
       onClick={handleButtonClick}
     >
       수정

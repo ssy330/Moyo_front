@@ -4,30 +4,29 @@ import { fetchPosts } from "@/api/post";
 import { QUERY_KEYS } from "@/lib/constants";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 20;
 
-// groupId는 UI 캐시 분리용으로만 사용하고
-// API 요청에는 전달하지 않는다 (지금 post 테이블에 group_id 없음)
-export function useInfinitePostsData(groupId?: number) {
+// ✅ groupId는 필수
+export function useInfinitePostsData(groupId: number) {
   return useInfiniteQuery({
-    // 그룹별로 캐시를 분리함 (각 그룹 페이지마다 게시글 캐시 따로)
-    queryKey: [QUERY_KEYS.post.list, groupId ?? "all"],
+    // 그룹별로 캐시 분리
+    queryKey: [QUERY_KEYS.post.list, groupId],
 
-    // 실제 Supabase 요청에는 groupId를 사용하지 않음
+    // 실제 백엔드 API 요청 (groupId 포함)
     queryFn: async ({ pageParam = 0 }) => {
       const from = pageParam * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      // Supabase에는 from/to만 전달
-      const posts = await fetchPosts({ from, to });
+      const posts = await fetchPosts({ groupId, from, to });
       return posts;
     },
 
     initialPageParam: 0,
 
     getNextPageParam: (lastPage, allPages) => {
+      // 마지막 페이지가 PAGE_SIZE보다 작으면 다음 페이지 없음
       if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
-      return allPages.length;
+      return allPages.length; // pageParam: 0,1,2,...
     },
   });
 }
