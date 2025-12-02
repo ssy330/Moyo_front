@@ -1,4 +1,3 @@
-
 import { api } from "./api"; // 이미 있는 axios 인스턴스 사용
 
 // --- 타입 정의 ---
@@ -32,7 +31,6 @@ export interface UpdateCalendarEventPayload {
 
 export type UpdateEventPayload = Partial<CreateEventPayload>;
 
-
 // --- API 함수들 ---
 
 // ⚠️ 백엔드에서 쿼리 파라미터가 from_ 인지 from 인지에 따라 아래 부분만 조정!
@@ -41,7 +39,7 @@ export type UpdateEventPayload = Partial<CreateEventPayload>;
 export const getCalendarEvents = (from: string, to: string) =>
   api
     .get<CalendarEvent[]>("/calendar/events", {
-      params: { from, to }, 
+      params: { from, to },
     })
     .then((res) => res.data);
 
@@ -52,7 +50,7 @@ export const createCalendarEvent = (payload: CreateEventPayload) =>
 // api 는 기존에 사용하던 axios 인스턴스 이름에 맞춰서 바꿔주세요
 export async function updateCalendarEvent(
   id: number,
-  payload: UpdateCalendarEventPayload
+  payload: UpdateCalendarEventPayload,
 ) {
   const res = await api.patch<CalendarEvent>(`/calendar/events/${id}`, payload);
   return res.data;

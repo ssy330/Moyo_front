@@ -6,11 +6,11 @@ export interface ChatMessage {
   user_id: number | null;
   content: string;
   created_at: string;
-  nickname?: string | null; // 서버에서 내려주는 닉네임
+  nickname?: string | null;
 }
 
 interface UseChatSocketProps {
-  groupId: number; // 🔹 이제 groupId만 받음
+  groupId: number;
   onMessage?: (msg: ChatMessage) => void;
 }
 
@@ -30,36 +30,31 @@ export function useChatSocket({ groupId, onMessage }: UseChatSocketProps) {
 
     const API_BASE = import.meta.env.VITE_API_BASE;
     const WS_BASE = API_BASE.replace(/^http/, "ws").replace(/\/api\/v1$/, "");
-    // 🔹 groupId를 그냥 room id처럼 사용
     const url = `${WS_BASE}/ws/rooms/${groupId}?token=${encodeURIComponent(
       token,
     )}`;
-
-    console.log("🌐 WS connect try:", url);
 
     const ws = new WebSocket(url);
     socketRef.current = ws;
 
     ws.onopen = () => {
       setConnected(true);
-      console.log("✅ WebSocket connected");
     };
 
-    ws.onclose = (event) => {
+    ws.onclose = () => {
       setConnected(false);
-      console.log("❌ WebSocket disconnected", event.code, event.reason);
     };
 
-    ws.onerror = (e) => {
-      console.error("WebSocket error", e);
+    ws.onerror = () => {
+      // 조용히 무시 (필요하면 여기서만 에러 처리 추가)
     };
 
     ws.onmessage = (event) => {
       try {
         const data: ChatMessage = JSON.parse(event.data);
         onMessage?.(data);
-      } catch (err) {
-        console.error("Invalid WS message", err);
+      } catch {
+        // 잘못된 메시지는 무시
       }
     };
 
@@ -73,11 +68,11 @@ export function useChatSocket({ groupId, onMessage }: UseChatSocketProps) {
   }, [groupId, onMessage]);
 
   const sendMessage = useCallback((payload: OutgoingPayload) => {
-    if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
-      console.warn("⚠️ WebSocket not open, cannot send");
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
       return;
     }
-    socketRef.current.send(JSON.stringify(payload));
+    socket.send(JSON.stringify(payload));
   }, []);
 
   return { connected, sendMessage };

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "@/lib/api-link";
+import { API_BASE } from "@/lib/api";
 
 export type Group = {
   id: number;
@@ -25,7 +25,7 @@ export class AuthError extends Error {
 async function fetchMyGroups(): Promise<Group[]> {
   const token = localStorage.getItem("access_token");
 
-  const res = await fetch(`${API_URL}/groups/my`, {
+  const res = await fetch(`${API_BASE}/groups/my`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

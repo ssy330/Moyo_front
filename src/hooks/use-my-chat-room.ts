@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "@/lib/api-link";
+import { API_BASE } from "@/lib/api";
 
 export interface RoomGroup {
   id: number;
@@ -18,7 +18,7 @@ export interface Room {
 async function fetchMyGroupRooms(): Promise<Room[]> {
   const token = localStorage.getItem("access_token");
 
-  const res = await fetch(`${API_URL}/rooms/my-group`, {
+  const res = await fetch(`${API_BASE}/rooms/my-group`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

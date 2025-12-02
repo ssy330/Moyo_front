@@ -1,8 +1,6 @@
 // src/features/mapBackendUserToSessionUser.ts
 import type { SessionUser } from "./sessionSlice";
-import { API_URL } from "@/lib/api-link";
-
-const API_ORIGIN = new URL(API_URL).origin;
+import { API_ORIGIN } from "@/lib/api";
 
 export interface BackendUser {
   id: number;

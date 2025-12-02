@@ -1,8 +1,31 @@
 // src/lib/api.ts
 import axios from "axios";
-import { API_URL } from "./api-link";
 
-export const api = axios.create({ baseURL: API_URL });
+// Vite 환경변수에서 API base를 직접 읽어 옵니다. (예: http://localhost:8000/api/v1 또는 /api/v1)
+const RAW_API_BASE =
+  (import.meta.env.VITE_API_BASE as string | undefined) ?? "/api/v1";
+
+// 뒤 슬래시를 정리하여 일관된 baseURL을 만듭니다 (예: "http://host/api/v1" 또는 "/api/v1")
+export const API_BASE = RAW_API_BASE.replace(/\/+$/u, "");
+
+// API origin: 절대 URL이면 origin을, 상대경로(/api/v1)라면 브라우저의 location.origin을 사용합니다.
+export const API_ORIGIN = (() => {
+  try {
+    // 절대 URL인 경우
+    return new URL(API_BASE).origin;
+  } catch {
+    // 상대경로인 경우 (빌드 시 window가 없을 수 있음)
+    if (typeof window !== "undefined" && window.location)
+      return window.location.origin;
+    return "";
+  }
+})();
+
+// Rhymix(또는 다른 외부) 기본 URL
+export const RHYMIX_BASE_URL =
+  (import.meta.env.VITE_RHYMIX_BASE_URL as string | undefined) ?? "";
+
+export const api = axios.create({ baseURL: API_BASE });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");

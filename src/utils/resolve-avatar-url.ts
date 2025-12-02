@@ -1,4 +1,4 @@
-import { API_ORIGIN } from "@/lib/api-link";
+import { API_ORIGIN } from "@/lib/api";
 
 export function resolveAvatarUrl(path?: string | null): string | null {
   if (!path) return null;

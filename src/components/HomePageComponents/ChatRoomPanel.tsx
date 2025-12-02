@@ -12,7 +12,7 @@ import MessageBubble from "./MessageBubble";
 
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-import { API_URL } from "@/lib/api-link";
+import { API_BASE } from "@/lib/api";
 import { getChatBubbleTimeMeta } from "@/utils/ChatTimeFunc";
 
 interface Room {
@@ -55,7 +55,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
       return;
     }
 
-    fetch(`${API_URL}/rooms/`)
+    fetch(`${API_BASE}/rooms/`)
       .then((res) => res.json())
       .then((data: Room[]) => {
         const room = data.find((r) => r.id === roomId);
@@ -73,7 +73,7 @@ const ChatRoomPanel = ({ chatId, onBack }: ChatRoomPanelProps) => {
       return;
     }
 
-    fetch(`${API_URL}/messages/rooms/${roomId}`)
+    fetch(`${API_BASE}/messages/rooms/${roomId}`)
       .then((res) => res.json())
       .then((data: ChatMessageDTO[]) => {
         const mapped: ChatMessage[] = data.map((m) => ({

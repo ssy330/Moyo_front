@@ -1,4 +1,3 @@
-// src/constants/registerSteps.ts
 export type RegisterStep = 1 | 2 | 3 | 4;
 
 export const REGISTER_STEP_META: {

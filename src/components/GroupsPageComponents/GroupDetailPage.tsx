@@ -1,6 +1,5 @@
-import { api } from "@/lib/api";
+import { api, RHYMIX_BASE_URL } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { RHYMIX_BASE_URL } from "@/lib/api-link";
 
 interface GroupDetail {
   id: number;

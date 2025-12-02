@@ -9,7 +9,7 @@ import GlobalLoader from "@/components/layouts/global-loader";
 import { useMyGroups } from "@/hooks/use-my-groups";
 import { api } from "@/lib/api";
 import { useCallback, useEffect, useState } from "react";
-import type { ChatMessage } from "@/hook/useChatSocket";
+import type { ChatMessage } from "@/hooks/useChatSocket";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 
@@ -33,8 +33,6 @@ export default function GroupLayout() {
   const [hasUnread, setHasUnread] = useState(false);
 
   const currentUserId = useSelector((state: RootState) => state.auth.id);
-
-  console.log(hasUnread);
 
   // WebSocket 새 메시지 알림 콜백
   const handleNewMessage = useCallback(
