@@ -1,4 +1,4 @@
-import type { Group } from "@/hook/use-my-groups";
+import type { Group } from "@/hooks/use-my-groups";
 import type { CalendarEvent } from "@/lib/calendar-api";
 import { DAY_LABELS, getEventColor, toDateKey } from "@/utils/calendar-util";
 

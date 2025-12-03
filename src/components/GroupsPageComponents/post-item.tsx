@@ -12,7 +12,12 @@ import { formatTimeAgo } from "@/lib/time";
 import EditPostItemButton from "./edit-post-item-button";
 import DeletePostButton from "./delete-post-item-button";
 
-export default function PostItem(post: Post) {
+interface PostItemProps {
+  post: Post;
+  groupId: number;
+}
+
+export default function PostItem({ post, groupId }: PostItemProps) {
   const authorName = post.author.name;
   const avatarSrc = post.author.profile_image_url ?? defaultAvatar;
 
@@ -38,7 +43,7 @@ export default function PostItem(post: Post) {
         {/* 1-2. 수정/삭제 버튼 */}
         <div className="text-muted-foreground flex text-sm">
           <EditPostItemButton {...post} />
-          <DeletePostButton id={post.id} />
+          <DeletePostButton groupId={groupId} postId={post.id} />
         </div>
       </div>
 

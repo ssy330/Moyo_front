@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/hook/useChatSocket";
+import type { ChatMessage } from "@/hooks/useChatSocket";
 
 interface MessageBubbleProps {
   message: ChatMessage;

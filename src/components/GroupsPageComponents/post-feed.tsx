@@ -1,5 +1,3 @@
-// src/components/GroupsPageComponents/post-feed.tsx
-
 import Fallback from "../fallback";
 import Loader from "../loader";
 import PostItem from "./post-item";
@@ -40,7 +38,11 @@ export default function PostFeed({ groupId }: PostFeedProps) {
     <div className="flex flex-col gap-10">
       {data?.pages.map((page, pageIndex) =>
         page.map((post) => (
-          <PostItem key={`${pageIndex}-${post.id}`} {...post} />
+          <PostItem
+            key={`${pageIndex}-${post.id}`}
+            post={post}
+            groupId={groupId}
+          />
         )),
       )}
       {isFetchingNextPage && <Loader />}

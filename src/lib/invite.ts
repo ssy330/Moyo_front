@@ -1,10 +1,12 @@
 // src/api/invite.ts
 import { api } from "@/lib/api";
 
+type InvitePayload = { groupId: number } | null;
+
 // ✅ 초대코드 생성
 export const createInvite = async (body: {
   purpose: string;
-  payload?: string | null;
+  payload?: InvitePayload;
   maxUses: number;
   ttlMinutes: number;
 }) => {
