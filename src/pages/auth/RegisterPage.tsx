@@ -196,14 +196,12 @@ export default function RegisterPage() {
 
   const handleChangeEmail = (v: string) => {
     setEmailLocal(v);
-    setIsEmailValid(null);
+    //setIsEmailValid(null);
     setIsCodeSent(false);
     setInputCode("");
     setIsCodeValid(null);
     setIsEmailVerified(false);
   };
-
-  console.log("Email Valid Status:", isEmailValid);
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -213,7 +211,7 @@ export default function RegisterPage() {
           {/* 상단: 타이틀 + 작은 스텝 인디케이터 */}
           <div className="mb-8 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-neutral-900 sm:text-2xl">
+              <h2 className="text-xl font-semibold whitespace-nowrap text-neutral-900 sm:text-2xl">
                 모요 회원가입
               </h2>
               <p className="mt-2 text-xs text-neutral-500 sm:text-sm">
