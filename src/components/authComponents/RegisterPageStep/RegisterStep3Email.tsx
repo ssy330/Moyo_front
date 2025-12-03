@@ -1,4 +1,3 @@
-// src/components/authComponents/registerSteps/RegisterStep3Email.tsx
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
 

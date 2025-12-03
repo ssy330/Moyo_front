@@ -196,14 +196,14 @@ export default function RegisterPage() {
 
   const handleChangeEmail = (v: string) => {
     setEmailLocal(v);
-    // 형식 검사는 다시 해야 하니까
     setIsEmailValid(null);
-    // 인증 관련 상태 리셋
     setIsCodeSent(false);
     setInputCode("");
     setIsCodeValid(null);
     setIsEmailVerified(false);
   };
+
+  console.log("Email Valid Status:", isEmailValid);
 
   return (
     <div className="min-h-screen bg-neutral-50">

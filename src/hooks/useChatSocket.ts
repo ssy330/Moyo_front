@@ -1,3 +1,4 @@
+import { API_BASE } from "@/lib/api";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 export interface ChatMessage {
@@ -28,7 +29,6 @@ export function useChatSocket({ groupId, onMessage }: UseChatSocketProps) {
 
     const token = localStorage.getItem("access_token") ?? "";
 
-    const API_BASE = import.meta.env.VITE_API_BASE;
     const WS_BASE = API_BASE.replace(/^http/, "ws").replace(/\/api\/v1$/, "");
     const url = `${WS_BASE}/ws/rooms/${groupId}?token=${encodeURIComponent(
       token,

@@ -13,6 +13,8 @@ export const useValidation = (
   const [isValid, setIsValid] = useState<boolean | null>(null);
 
   const validate = (value: string) => {
+    const trimmedValue = value.trim();
+
     const rules = {
       nickname: /^[a-zA-Z가-힣]{2,}$/, // 2글자 이상, 한글/영문
       email: /^[0-9a-zA-Z]([._-]?[0-9a-zA-Z])*@[0-9a-zA-Z-]+(\.[a-zA-Z]{2,})+$/,
@@ -34,7 +36,7 @@ export const useValidation = (
     }
 
     // ✅ 나머지 정규식 검사
-    const result = rules[type].test(value);
+    const result = rules[type].test(trimmedValue);
     setIsValid(result);
   };
 
