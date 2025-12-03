@@ -3,10 +3,9 @@ import MoyoLogo from "@/components/authComponents/MoyoLogo2";
 import AuthLinks from "@/components/authComponents/AuthLinks";
 import AuthInput from "@/components/authComponents/AuthInput";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignInWithEmail } from "@/hooks/mutation/auth/use-login-mutation";
-import { checkServerConnection } from "@/lib/server-test";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -15,12 +14,6 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
-
-  useEffect(() => {
-    checkServerConnection().then((ok) => {
-      if (!ok) toast.error("⚠️ 백엔드 서버에 연결할 수 없습니다!");
-    });
-  }, []);
 
   const navigate = useNavigate();
 
