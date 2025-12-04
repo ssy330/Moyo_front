@@ -85,7 +85,7 @@ export default function RegisterStep3Email({
                 onChange={(e) => onChangeCode(e.target.value)}
                 disabled={isCodeValid === true || loadingVerify}
                 resendKey={resendKey}
-                inputClassName="h-15 text-base placeholder:text-base"
+                size="lg"
               />
             </div>
             <Button

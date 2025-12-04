@@ -22,6 +22,7 @@ interface AuthInputProps {
   validateOnChange?: boolean;
   resendKey?: number;
   inputClassName?: string;
+  size?: "sm" | "md" | "lg";
 }
 
 export default function AuthInput({
@@ -36,6 +37,7 @@ export default function AuthInput({
   resendKey,
   validateOnChange = true,
   inputClassName,
+  size = "md", // ✅ 기본값
 }: AuthInputProps) {
   const { isValid, validate, messages } = useValidation(name, passwordValue);
 
@@ -48,13 +50,18 @@ export default function AuthInput({
     onValidChange?.(isValid);
   }, [isValid, onValidChange]);
 
+  useEffect(() => {
+    if (name === "passwordConfirm" && value.trim().length > 0) {
+      validate(value);
+    }
+  }, [passwordValue, name, value, validate]);
+
   const getAutoCompleteValue = () => {
     if (autoComplete) return autoComplete;
     switch (name) {
       case "email":
         return "email";
       case "password":
-        return "new-password";
       case "passwordConfirm":
         return "new-password";
       case "nickname":
@@ -65,10 +72,16 @@ export default function AuthInput({
         return "off";
     }
   };
+  // size로 관리
+  const sizeClasses =
+    size === "lg"
+      ? "h-[60px] text-[16px] md:text-[16px] placeholder:text-[15px] md:placeholder:text-[15px]"
+      : size === "sm"
+        ? "h-9 text-xs placeholder:text-xs"
+        : "h-11 text-sm placeholder:text-sm";
 
   return (
     <div className="flex flex-col space-y-1">
-      {/* Input + 토글/카운트다운 */}
       <div className="relative">
         <Input
           id={name}
@@ -83,12 +96,9 @@ export default function AuthInput({
           disabled={disabled}
           maxLength={name === "authCode" ? 6 : undefined}
           autoComplete={getAutoCompleteValue()}
-          className={`h-12 pr-12 ${
-            isAuthCode ? "pr-20 md:pr-24" : ""
-          } ${isValid === false ? "border-red-400" : ""} ${inputClassName ?? ""}`}
+          className={`pr-12 ${sizeClasses} ${isAuthCode ? "pr-20 md:pr-24" : ""} ${isValid === false ? "border-red-400" : ""} ${inputClassName ?? ""} `}
         />
 
-        {/* 비밀번호 보기/숨김 */}
         {isPassword && (
           <button
             type="button"
@@ -99,15 +109,12 @@ export default function AuthInput({
           </button>
         )}
 
-        {/* 인증번호 타이머 (폭 고정) */}
         {isAuthCode && !disabled && (
           <div className="absolute top-1/2 right-3 flex h-6 w-16 -translate-y-1/2 items-center justify-center text-xs">
             <AuthCountdown key={resendKey} initialTime={300} />
           </div>
         )}
       </div>
-
-      {/* 메시지 영역: 항상 높이 고정 */}
 
       {isValid !== null && (
         <p

@@ -46,15 +46,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white md:flex-row">
-      {/* 왼쪽 영역 - 로고 */}
-      <div className="-mt-4 flex flex-1 cursor-pointer items-center justify-center p-8 md:-mt-15">
-        <MoyoLogo type="main" />
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white md:flex-row">
+      {/* 왼쪽 영역 - 로고 (모바일에서도 가운데 정렬, 폭 제한) */}
+      <div className="flex flex-1 items-center justify-center px-6 pt-10 md:px-10 md:pt-0">
+        <div className="w-full max-w-xs">
+          {/* MoyoLogo가 내부에서 너무 크게 잡혀 있다면 거기에도 max-w-full 한 번 걸어주면 좋음 */}
+          <MoyoLogo type="main" />
+        </div>
       </div>
 
       {/* 오른쪽 영역 - 로그인 박스 */}
-      <div className="flex flex-1 items-center justify-center bg-white">
-        <div className="w-full max-w-sm p-6">
+      <div className="flex flex-1 items-center justify-center bg-white px-6 pb-10 md:px-10 md:pb-0">
+        <div className="w-full max-w-sm">
           {/* 로그인 폼 */}
           <form onSubmit={handleSignInWithEmail}>
             {/* 입력 + 버튼 묶음 */}

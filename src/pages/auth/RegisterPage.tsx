@@ -117,7 +117,7 @@ export default function RegisterPage() {
   );
 
   // 단계별 유효성 (프로필은 지금은 선택사항)
-  const isStep1Valid = isNameValid === true && isNickValid === true;
+  // const isStep1Valid = isNameValid === true && isNickValid === true;
   const isStep2Valid = true; // 프로필 필수로 하고 싶으면 !!profileImage
   const isStep3Valid = isEmailVerified === true && isCodeValid === true;
   const isStep4Valid = isPwValid === true && isPwMatch === true;
@@ -203,22 +203,38 @@ export default function RegisterPage() {
     setIsEmailVerified(false);
   };
 
+  // 이전 다음 안가지는 오류
+  const canGoNextFromStep1 = () => {
+    // 값 비어 있으면 불가
+    if (!name.trim() || !nickname.trim()) return false;
+
+    // 명시적으로 "유효하지 않음"으로 판정된 경우만 막기
+    if (isNameValid === false || isNickValid === false) return false;
+
+    return true;
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-row">
+    <div className="min-h-screen overflow-x-hidden bg-neutral-50">
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 sm:px-6 md:flex-row lg:px-8">
         {/* ===== 왼쪽: 큰 인풋 영역 ===== */}
         <div className="flex flex-1 flex-col px-6 py-8 sm:px-10 lg:px-14 lg:py-12">
           {/* 상단: 타이틀 + 작은 스텝 인디케이터 */}
-          <div className="mb-8 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold whitespace-nowrap text-neutral-900 sm:text-2xl">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* ✅ 모바일: 위 / PC: 오른쪽 */}
+            <div className="order-1 sm:order-2">
+              <RegisterStepIndicator step={step} />
+            </div>
+
+            {/* ✅ 모바일: 아래 / PC: 왼쪽 */}
+            <div className="order-2 sm:order-1">
+              <h2 className="text-xl font-semibold text-neutral-900 sm:text-2xl sm:whitespace-nowrap">
                 모요 회원가입
               </h2>
               <p className="mt-2 text-xs text-neutral-500 sm:text-sm">
                 {STEP_META.find((m) => m.id === step)?.desc}
               </p>
             </div>
-            <RegisterStepIndicator step={step} />
           </div>
 
           <form
@@ -305,13 +321,14 @@ export default function RegisterPage() {
             </div>
 
             {/* ===== 하단 버튼 영역 ===== */}
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex gap-2">
+            <div className="mt-8 flex items-center justify-between gap-3">
+              {/* 왼쪽: 이전 단계 */}
+              <div className="flex items-center gap-2">
                 {step > 1 && (
                   <Button
                     type="button"
                     variant="ghost"
-                    className="h-12 min-w-[100px] text-sm text-neutral-600"
+                    className="h-11 min-w-[100px] rounded-full border-none bg-transparent text-sm text-neutral-600 shadow-none hover:bg-neutral-100 hover:text-neutral-800"
                     onClick={() => goToStep(((step - 1) as Step) || 1)}
                   >
                     이전 단계
@@ -319,17 +336,18 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              <div className="flex flex-1 justify-end gap-2">
+              {/* 오른쪽: 다음 / 완료 */}
+              <div className="flex items-center justify-end gap-2">
                 {step < 4 && (
                   <Button
                     type="button"
                     onClick={() => {
-                      if (step === 1 && !isStep1Valid) return;
+                      if (step === 1 && !canGoNextFromStep1()) return;
                       if (step === 2 && !isStep2Valid) return;
                       if (step === 3 && !isStep3Valid) return;
                       goToStep(((step + 1) as Step) || 4);
                     }}
-                    className="h-12 min-w-[100px]"
+                    className="h-11 min-w-[100px]"
                   >
                     다음
                   </Button>
@@ -340,7 +358,7 @@ export default function RegisterPage() {
                     type="button"
                     disabled={!isFormValid || !isStep4Valid || loadingSignup}
                     onClick={handleSubmit}
-                    className="h-12 min-w-[100px]"
+                    className="h-11 min-w-[100px]"
                   >
                     {loadingSignup ? "등록 중…" : "완료"}
                   </Button>

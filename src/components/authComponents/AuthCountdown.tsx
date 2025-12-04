@@ -20,6 +20,8 @@ function AuthCountdown({ initialTime = 300, onExpire }: AuthCountdownProps) {
   const minutes = Math.floor(timeLeft / 60);
   const seconds = String(timeLeft % 60).padStart(2, "0");
 
+  if (timeLeft <= 0) return null;
+
   return (
     <span
       className={`text-sm ${timeLeft > 0 ? "text-gray-500" : "text-red-500"}`}

@@ -43,7 +43,8 @@ export default function BellModal({
     <div className="fixed inset-0 z-50" onClick={handleClose}>
       {/* 알림 카드 */}
       <div
-        className="absolute bottom-20 left-20 flex max-h-[40vh] w-[320px] flex-col overflow-hidden rounded-2xl border bg-white shadow-xl"
+        // ✅ 상단 오른쪽에 뜨도록 위치 변경 + 모바일 대응
+        className="absolute top-16 right-4 flex max-h-[50vh] w-[320px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border bg-white shadow-xl md:top-auto md:right-auto md:bottom-20 md:left-20 md:max-h-[40vh] md:max-w-[320px]"
         onClick={(e) => e.stopPropagation()} // 카드 안 클릭은 닫히지 않도록
       >
         {/* 헤더 */}
@@ -52,7 +53,7 @@ export default function BellModal({
         </div>
 
         {/* 스크롤되는 알림 목록 영역 */}
-        <div className="max-h-[32vh] min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
+        <div className="max-h-[40vh] min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
           {notifLoading && (
             <div className="py-6 text-center text-sm text-slate-500">
               알림 불러오는 중...

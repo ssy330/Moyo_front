@@ -1,5 +1,4 @@
 // src/hooks/useValidation.ts
-
 import { useState } from "react";
 
 export const useValidation = (
@@ -18,35 +17,39 @@ export const useValidation = (
     const trimmedValue = value.trim();
 
     const rules = {
-      nickname: /^[a-zA-Z가-힣]{2,}$/, // 2글자 이상, 한글/영문
+      nickname: /^[a-zA-Z가-힣]{2,}$/,
       email: /^[0-9a-zA-Z]([._-]?[0-9a-zA-Z])*@[0-9a-zA-Z-]+(\.[a-zA-Z]{2,})+$/,
-      password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, // 문자+숫자+기호 포함 8자 이상
-      authCode: /^\d{6}$/, // 인증번호 6자리 숫자
+      // 문자 + 숫자 + 특수문자(종류 제한 X) + 8자 이상
+      password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/,
+      authCode: /^\d{6}$/,
     };
 
-    // ✅ passwordConfirm만 따로 처리
+    // ✅ 비밀번호 확인만 별도 처리
     if (type === "passwordConfirm") {
-      // trimmedValue를 사용하여 비밀번호 일치 및 길이 검사
-      const result = trimmedValue === passwordValue && trimmedValue.length > 0;
+      const pw = (passwordValue ?? "").trim();
+
+      // 아직 아무 것도 안 쳤으면 -> "검사 전" 상태
+      if (!trimmedValue.length || !pw.length) {
+        setIsValid(null);
+        return;
+      }
+
+      const result = trimmedValue === pw;
       setIsValid(result);
       return;
     }
 
     if (type === "name") {
-      // trimmedValue를 사용하여 길이 검사
-      const result = trimmedValue.length >= 2; // 2글자 이상만 허용
+      const result = trimmedValue.length >= 2;
       setIsValid(result);
       return;
     }
 
-    // 값이 없으면 무효 처리 (필수 입력 필드에 해당)
     if (trimmedValue.length === 0) {
       setIsValid(false);
       return;
     }
 
-    // ✅ 나머지 정규식 검사
-    // 공백이 제거된 trimmedValue를 test 함수에 전달합니다.
     const result = rules[type].test(trimmedValue);
     setIsValid(result);
   };

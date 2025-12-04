@@ -30,7 +30,7 @@ export default function RegisterStep1Basic({
             value={name}
             onChange={(e) => onChangeName(e.target.value)}
             onValidChange={setIsNameValid}
-            inputClassName="h-15 text-base placeholder:text-base"
+            size="lg"
           />
         </div>
         <div className="origin-top transform sm:scale-[1.03]">
@@ -40,7 +40,7 @@ export default function RegisterStep1Basic({
             value={nickname}
             onChange={(e) => onChangeNickname(e.target.value)}
             onValidChange={setIsNickValid}
-            inputClassName="h-15 text-base placeholder:text-base"
+            size="lg"
           />
         </div>
       </div>
