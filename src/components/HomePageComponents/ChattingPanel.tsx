@@ -32,7 +32,7 @@ const ChattingPanel = ({
   };
 
   return (
-    <div className="border-border bg-card flex h-[calc(90vh)] flex-col rounded-2xl border shadow-lg">
+    <div className="border-border bg-card flex h-full flex-col rounded-2xl border shadow-lg">
       {/* 상단 탭 + 검색 영역 */}
       <div className="border-border bg-card border-b">
         {/* 탭 영역 */}

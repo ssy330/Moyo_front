@@ -21,31 +21,59 @@ export default function ChatPage({ viewMode }: ChatPageProps) {
 
   // ─────────────────────────────
   // 🔹 1) viewMode === "chat"
-  //    - 모바일: 가로 슬라이드 (왼쪽 목록 / 오른쪽 채팅)
-  //    - 데스크탑: 항상 "왼쪽 320px 목록 + 오른쪽 채팅/플레이스홀더"
+  //    - 모바일: 목록 전체 화면 → 클릭 시 채팅방이 위에서 덮어쓰는 구조
+  //    - 데스크탑: 기존처럼 좌측 목록 + 우측 채팅 2분할
   // ─────────────────────────────
   if (viewMode === "chat") {
     return (
-      <div className="flex h-[90vh] w-full">
-        {/* 왼쪽: 채팅 목록 패널 */}
-        <div className="w-[480px] min-w-[280px] border-r border-gray-200">
-          <ChattingPanel
-            onSelectChat={handleSelectChat}
-            selectedChatId={selectedChatId}
-          />
-        </div>
+      <>
+        {/* ✅ 모바일 전용 레이아웃 (md 미만) */}
+        <div className="relative flex h-[90vh] w-full overflow-hidden md:hidden">
+          {/* 채팅 목록 (선택 전) */}
+          {!selectedChatId && (
+            <div className="h-full w-full">
+              <ChattingPanel
+                onSelectChat={handleSelectChat}
+                selectedChatId={selectedChatId}
+              />
+            </div>
+          )}
 
-        {/* 오른쪽: 채팅방 / 플레이스홀더 */}
-        <div className="flex flex-1 flex-col">
-          {selectedChatId ? (
-            <ChatRoomPanel chatId={selectedChatId} onBack={handleBack} />
-          ) : (
-            <div className="flex h-full items-center justify-center text-sm text-gray-400">
-              채팅방을 선택해주세요.
+          {/* 채팅방 (선택 후 전체 덮기) */}
+          {selectedChatId && (
+            <div className="absolute inset-0 flex flex-col overflow-hidden bg-white">
+              {/* 👇 이 래퍼가 채팅 영역을 고정 높이 + 내부 스크롤로 만들어줌 */}
+              <div className="flex h-full flex-col overflow-hidden">
+                <ChatRoomPanel chatId={selectedChatId} onBack={handleBack} />
+              </div>
             </div>
           )}
         </div>
-      </div>
+
+        {/* ✅ 데스크탑 레이아웃 (md 이상) - 기존 구조 유지 */}
+        <div className="hidden h-full w-full overflow-hidden md:flex">
+          {/* 왼쪽: 채팅 목록 패널 */}
+          <div className="w-[480px] min-w-[280px] border-r border-gray-200">
+            <ChattingPanel
+              onSelectChat={handleSelectChat}
+              selectedChatId={selectedChatId}
+            />
+          </div>
+
+          {/* 오른쪽: 채팅방 / 플레이스홀더 */}
+          <div className="flex flex-1 flex-col overflow-hidden">
+            {selectedChatId ? (
+              <div className="flex h-full flex-col overflow-hidden">
+                <ChatRoomPanel chatId={selectedChatId} onBack={handleBack} />
+              </div>
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                채팅방을 선택해주세요.
+              </div>
+            )}
+          </div>
+        </div>
+      </>
     );
   }
 

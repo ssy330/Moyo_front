@@ -23,7 +23,8 @@ export default function ViewModeButtonGroup({
   options = defaultOptions,
 }: Props) {
   return (
-    <div className="border-border bg-card/80 mt-2 mr-7 flex items-center rounded-full border shadow-sm backdrop-blur-md">
+    // ✅ 여기서는 margin 제거, 크기/스타일만
+    <div className="border-border bg-card/80 inline-flex items-center rounded-full border shadow-sm backdrop-blur-md">
       {options.map(({ key, label }) => {
         const isActive = value === key;
         return (
