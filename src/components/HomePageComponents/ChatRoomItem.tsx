@@ -38,7 +38,7 @@ export default function ChatRoomItem({
       }`}
     >
       {/* 🔹 왼쪽 그룹 이미지 영역 */}
-      <div className="bg-muted mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full">
+      <div className="bg-muted mr-3 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full">
         {imageUrl ? (
           <img
             src={imageUrl}

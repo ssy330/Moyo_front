@@ -26,12 +26,14 @@ export default function ChatPage({ viewMode }: ChatPageProps) {
   // ─────────────────────────────
   if (viewMode === "chat") {
     return (
-      <>
+      // ✅ 공통 부모에 고정 높이 부여 (예: 90vh)
+      <div className="h-[90vh] w-full">
         {/* ✅ 모바일 전용 레이아웃 (md 미만) */}
-        <div className="relative flex h-[90vh] w-full overflow-hidden md:hidden">
+        <div className="relative flex h-full w-full overflow-hidden md:hidden">
           {/* 채팅 목록 (선택 전) */}
           {!selectedChatId && (
-            <div className="h-full w-full">
+            // ✅ 목록 영역도 h-full + 스크롤
+            <div className="h-full w-full overflow-y-auto">
               <ChattingPanel
                 onSelectChat={handleSelectChat}
                 selectedChatId={selectedChatId}
@@ -42,7 +44,6 @@ export default function ChatPage({ viewMode }: ChatPageProps) {
           {/* 채팅방 (선택 후 전체 덮기) */}
           {selectedChatId && (
             <div className="absolute inset-0 flex flex-col overflow-hidden bg-white">
-              {/* 👇 이 래퍼가 채팅 영역을 고정 높이 + 내부 스크롤로 만들어줌 */}
               <div className="flex h-full flex-col overflow-hidden">
                 <ChatRoomPanel chatId={selectedChatId} onBack={handleBack} />
               </div>
@@ -50,14 +51,17 @@ export default function ChatPage({ viewMode }: ChatPageProps) {
           )}
         </div>
 
-        {/* ✅ 데스크탑 레이아웃 (md 이상) - 기존 구조 유지 */}
+        {/* ✅ 데스크탑 레이아웃 (md 이상) */}
         <div className="hidden h-full w-full overflow-hidden md:flex">
           {/* 왼쪽: 채팅 목록 패널 */}
-          <div className="w-[480px] min-w-[280px] border-r border-gray-200">
-            <ChattingPanel
-              onSelectChat={handleSelectChat}
-              selectedChatId={selectedChatId}
-            />
+          <div className="flex h-full w-[480px] min-w-[280px] flex-col border-r border-gray-200">
+            {/* ✅ 여기서도 내부 스크롤 가능 */}
+            <div className="flex-1 overflow-y-auto">
+              <ChattingPanel
+                onSelectChat={handleSelectChat}
+                selectedChatId={selectedChatId}
+              />
+            </div>
           </div>
 
           {/* 오른쪽: 채팅방 / 플레이스홀더 */}
@@ -73,7 +77,7 @@ export default function ChatPage({ viewMode }: ChatPageProps) {
             )}
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
