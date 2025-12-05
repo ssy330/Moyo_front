@@ -32,7 +32,7 @@ export default function Step1({
         placeholder="예: 강남대 프로젝트 모임"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
-        className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/30 w-full rounded-2xl border-2 px-5 py-4 text-lg font-semibold shadow-sm transition outline-none placeholder:text-lg placeholder:font-semibold focus:ring-2"
+        className="border-input bg-background focus:border-primary focus:ring-primary/30 w-full rounded-2xl border-2 px-5 py-4 text-lg font-semibold shadow-sm transition outline-none placeholder:text-lg placeholder:font-semibold placeholder:text-neutral-400 focus:ring-2"
       />
 
       {/* 개인정보 동의 */}
