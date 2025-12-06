@@ -21,7 +21,6 @@ export default function PostItem({ post, groupId }: PostItemProps) {
   const avatar = post.author.profile_image_url;
 
   const avatarSrc = resolveAvatarUrl(avatar) ?? defaultAvatar;
-  console.log(post.image_urls);
 
   return (
     <div className="flex flex-col gap-4 border-b pb-8">

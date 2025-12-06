@@ -23,6 +23,7 @@ interface AuthInputProps {
   resendKey?: number;
   inputClassName?: string;
   size?: "sm" | "md" | "lg";
+  type?: "text" | "email" | "password";
 }
 
 export default function AuthInput({
@@ -38,13 +39,21 @@ export default function AuthInput({
   validateOnChange = true,
   inputClassName,
   size = "md", // ✅ 기본값
+  type,
 }: AuthInputProps) {
   const { isValid, validate, messages } = useValidation(name, passwordValue);
 
   const [showPw, setShowPw] = useState(false);
-  const isPassword = name.includes("password");
+
+  const isPasswordName = name.includes("password");
+  const isPassword = type ? type === "password" : isPasswordName;
   const isAuthCode = name.includes("authCode");
-  const inputType = isPassword ? (showPw ? "text" : "password") : "text";
+
+  const inputType: "text" | "email" | "password" = isPassword
+    ? showPw
+      ? "text"
+      : "password"
+    : (type ?? "text");
 
   useEffect(() => {
     onValidChange?.(isValid);

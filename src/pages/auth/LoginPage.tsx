@@ -1,3 +1,5 @@
+// LoginPage.tsx
+
 import KakaoTalkIcon from "@/assets/KakaoTalkIcon";
 import MoyoLogo from "@/components/authComponents/MoyoLogo2";
 import AuthLinks from "@/components/authComponents/AuthLinks";
@@ -9,7 +11,6 @@ import { useSignInWithEmail } from "@/hooks/mutation/auth/use-login-mutation";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  // 입력 상태 관리
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -20,7 +21,6 @@ export default function LoginPage() {
   const { mutateAsync: signInWithEmail, isPending: isSignInWithEmailPending } =
     useSignInWithEmail();
 
-  // 입력 값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -35,7 +35,6 @@ export default function LoginPage() {
         password: form.password,
       });
 
-      // useSignInWithEmail onSuccess에서 세션/토큰 세팅 끝났다고 가정
       const me = data.me;
       toast.success(`${me?.name ?? "회원"}님 환영합니다!`);
       navigate("/", { replace: true });
@@ -47,28 +46,27 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-white md:flex-row">
-      {/* 왼쪽 영역 - 로고 (모바일에서도 가운데 정렬, 폭 제한) */}
+      {/* 왼쪽 영역 - 로고 */}
       <div className="flex flex-1 items-center justify-center px-6 pt-10 md:px-10 md:pt-0">
         <div className="w-full max-w-xs">
-          {/* MoyoLogo가 내부에서 너무 크게 잡혀 있다면 거기에도 max-w-full 한 번 걸어주면 좋음 */}
           <MoyoLogo type="main" />
         </div>
       </div>
 
       {/* 오른쪽 영역 - 로그인 박스 */}
-      <div className="flex flex-1 items-center justify-center bg-white px-10 md:px-10 md:pb-0">
-        <div className="w-full max-w-sm">
-          {/* 로그인 폼 */}
+      <div className="flex flex-1 items-center justify-center bg-white px-6 md:px-10 md:pb-0">
+        {/* ✅ 너비 좁히고, 살짝 아래로 내리기 */}
+        <div className="w-full max-w-[320px] translate-y-4 md:max-w-[340px] md:translate-y-6">
           <form onSubmit={handleSignInWithEmail}>
-            {/* 입력 + 버튼 묶음 */}
             <div className="mb-4 flex flex-col gap-3">
               <AuthInput
                 name="email"
-                autoComplete="username"
+                type="email"
                 placeholder="이메일을 입력하세요"
                 value={form.email}
                 onChange={handleChange}
                 validateOnChange={false}
+                inputClassName="h-12"
               />
 
               <AuthInput
@@ -78,9 +76,9 @@ export default function LoginPage() {
                 value={form.password}
                 onChange={handleChange}
                 validateOnChange={false}
+                inputClassName="h-12"
               />
 
-              {/* 로그인 버튼 */}
               <Button
                 type="submit"
                 className="h-12 w-full text-base"
@@ -89,7 +87,6 @@ export default function LoginPage() {
                 로그인
               </Button>
 
-              {/* 카카오 로그인 버튼 */}
               <Button
                 type="button"
                 variant="secondary"
@@ -105,7 +102,6 @@ export default function LoginPage() {
 
             <hr className="my-6" />
 
-            {/* 하단 링크 */}
             <div className="space-x-2 text-center text-sm text-gray-500">
               <AuthLinks text="회원가입" />
               <span>|</span>

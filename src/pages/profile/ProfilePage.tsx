@@ -21,13 +21,11 @@ import { parseServerDateAsUTC } from "@/utils/ChatTimeFunc";
 export default function ProfilePage() {
   const nav = useNavigate();
   const dispatch = useAppDispatch();
-  const { session: user } = useSelector((state: RootState) => state.session);
 
+  const { session: user } = useSelector((state: RootState) => state.session);
   const { data: friends = [], isLoading: friendsLoading } = useMyFriends();
 
-  // 닉네임 입력값
   const [changeNickname, setChangeNickname] = useState("");
-  // 아바타 모달 열림 여부
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   // 닉네임 초기값 세팅
@@ -40,7 +38,10 @@ export default function ProfilePage() {
   const name = user?.name ?? "이름 없음";
   const email = user?.email ?? "이메일 없음";
   const nickname = user?.nickname ?? "";
-  const avatar = user?.profile_image_url ?? null;
+  const rawAvatar = user?.profile_image_url ?? null;
+  const avatar = resolveAvatarUrl(rawAvatar);
+  console.log("rawAvatar:", rawAvatar);
+  console.log("avatar:", avatar);
 
   // 닉네임 수정 버튼 클릭
   const handleNicknameEditClick = () => {
