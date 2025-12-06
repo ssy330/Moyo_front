@@ -1,6 +1,16 @@
+// src/hooks/mutation/post/use-update-post.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Post } from "@/types";
 import { toast } from "sonner";
+import { QUERY_KEYS } from "@/lib/constants";
+import { updatePost } from "@/api/post";
+
+interface EditPostInput {
+  id: number;
+  groupId: number;
+  content: string;
+  image_urls: string[];
+}
 
 export function useEditPost({
   onSuccess,
@@ -11,24 +21,23 @@ export function useEditPost({
 } = {}) {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    // 🔥 아직 백엔드 수정 API가 없으므로, 임시 에러 던지기
-    mutationFn: async (_post: Partial<Post> & { id: number }) => {
-      throw new Error("게시글 수정 API가 아직 구현되지 않았습니다.");
-    },
+  return useMutation<Post, Error, EditPostInput>({
+    mutationFn: ({ id, groupId, content, image_urls }) =>
+      updatePost({ groupId, postId: id, content, image_urls }),
 
-    onSuccess: async (data) => {
+    async onSuccess(data, variables) {
       toast.success("게시물이 수정되었습니다!", { position: "top-center" });
 
-      // ✅ posts 관련 쿼리 invalidate (피드 갱신)
-      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      // ✅ 수정된 게시글이 있는 그룹 피드 invalidate
+      await queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.post.list, variables.groupId],
+      });
 
       onSuccess?.(data);
     },
 
-    onError: (err) => {
-      // 여기로 항상 들어오게 될 거야 (위에서 에러 던져서)
-      toast.error("게시물 수정 기능이 아직 준비되지 않았어요.", {
+    onError(err) {
+      toast.error("게시물 수정에 실패했습니다.", {
         position: "top-center",
       });
       onError?.(err);

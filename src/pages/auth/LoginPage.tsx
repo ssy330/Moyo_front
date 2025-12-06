@@ -56,7 +56,7 @@ export default function LoginPage() {
       </div>
 
       {/* 오른쪽 영역 - 로그인 박스 */}
-      <div className="flex flex-1 items-center justify-center bg-white px-6 pb-10 md:px-10 md:pb-0">
+      <div className="flex flex-1 items-center justify-center bg-white px-10 md:px-10 md:pb-0">
         <div className="w-full max-w-sm">
           {/* 로그인 폼 */}
           <form onSubmit={handleSignInWithEmail}>

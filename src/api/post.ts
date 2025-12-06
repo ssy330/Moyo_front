@@ -29,33 +29,29 @@ export async function fetchPosts({ groupId, from, to }: FetchPostsParams) {
 }
 
 // ─────────────────────────────
-// 2) 게시글 생성 (thumbnail_url 포함)
+// 2) 게시글 생성
 // ─────────────────────────────
 
-interface CreatePostParams {
-  groupId: number;
+interface CreatePostBody {
   title: string;
   content: string;
-  thumbnailUrl?: string | null;
+  image_urls: string[];
 }
 
-/**
- * POST /groups/{group_id}/posts
- * body: { title, content, thumbnail_url? }
- */
 export async function createPost({
   groupId,
   title,
   content,
-  thumbnailUrl = null,
-}: CreatePostParams) {
-  const res = await api.post<Post>(`/groups/${groupId}/posts`, {
+  image_urls,
+}: {
+  groupId: number;
+} & CreatePostBody) {
+  const res = await api.post(`/groups/${groupId}/posts`, {
     title,
     content,
-    thumbnail_url: thumbnailUrl, // 🔥 백엔드 PostCreate.thumbnail_url 필드랑 맞춤
+    image_urls,
   });
-
-  return res.data; // PostDetailOut과 거의 동일 (comments 제외)
+  return res.data;
 }
 
 // ─────────────────────────────
@@ -63,11 +59,11 @@ export async function createPost({
 //    (자체 백엔드 이미지 업로드 + 게시글 생성)
 // ─────────────────────────────
 
-interface CreatePostWithImagesParams {
+export interface CreatePostWithImagesParams {
   groupId: number;
   title: string;
   content: string;
-  images: File[]; // 이제 userId나 filePath 필요 없음
+  images: File[];
 }
 
 export async function createPostWithImages({
@@ -76,20 +72,19 @@ export async function createPostWithImages({
   content,
   images,
 }: CreatePostWithImagesParams) {
-  let thumbnailUrl: string | null = null;
-
-  // 첫 번째 이미지를 썸네일로 사용
-  if (images.length > 0) {
-    thumbnailUrl = await uploadImage({
-      file: images[0],
-    });
+  // 1) 모든 이미지 업로드 → URL 배열 만들기
+  const uploadedUrls: string[] = [];
+  for (const file of images) {
+    const url = await uploadImage({ file }); // 기존에 쓰던 uploadImage 재사용
+    uploadedUrls.push(url);
   }
 
+  // 2) 백엔드에 image_urls만 보냄 (썸네일 X)
   const post = await createPost({
     groupId,
     title,
     content,
-    thumbnailUrl,
+    image_urls: uploadedUrls,
   });
 
   return post;
@@ -110,4 +105,39 @@ interface DeletePostParams {
  */
 export async function deletePost({ groupId, postId }: DeletePostParams) {
   await api.delete(`/groups/${groupId}/posts/${postId}`);
+}
+
+// ─────────────────────────────
+// 5) 게시글 수정
+// ─────────────────────────────
+
+interface UpdatePostBody {
+  title?: string;
+  content?: string;
+  image_urls?: string[];
+}
+
+export interface UpdatePostParams extends UpdatePostBody {
+  groupId: number;
+  postId: number;
+}
+
+/**
+ * PATCH /groups/{group_id}/posts/{post_id}
+ * 수정된 Post 리턴
+ */
+export async function updatePost({
+  groupId,
+  postId,
+  title,
+  content,
+  image_urls,
+}: UpdatePostParams) {
+  const res = await api.patch<Post>(`/groups/${groupId}/posts/${postId}`, {
+    title,
+    content,
+    image_urls,
+  });
+
+  return res.data;
 }

@@ -1,5 +1,3 @@
-// src/components/GroupsPageComponents/post-item.tsx
-
 import { HeartIcon, MessageCircle } from "lucide-react";
 import type { Post } from "@/types";
 import defaultAvatar from "@/assets/default-avatar.png";
@@ -11,6 +9,7 @@ import {
 import { formatTimeAgo } from "@/lib/time";
 import EditPostItemButton from "./edit-post-item-button";
 import DeletePostButton from "./delete-post-item-button";
+import { resolveAvatarUrl } from "@/utils/resolve-avatar-url";
 
 interface PostItemProps {
   post: Post;
@@ -19,7 +18,10 @@ interface PostItemProps {
 
 export default function PostItem({ post, groupId }: PostItemProps) {
   const authorName = post.author.name;
-  const avatarSrc = post.author.profile_image_url ?? defaultAvatar;
+  const avatar = post.author.profile_image_url;
+
+  const avatarSrc = resolveAvatarUrl(avatar) ?? defaultAvatar;
+  console.log(post.image_urls);
 
   return (
     <div className="flex flex-col gap-4 border-b pb-8">
@@ -58,16 +60,19 @@ export default function PostItem({ post, groupId }: PostItemProps) {
         {post.image_urls && post.image_urls.length > 0 && (
           <Carousel>
             <CarouselContent>
-              {post.image_urls.map((url, index) => (
-                <CarouselItem className="basis-3/5" key={index}>
-                  <div className="overflow-hidden rounded-xl">
-                    <img
-                      src={url}
-                      className="h-full max-h-[350px] w-full object-cover"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
+              {post.image_urls.map((url, index) => {
+                const img_url = resolveAvatarUrl(url) ?? undefined;
+                return (
+                  <CarouselItem className="basis-3/5" key={index}>
+                    <div className="overflow-hidden rounded-xl">
+                      <img
+                        src={img_url}
+                        className="h-full max-h-[350px] w-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                );
+              })}
             </CarouselContent>
           </Carousel>
         )}

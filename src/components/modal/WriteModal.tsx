@@ -1,5 +1,3 @@
-// src/components/modal/WriteModal.tsx
-
 import {
   Dialog,
   DialogContent,
@@ -45,11 +43,9 @@ export default function WriteModal() {
   }>();
 
   // 모달 데이터에 groupId 가 있다면 그걸 우선 사용
-  const modalGroupId = (currentModal?.data as any)?.groupId;
+  const modalGroupId = currentModal?.data?.groupId;
 
-  const numericGroupId = Number(
-    modalGroupId ?? routeGroupId ?? routeId ?? NaN,
-  );
+  const numericGroupId = Number(modalGroupId ?? routeGroupId ?? routeId ?? NaN);
 
   const [images, setImages] = useState<Image[]>([]);
   const [text, setText] = useState("");
@@ -107,7 +103,7 @@ export default function WriteModal() {
     if (!currentModal) return;
 
     if (isEditMode && currentModal.data) {
-      const { content, image_urls } = currentModal.data as any;
+      const { content, image_urls } = currentModal.data;
       setText(content ?? "");
 
       if (image_urls && image_urls.length > 0) {
@@ -149,21 +145,23 @@ export default function WriteModal() {
     if (text.trim() === "") return;
 
     if (isEditMode) {
-      // ✏️ 수정
       const data = currentModal?.data as any;
       if (!data?.id) {
         console.error("❌ postId가 없습니다.");
         return;
       }
 
+      // data.groupId or data.group_id 에서 가져오거나,
+      // numericGroupId를 그대로 써도 OK (이미 계산된 groupId니까)
+      const groupIdForEdit = data.groupId ?? data.group_id ?? numericGroupId;
+
       editPost({
         id: data.id,
+        groupId: groupIdForEdit,
         content: text,
         image_urls: images.map((img) => img.previewUrl),
       });
     } else {
-      // 📝 새 글 작성
-
       // ✅ groupId 체크
       if (!numericGroupId || Number.isNaN(numericGroupId)) {
         console.error("❌ groupId 를 찾을 수 없습니다.", {
@@ -264,7 +262,7 @@ export default function WriteModal() {
                     {!isEditMode && (
                       <button
                         onClick={() => handleDeleteImage(image)}
-                        className="absolute right-0 top-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
+                        className="absolute top-0 right-0 m-1 rounded-full bg-black/30 p-1 hover:bg-black/50"
                       >
                         <XIcon className="h-4 w-4 text-white" />
                       </button>

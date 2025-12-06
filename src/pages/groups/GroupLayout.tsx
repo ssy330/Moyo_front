@@ -6,12 +6,12 @@ import GroupsLeftPanel from "@/components/GroupsPageComponents/GroupsLeftPanel";
 import GroupChatPanel from "@/components/GroupsPageComponents/GroupChatPanel";
 import PostFeed from "@/components/GroupsPageComponents/post-feed";
 import GlobalLoader from "@/components/layouts/global-loader";
-import { useMyGroups } from "@/hooks/use-my-groups";
 import { api } from "@/lib/api";
 import { useCallback, useEffect, useState } from "react";
-import type { ChatMessage } from "@/hooks/useChatSocket";
 import { useSelector } from "react-redux";
+import { useMyGroups } from "@/hooks/use-my-groups";
 import type { RootState } from "@/store/store";
+import type { ChatMessage } from "@/hooks/useChatSocket";
 
 export default function GroupLayout() {
   const { id } = useParams();

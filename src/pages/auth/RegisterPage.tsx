@@ -1,4 +1,3 @@
-// src/pages/auth/RegisterPage.tsx
 import { useState, useMemo, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
